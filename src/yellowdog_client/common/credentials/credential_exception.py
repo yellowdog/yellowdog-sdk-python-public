@@ -1,0 +1,2 @@
+class CredentialException(Exception):
+    pass
