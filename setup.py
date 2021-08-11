@@ -53,7 +53,7 @@ setup(
         "python-dispatch==0.1.31",
         "sseclient==0.0.24",
         "cancel-token==0.1.5",
-        "isodate==0.6.0"
+        "isodate==0.6.0",
         "futures;python_version<'3.2'",
         "enum;python_version<'3.4'",
     ],
