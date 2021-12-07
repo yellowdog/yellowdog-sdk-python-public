@@ -42,8 +42,10 @@ class ComputeRequirement(Identified, Named, Tagged):
     tag: Optional[str] = None
     targetInstanceCount: int = 0
     """The number of instances to be provisioned to meet this compute requirement."""
-    autoReprovision: bool = False
-    """Indicates if the Compute Service should automatically attempt to reprovision new instances if the number of RUNNING instances is below the specified targetInstanceCount"""
+    expectedInstanceCount: int = 0
+    """The number of alive instances expected based on existing instances and the most recent provision action."""
+    maintainInstanceCount: bool = False
+    """Indicates if the Compute Service should automatically attempt to provision new instances if the number of RUNNING instances is below the specified targetInstanceCount"""
     instances: Optional[List[Instance]] = None
     """A collection of model objects describing the computer machine instances provisioned for this requirement."""
     nextStatus: Optional[ComputeRequirementStatus] = None

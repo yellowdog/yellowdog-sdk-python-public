@@ -8,13 +8,8 @@ def test_deserialize_empty():
     )
 
     obj_in_dict = {
-        'idealQueueConcurrency': 0,
-        'minimumQueueConcurrency': 0,
-        'shareWorkers': False,
         'taskTypes': [],
-        'instanceTypes': None,
-        "workerClaimBehaviour": "STARTUP_ONLY",
-        "workerReleaseBehaviour": "NO_PENDING_TASKS"
+        'instanceTypes': None
     }
 
     should_deserialize(obj_in_raw, obj_in_dict)

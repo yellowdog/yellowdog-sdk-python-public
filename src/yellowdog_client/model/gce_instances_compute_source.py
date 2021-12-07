@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
 from .compute_source_status import ComputeSourceStatus
@@ -24,16 +24,23 @@ class GceInstancesComputeSource(GceComputeSource):
     credential: str
     project: str
     region: str
-    zone: str
     machineType: str
     image: str
     limit: int = 0
     assignPublicIp: bool = True
     """Indicates if provisioned instances should be assigned public IP addresses."""
+    specifyMinimum: bool = False
+    """
+    Indicates if YellowDog Compute should specify the minimum when requesting instances. NB: This can only be used with a limit set between 1..1000
+    If true, then no instances are provisioned unless all requested instances are available;
+    otherwise, if false, YellowDog Compute will provision as many instances as possible up to the number requested from this compute source.
+    """
+
     userData: Optional[str] = None
-    """The user-data script to be passed to the provisioned instance at startup."""
+    instanceTags: Optional[Dict[str, str]] = None
     sshKeys: Optional[str] = None
     """A list of public SSH keys. If provided, instances will be accessible with the matching private keys through SSH."""
+    zone: Optional[str] = None
     network: Optional[str] = None
     subnetwork: Optional[str] = None
     preemptible: bool = False

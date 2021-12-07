@@ -12,8 +12,8 @@ class ComputeRequirementStatus(Enum):
     """The compute requirement has been created and submitted to YellowDog Compute."""
     PENDING = "PENDING"
     """
-    The compute requirement has been submitted and YellowDog Compute is in the process of provisioning compute machine instances to meet the requirement.
-    The requirement will remain in PENDING state until all provisioned instances have transitioned to RUNNING.
+    YellowDog Compute is in the process of provisioning compute machine instances to meet the requirement.
+    The requirement will remain in PENDING state until all newly provisioned instances have transitioned to RUNNING or TERMINATED (in the case where a provider cancels provision).
     """
 
     STARTING = "STARTING"

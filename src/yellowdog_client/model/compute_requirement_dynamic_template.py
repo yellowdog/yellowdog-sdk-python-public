@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from .attribute_constraint import AttributeConstraint
 from .attribute_preference import AttributePreference
@@ -19,6 +19,7 @@ class ComputeRequirementDynamicTemplate(ComputeRequirementTemplate):
     maximumSourceCount: Optional[int] = None
     imagesId: Optional[str] = None
     userData: Optional[str] = None
+    instanceTags: Optional[Dict[str, str]] = None
     constraints: Optional[List[AttributeConstraint]] = None
     preferences: Optional[List[AttributePreference]] = None
     sourceTraits: Optional[ComputeSourceTraitsFilter] = None

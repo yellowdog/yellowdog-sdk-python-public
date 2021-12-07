@@ -29,13 +29,8 @@ def test_serialize_empty():
         "name": "my_name",
         "tag": "my_tag",
         'runSpecification': {
-            'idealQueueConcurrency': 0,
-            'minimumQueueConcurrency': 0,
-            'shareWorkers': False,
             'taskTypes': [],
-            'instanceTypes': None,
-            'workerClaimBehaviour': 'STARTUP_ONLY',
-            'workerReleaseBehaviour': 'NO_PENDING_TASKS'
+            'instanceTypes': None
         },
         "priority": 0,
         "dependentOn": "my_dependent_on",

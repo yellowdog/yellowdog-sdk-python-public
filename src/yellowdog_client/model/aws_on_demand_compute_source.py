@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from .aws_compute_source import AwsComputeSource
 from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
@@ -44,6 +44,8 @@ class AwsOnDemandComputeSource(AwsComputeSource):
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a cluster placement group."""
+    createElasticFabricAdapter: Optional[bool] = None
+    """Indicates if instances should be provisioned with an Elastic Fabric Adapter network interface."""
     enableDetailedMonitoring: Optional[bool] = None
     """Indicates if provisioned instances should have detailed CloudWatch monitoring enabled."""
     keyName: Optional[str] = None
@@ -53,4 +55,4 @@ class AwsOnDemandComputeSource(AwsComputeSource):
     subnetId: Optional[str] = None
     """The ID of the subnet to use for the provisioned instances."""
     userData: Optional[str] = None
-    """The user-data script to be passed to the provisioned instance at startup."""
+    instanceTags: Optional[Dict[str, str]] = None

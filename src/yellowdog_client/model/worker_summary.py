@@ -14,6 +14,8 @@ class WorkerSummary:
     """The number of claims across all workers in this worker pool."""
     claimedWorkerCount: int = 0
     """The number of workers that are claimed."""
+    lastClaimedTime: Optional[datetime] = None
+    """The last time one of these workers was claimed."""
     lastReleasedTime: Optional[datetime] = None
     """The last time one of these workers was released."""
     lastUpdatedTime: Optional[datetime] = None

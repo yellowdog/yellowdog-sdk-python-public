@@ -20,6 +20,8 @@ class Node(Identified):
     """The details of the node."""
     status: Optional[NodeStatus] = None
     """The status of this compute machine instance."""
+    statusChangedTime: Optional[datetime] = None
+    """The date and time when the status last changed."""
     registeredTime: Optional[datetime] = None
     """The time when the node was registered."""
     workers: Optional[List[Worker]] = None

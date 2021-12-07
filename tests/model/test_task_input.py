@@ -13,7 +13,8 @@ def test_serialize_populated():
     obj_in_dict = {
         "source": "OTHER_NAMESPACE",
         "namespace": "my_namespace",
-        "objectNamePattern": "my_objectNamePattern"
+        "objectNamePattern": "my_objectNamePattern",
+        "required": False
     }
 
     should_serde(obj_in_raw, obj_in_dict)

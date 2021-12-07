@@ -15,9 +15,14 @@ class WorkerPoolStatus(Enum):
     """One or more workers are claimed"""
     SHUTDOWN = "SHUTDOWN"
     """The worker pool is shutdown and any workers are instructed to shutdown"""
+    TERMINATED = "TERMINATED"
+    """The provisioned worker pool is terminated as is the corresponding compute requirement"""
 
     def is_available(self) -> bool:
         return self in (self.PENDING, self.EMPTY, self.IDLE, self.RUNNING)
+
+    def is_finished(self) -> bool:
+        return self in (self.SHUTDOWN, self.TERMINATED)
 
     def __str__(self) -> str:
         return self.name

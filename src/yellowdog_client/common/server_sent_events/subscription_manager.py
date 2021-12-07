@@ -8,29 +8,26 @@ from yellowdog_client.common import Closeable
 from yellowdog_client.model import Identified
 from yellowdog_client.model import ComputeRequirement
 from yellowdog_client.model import WorkRequirement
-from yellowdog_client.model.exceptions import InvalidOperationException
 
 IIdentified = TypeVar('IIdentified', Identified, ComputeRequirement, WorkRequirement)
 
 
 class SubscriptionManager(Closeable):
-    _sync_lock = None  # type: Lock
-    _update_events_provider = None  # type: Callable[[IIdentified], EventSource]
-    _class_type = None  # type: type
-    _subscriptions = None  # type: Dict[str, Subscription]
+    _sync_lock: Lock = None
+    _update_events_provider: Callable[[str], EventSource] = None
+    _class_type: type = None
+    _subscriptions: Dict[str, Subscription] = None
 
-    def __init__(self, update_events_provider, class_type):
-        # type: (Callable[[IIdentified], EventSource], type) -> None
+    def __init__(self, update_events_provider: Callable[[str], EventSource], class_type: type) -> None:
         self._sync_lock = Lock()
         self._update_events_provider = update_events_provider
         self._class_type = class_type
         self._subscriptions = {}
 
-    def create_subscription(self, obj, listener):
-        # type: (IIdentified, SubscriptionEventListener) -> Subscription
-        sse = self._update_events_provider(obj)
+    def create_subscription(self, id: str, listener: SubscriptionEventListener) -> Subscription:
+        sse = self._update_events_provider(id)
         subscription = Subscription(sse=sse, listener=listener, class_type=self._class_type)
-        self._subscriptions[obj.id] = subscription
+        self._subscriptions[id] = subscription
         return subscription
 
     @staticmethod
@@ -40,17 +37,13 @@ class SubscriptionManager(Closeable):
             subscription.add_subscription_listener(listener=listener)
         return subscription
 
-    def add_listener(self, obj, listener):
-        # type: (IIdentified, SubscriptionEventListener) -> None
-        if not obj.id:
-            raise InvalidOperationException("Cannot add a listener for an object with null ID")
-
+    def add_listener(self, id: str, listener: SubscriptionEventListener) -> None:
         with self._sync_lock:
-            if obj.id in self._subscriptions:
-                existing_subscription = self._subscriptions[obj.id]
+            if id in self._subscriptions:
+                existing_subscription = self._subscriptions[id]
                 self.add_to_subscription(subscription=existing_subscription, listener=listener)
             else:
-                self.create_subscription(obj=obj, listener=listener)
+                self.create_subscription(id, listener)
 
     def remove_listener(self, listener):
         # type: (SubscriptionEventListener) -> None

@@ -21,12 +21,13 @@ def test_serialize_single_source_provision_strategy__compute_requirement():
     expected_dict = {
         "name": "test_name",
         "namespace": "test_namespace",
-        "autoReprovision": False,
+        "maintainInstanceCount": False,
         "provisionStrategy": {
             "sources": [],
             "type": "co.yellowdog.platform.model.SingleSourceProvisionStrategy"
         },
-        "targetInstanceCount": 0
+        "targetInstanceCount": 0,
+        "expectedInstanceCount": 0
     }
     should_serde(expected_object, expected_dict)
 
@@ -43,12 +44,13 @@ def test_serialize_waterfall_provision_strategy__compute_requirement():
     expected_dict = {
         "name": "test_name",
         "namespace": "test_namespace",
-        "autoReprovision": False,
+        "maintainInstanceCount": False,
         "provisionStrategy": {
             "sources": [],
             "type": "co.yellowdog.platform.model.WaterfallProvisionStrategy"
         },
-        "targetInstanceCount": 0
+        "targetInstanceCount": 0,
+        "expectedInstanceCount": 0
     }
     should_serde(expected_object, expected_dict)
 
@@ -65,11 +67,12 @@ def test_serialize_split_provision_strategy__compute_requirement():
     expected_dict = {
         "name": "test_name",
         "namespace": "test_namespace",
-        "autoReprovision": False,
+        "maintainInstanceCount": False,
         "provisionStrategy": {
             "sources": [],
             "type": "co.yellowdog.platform.model.SplitProvisionStrategy"
         },
-        "targetInstanceCount": 0
+        "targetInstanceCount": 0,
+        "expectedInstanceCount": 0
     }
     should_serde(expected_object, expected_dict)

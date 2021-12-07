@@ -4,8 +4,6 @@ import pytest
 
 from yellowdog_client.common.iso_datetime import iso_format
 from yellowdog_client.model import RunSpecification
-from yellowdog_client.model import WorkerClaimBehaviour
-from yellowdog_client.model import WorkerReleaseBehaviour
 from yellowdog_client.model import CloudProvider
 from yellowdog_client.model import Task
 from yellowdog_client.model import FlattenPath
@@ -19,7 +17,6 @@ from yellowdog_client.model import TaskGroupStatus
 from yellowdog_client.model import WorkRequirement
 from yellowdog_client.model import WorkRequirementStatus
 from yellowdog_client.model import AllWorkersReleasedShutdownCondition
-from yellowdog_client.model import UnusedAfterStartupShutdownCondition
 from yellowdog_client.model import NoRegisteredWorkersShutdownCondition
 from yellowdog_client.model import ProvisionedWorkerPoolProperties
 from yellowdog_client.model import ComputeRequirementTemplateUsage
@@ -31,11 +28,6 @@ def run_specification_raw():
     return RunSpecification(
         instanceTypes=["instance_type1", "instance_type2"],
         taskTypes=["type1", "type2", "type3"],
-        minimumQueueConcurrency=10,
-        idealQueueConcurrency=20,
-        workerClaimBehaviour=WorkerClaimBehaviour.MAINTAIN_IDEAL,
-        workerReleaseBehaviour=WorkerReleaseBehaviour.WORK_REQUIREMENT_FINISHED,
-        shareWorkers=True,
         maximumTaskRetries=5,
         providers=[CloudProvider.OCI, CloudProvider.GOOGLE],
         regions=["region1", "region2"],
@@ -47,13 +39,8 @@ def run_specification_raw():
 @pytest.fixture
 def run_specification_dict():
     return {
-        "workerClaimBehaviour": "MAINTAIN_IDEAL",
-        "workerReleaseBehaviour": "WORK_REQUIREMENT_FINISHED",
         "instanceTypes": ["instance_type1", "instance_type2"],
         "taskTypes": ["type1", "type2", "type3"],
-        "minimumQueueConcurrency": 10,
-        "idealQueueConcurrency": 20,
-        "shareWorkers": True,
         "maximumTaskRetries": 5,
         "providers": ["OCI", "GOOGLE"],
         "regions": ["region1", "region2"],
@@ -132,17 +119,20 @@ def task_dict():
             {
                 "source": "OTHER_NAMESPACE",
                 "namespace": "input1_namespace",
-                "objectNamePattern": "input1_objectNamePattern"
+                "objectNamePattern": "input1_objectNamePattern",
+                "required": False
             },
             {
                 "source": "OTHER_NAMESPACE",
                 "namespace": "input2_namespace",
-                "objectNamePattern": "input2_objectNamePattern"
+                "objectNamePattern": "input2_objectNamePattern",
+                "required": False
             },
             {
                 "source": "TASK_NAMESPACE",
                 "namespace": "input3_namespace",
-                "objectNamePattern": "input3_objectNamePattern"
+                "objectNamePattern": "input3_objectNamePattern",
+                "required": False
             }
         ],
         "flattenInputPaths": "REPLACE_PATH_SEPERATOR",
@@ -152,18 +142,21 @@ def task_dict():
                 "directoryName": "output1_directoryName",
                 "filePattern": "output1_filePattern",
                 "uploadOnFailed": True,
+                "required": False
             },
             {
                 "source": "PROCESS_OUTPUT",
                 "directoryName": "output2_directoryName",
                 "filePattern": "output2_filePattern",
                 "uploadOnFailed": False,
+                "required": False
             },
             {
                 "source": "OTHER_DIRECTORY",
                 "directoryName": "output3_directoryName",
                 "filePattern": "output3_filePattern",
                 "uploadOnFailed": True,
+                "required": False
             }
         ],
         "status": "COMPLETED",
@@ -252,10 +245,9 @@ def work_requirement_dict(task_group_dict):
 @pytest.fixture
 def provisioned_worker_pool_properties_raw():
     return ProvisionedWorkerPoolProperties(
-        bootTimeLimit=timedelta(minutes=30, seconds=15),
+        nodeBootTimeLimit=timedelta(minutes=30, seconds=15),
         autoShutdownConditions=[
             AllWorkersReleasedShutdownCondition(delay=timedelta(minutes=3)),
-            UnusedAfterStartupShutdownCondition(delay=timedelta(minutes=7)),
             NoRegisteredWorkersShutdownCondition()
         ]
     )
@@ -264,21 +256,16 @@ def provisioned_worker_pool_properties_raw():
 @pytest.fixture
 def provisioned_worker_pool_properties_dict():
     return {
-        "bootTimeLimit": "PT30M15S",
+        "nodeBootTimeLimit": "PT30M15S",
         "autoShutdownConditions": [
             {
                 "delay": "PT3M",
                 "type": "co.yellowdog.platform.model.AllWorkersReleasedShutdownCondition"
             },
             {
-                "delay": "PT7M",
-                "type": "co.yellowdog.platform.model.UnusedAfterStartupShutdownCondition"
-            },
-            {
                 "type": "co.yellowdog.platform.model.NoRegisteredWorkersShutdownCondition"
             }
-        ],
-        'type': 'co.yellowdog.platform.model.ProvisionedWorkerPoolProperties'
+        ]
     }
 
 
@@ -317,8 +304,7 @@ def compute_requirement_template_usage_raw():
         requirementName="request_requirementName",
         requirementNamespace="request_requirementNamespace",
         requirementTag="request_requirementTag",
-        targetInstanceCount=10,
-        autoReprovision=True
+        targetInstanceCount=10
     )
 
 
@@ -329,6 +315,5 @@ def compute_requirement_template_usage_dict():
         "requirementName": "request_requirementName",
         "requirementNamespace": "request_requirementNamespace",
         "requirementTag": "request_requirementTag",
-        "targetInstanceCount": 10,
-        "autoReprovision": True
+        "targetInstanceCount": 10
     }

@@ -38,7 +38,8 @@ def test_serialize__oci_instances_compute_source():
         "imageId": "oci_instances_imageId",
         "shape": "oci_instances_shape",
         "subnetId": "oci_instances_subnetId",
-        "userData": "oci_instances_userData"
+        "userData": "oci_instances_userData",
+        "preemptible": False,
     }
 
     should_serde(obj_in_raw, obj_in_dict)

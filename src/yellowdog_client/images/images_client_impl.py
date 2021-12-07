@@ -38,25 +38,25 @@ class ImagesClientImpl(ImagesClient):
     def delete_image(self, image: MachineImage) -> None:
         self.__service_proxy.delete_image(image)
 
-    def get_image_family_by_name(self, namespace: str, family_name: str) -> MachineImageFamily:
-        return self.__service_proxy.get_image_family_by_name(namespace, family_name)
-
     def get_image_family_by_id(self, family_id: str) -> MachineImageFamily:
         return self.__service_proxy.get_image_family_by_id(family_id)
 
-    def get_latest_image_group_by_family_name(self, namespace: str, family_name: str) -> MachineImageGroup:
-        return self.__service_proxy.get_latest_image_group_by_family_name(namespace, family_name)
+    def get_image_family_by_name(self, namespace: str, family_name: str) -> MachineImageFamily:
+        return self.__service_proxy.get_image_family_by_name(namespace, family_name)
 
     def get_latest_image_group_by_family_id(self, family_id: str) -> MachineImageGroup:
         return self.__service_proxy.get_latest_image_group_by_family_id(family_id)
 
-    def get_image_group_by_name(self, namespace: str, family_name: str, group_name: str) -> MachineImageGroup:
-        return self.__service_proxy.get_image_group_by_name(namespace, family_name, group_name)
+    def get_latest_image_group_by_family_name(self, namespace: str, family_name: str) -> MachineImageGroup:
+        return self.__service_proxy.get_latest_image_group_by_family_name(namespace, family_name)
 
     def get_image_group_by_id(self, group_id: str) -> MachineImageGroup:
         return self.__service_proxy.get_image_group_by_id(group_id)
 
-    def get_image_by_id(self, image_id: str) -> MachineImage:
+    def get_image_group_by_name(self, namespace: str, family_name: str, group_name: str) -> MachineImageGroup:
+        return self.__service_proxy.get_image_group_by_name(namespace, family_name, group_name)
+
+    def get_image(self, image_id: str) -> MachineImage:
         return self.__service_proxy.get_image_by_id(image_id)
 
     def get_all_image_families(self) -> List[MachineImageFamilySummary]:

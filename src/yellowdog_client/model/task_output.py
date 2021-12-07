@@ -15,3 +15,33 @@ class TaskOutput:
     """An ant-style pattern to select output files by path."""
     uploadOnFailed: bool = False
     """Indicates that the outputs should still be uploaded even if the task execution fails."""
+    required: bool = False
+    """Indicates that at least one output should be found otherwise the task execution is failed."""
+
+    # KEEP
+    @staticmethod
+    def from_worker_directory(file_pattern: str, required: bool = False) -> 'TaskOutput':
+        """Specifies that matching files from the working directory of the worker that executed the task should be uploaded."""
+        return TaskOutput(
+            source=TaskOutputSource.WORKER_DIRECTORY,
+            filePattern=file_pattern,
+            required=required
+        )
+
+    @staticmethod
+    def from_directory(directory_name: str, file_pattern: str, required: bool = False) -> 'TaskOutput':
+        """Specifies that matching files from the directory (defined in the agent configuration with the specified name) should be uploaded."""
+        return TaskOutput(
+            source=TaskOutputSource.OTHER_DIRECTORY,
+            directoryName=directory_name,
+            filePattern=file_pattern,
+            required=required
+        )
+
+    @staticmethod
+    def from_task_process() -> 'TaskOutput':
+        """Specifies that the text file containing the output from the task execution process should be uploaded."""
+        return TaskOutput(
+            source=TaskOutputSource.PROCESS_OUTPUT,
+            uploadOnFailed=True
+        )

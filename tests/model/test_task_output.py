@@ -15,7 +15,8 @@ def test_serialize_populated():
         "source": "PROCESS_OUTPUT",
         "directoryName": "my_directoryName",
         "filePattern": "my_filePattern",
-        "uploadOnFailed": True
+        "uploadOnFailed": True,
+        "required": False
     }
 
     should_serde(obj_in_raw, obj_in_dict)

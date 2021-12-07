@@ -12,11 +12,23 @@ class AllowancesClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def delete_allowance(self, allowance: Allowance) -> None:
+        pass
+
+    @abstractmethod
     def delete_allowance_by_id(self, allowance_id: str) -> None:
         pass
 
     @abstractmethod
+    def get_allowance(self, allowance: Allowance) -> Allowance:
+        pass
+
+    @abstractmethod
     def get_allowance_by_id(self, allowance_id: str) -> Allowance:
+        pass
+
+    @abstractmethod
+    def boost_allowance(self, allowance: Allowance, boost_hours: int) -> Allowance:
         pass
 
     @abstractmethod

@@ -1,8 +1,11 @@
 from .access_delegate import AccessDelegate
 from .account import Account
 from .account_allowance import AccountAllowance
+from .account_authentication_properties import AccountAuthenticationProperties
 from .add_application_request import AddApplicationRequest
 from .add_application_response import AddApplicationResponse
+from .add_configured_worker_pool_request import AddConfiguredWorkerPoolRequest
+from .add_configured_worker_pool_response import AddConfiguredWorkerPoolResponse
 from .add_node_actions_request import AddNodeActionsRequest
 from .add_user_request import AddUserRequest
 from .alibaba_compute_source import AlibabaComputeSource
@@ -12,6 +15,7 @@ from .alibaba_instance_charge_type import AlibabaInstanceChargeType
 from .alibaba_instances_compute_source import AlibabaInstancesComputeSource
 from .alibaba_namespace_storage_configuration import AlibabaNamespaceStorageConfiguration
 from .alibaba_spot_strategy import AlibabaSpotStrategy
+from .all_nodes_inactive_shutdown_condition import AllNodesInactiveShutdownCondition
 from .all_workers_released_shutdown_condition import AllWorkersReleasedShutdownCondition
 from .allowance import Allowance
 from .allowance_exhausted_notification import AllowanceExhaustedNotification
@@ -25,6 +29,7 @@ from .attribute_preference import AttributePreference
 from .attribute_source import AttributeSource
 from .attribute_source_type import AttributeSourceType
 from .attribute_value import AttributeValue
+from .authentication_provider import AuthenticationProvider
 from .aws_compute_source import AwsComputeSource
 from .aws_credential import AwsCredential
 from .aws_fleet_compute_source import AwsFleetComputeSource
@@ -37,6 +42,7 @@ from .aws_fleet_spot_options import AwsFleetSpotOptions
 from .aws_instance import AwsInstance
 from .aws_on_demand_compute_source import AwsOnDemandComputeSource
 from .aws_spot_compute_source import AwsSpotComputeSource
+from .azure_account_authentication_properties import AzureAccountAuthenticationProperties
 from .azure_client_credential import AzureClientCredential
 from .azure_compute_credential import AzureComputeCredential
 from .azure_compute_source import AzureComputeSource
@@ -89,6 +95,7 @@ from .create_keyring_response import CreateKeyringResponse
 from .credential import Credential
 from .double_range import DoubleRange
 from .error_response import ErrorResponse
+from .existing_password_request import ExistingPasswordRequest
 from .external_attribute_definition import ExternalAttributeDefinition
 from .external_attribute_provider_query import ExternalAttributeProviderQuery
 from .external_attribute_provider_query_source import ExternalAttributeProviderQuerySource
@@ -96,6 +103,7 @@ from .external_attribute_provider_registration import ExternalAttributeProviderR
 from .external_attribute_provider_results import ExternalAttributeProviderResults
 from .external_attribute_provider_results_source import ExternalAttributeProviderResultsSource
 from .external_attribute_source import ExternalAttributeSource
+from .external_user import ExternalUser
 from .filter import Filter
 from .flatten_path import FlattenPath
 from .gce_compute_source import GceComputeSource
@@ -115,6 +123,7 @@ from .instance_usage import InstanceUsage
 from .instance_usage_filter import InstanceUsageFilter
 from .instant_range import InstantRange
 from .internal_attribute_source import InternalAttributeSource
+from .internal_user import InternalUser
 from .keyring import Keyring
 from .keyring_access_secrets import KeyringAccessSecrets
 from .keyring_accessor import KeyringAccessor
@@ -131,6 +140,7 @@ from .model_exception import ModelException
 from .named import Named
 from .namespace_objects_response import NamespaceObjectsResponse
 from .namespace_storage_configuration import NamespaceStorageConfiguration
+from .new_password_request import NewPasswordRequest
 from .no_registered_workers_shutdown_condition import NoRegisteredWorkersShutdownCondition
 from .node import Node
 from .node_action import NodeAction
@@ -157,6 +167,7 @@ from .numeric_attribute_preference import NumericAttributePreference
 from .numeric_attribute_range import NumericAttributeRange
 from .numeric_attribute_rank_order import NumericAttributeRankOrder
 from .numeric_attribute_value import NumericAttributeValue
+from .o_auth2_authentication_properties import OAuth2AuthenticationProperties
 from .object_detail import ObjectDetail
 from .object_download_request import ObjectDownloadRequest
 from .object_download_response import ObjectDownloadResponse
@@ -170,6 +181,7 @@ from .oci_instance import OciInstance
 from .oci_instance_pool_compute_source import OciInstancePoolComputeSource
 from .oci_instances_compute_source import OciInstancesComputeSource
 from .oci_namespace_storage_configuration import OciNamespaceStorageConfiguration
+from .password_state import PasswordState
 from .provision_template_worker_pool_request import ProvisionTemplateWorkerPoolRequest
 from .provisioned_worker_pool import ProvisionedWorkerPool
 from .provisioned_worker_pool_properties import ProvisionedWorkerPoolProperties
@@ -206,27 +218,25 @@ from .task_status import TaskStatus
 from .task_summary import TaskSummary
 from .transfer_status_response import TransferStatusResponse
 from .transfer_summary_response import TransferSummaryResponse
-from .unused_after_startup_shutdown_condition import UnusedAfterStartupShutdownCondition
+from .unclaimed_after_startup_shutdown_condition import UnclaimedAfterStartupShutdownCondition
 from .update_application_request import UpdateApplicationRequest
 from .update_keyring_request import UpdateKeyringRequest
 from .update_user_request import UpdateUserRequest
 from .user import User
 from .user_login_request import UserLoginRequest
-from .user_login_response import UserLoginResponse
 from .waterfall_provision_strategy import WaterfallProvisionStrategy
 from .work_requirement import WorkRequirement
 from .work_requirement_status import WorkRequirementStatus
 from .work_requirement_summary import WorkRequirementSummary
 from .worker import Worker
 from .worker_action import WorkerAction
-from .worker_claim_behaviour import WorkerClaimBehaviour
 from .worker_pool import WorkerPool
 from .worker_pool_node_configuration import WorkerPoolNodeConfiguration
 from .worker_pool_properties import WorkerPoolProperties
 from .worker_pool_shutdown_condition import WorkerPoolShutdownCondition
 from .worker_pool_status import WorkerPoolStatus
 from .worker_pool_summary import WorkerPoolSummary
-from .worker_release_behaviour import WorkerReleaseBehaviour
+from .worker_pool_token import WorkerPoolToken
 from .worker_status import WorkerStatus
 from .worker_summary import WorkerSummary
 
@@ -234,8 +244,11 @@ __all__ = [
     "AccessDelegate",
     "Account",
     "AccountAllowance",
+    "AccountAuthenticationProperties",
     "AddApplicationRequest",
     "AddApplicationResponse",
+    "AddConfiguredWorkerPoolRequest",
+    "AddConfiguredWorkerPoolResponse",
     "AddNodeActionsRequest",
     "AddUserRequest",
     "AlibabaComputeSource",
@@ -245,6 +258,7 @@ __all__ = [
     "AlibabaInstancesComputeSource",
     "AlibabaNamespaceStorageConfiguration",
     "AlibabaSpotStrategy",
+    "AllNodesInactiveShutdownCondition",
     "AllWorkersReleasedShutdownCondition",
     "Allowance",
     "AllowanceExhaustedNotification",
@@ -258,6 +272,7 @@ __all__ = [
     "AttributeSource",
     "AttributeSourceType",
     "AttributeValue",
+    "AuthenticationProvider",
     "AwsComputeSource",
     "AwsCredential",
     "AwsFleetComputeSource",
@@ -270,6 +285,7 @@ __all__ = [
     "AwsInstance",
     "AwsOnDemandComputeSource",
     "AwsSpotComputeSource",
+    "AzureAccountAuthenticationProperties",
     "AzureClientCredential",
     "AzureComputeCredential",
     "AzureComputeSource",
@@ -322,6 +338,7 @@ __all__ = [
     "Credential",
     "DoubleRange",
     "ErrorResponse",
+    "ExistingPasswordRequest",
     "ExternalAttributeDefinition",
     "ExternalAttributeProviderQuery",
     "ExternalAttributeProviderQuerySource",
@@ -329,6 +346,7 @@ __all__ = [
     "ExternalAttributeProviderResults",
     "ExternalAttributeProviderResultsSource",
     "ExternalAttributeSource",
+    "ExternalUser",
     "Filter",
     "FlattenPath",
     "GceComputeSource",
@@ -348,6 +366,7 @@ __all__ = [
     "InstanceUsageFilter",
     "InstantRange",
     "InternalAttributeSource",
+    "InternalUser",
     "Keyring",
     "KeyringAccessSecrets",
     "KeyringAccessor",
@@ -364,6 +383,7 @@ __all__ = [
     "Named",
     "NamespaceObjectsResponse",
     "NamespaceStorageConfiguration",
+    "NewPasswordRequest",
     "NoRegisteredWorkersShutdownCondition",
     "Node",
     "NodeAction",
@@ -390,6 +410,7 @@ __all__ = [
     "NumericAttributeRange",
     "NumericAttributeRankOrder",
     "NumericAttributeValue",
+    "OAuth2AuthenticationProperties",
     "ObjectDetail",
     "ObjectDownloadRequest",
     "ObjectDownloadResponse",
@@ -403,6 +424,7 @@ __all__ = [
     "OciInstancePoolComputeSource",
     "OciInstancesComputeSource",
     "OciNamespaceStorageConfiguration",
+    "PasswordState",
     "ProvisionTemplateWorkerPoolRequest",
     "ProvisionedWorkerPool",
     "ProvisionedWorkerPoolProperties",
@@ -439,27 +461,25 @@ __all__ = [
     "TaskSummary",
     "TransferStatusResponse",
     "TransferSummaryResponse",
-    "UnusedAfterStartupShutdownCondition",
+    "UnclaimedAfterStartupShutdownCondition",
     "UpdateApplicationRequest",
     "UpdateKeyringRequest",
     "UpdateUserRequest",
     "User",
     "UserLoginRequest",
-    "UserLoginResponse",
     "WaterfallProvisionStrategy",
     "WorkRequirement",
     "WorkRequirementStatus",
     "WorkRequirementSummary",
     "Worker",
     "WorkerAction",
-    "WorkerClaimBehaviour",
     "WorkerPool",
     "WorkerPoolNodeConfiguration",
     "WorkerPoolProperties",
     "WorkerPoolShutdownCondition",
     "WorkerPoolStatus",
     "WorkerPoolSummary",
-    "WorkerReleaseBehaviour",
+    "WorkerPoolToken",
     "WorkerStatus",
     "WorkerSummary",
 ]

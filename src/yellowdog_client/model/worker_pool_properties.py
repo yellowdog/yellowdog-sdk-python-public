@@ -1,6 +1,6 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
 class WorkerPoolProperties:
-    type: str = field(default=None, init=False)
+    pass

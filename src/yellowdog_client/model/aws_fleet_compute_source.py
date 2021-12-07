@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from .aws_compute_source import AwsComputeSource
 from .aws_fleet_instance_override import AwsFleetInstanceOverride
@@ -45,6 +45,8 @@ class AwsFleetComputeSource(AwsComputeSource):
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a cluster placement group."""
+    createElasticFabricAdapter: Optional[bool] = None
+    """Indicates if instances should be provisioned with an Elastic Fabric Adapter network interface."""
     enableDetailedMonitoring: Optional[bool] = None
     """Indicates if provisioned instances should have detailed CloudWatch monitoring enabled."""
     keyName: Optional[str] = None
@@ -62,4 +64,4 @@ class AwsFleetComputeSource(AwsComputeSource):
     maintainCapacity: bool = False
     """Indicates if AWS EC2 Fleet should maintain the instance count independently of YellowDog Compute, replacing the reprovision functionality."""
     userData: Optional[str] = None
-    """The user-data script to be passed to the provisioned instance at startup."""
+    instanceTags: Optional[Dict[str, str]] = None

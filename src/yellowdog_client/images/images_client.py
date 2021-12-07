@@ -46,15 +46,11 @@ class ImagesClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def get_image_family_by_name(self, namespace: str, family_name: str) -> MachineImageFamily:
-        pass
-
-    @abstractmethod
     def get_image_family_by_id(self, family_id: str) -> MachineImageFamily:
         pass
 
     @abstractmethod
-    def get_latest_image_group_by_family_name(self, namespace: str, family_name: str) -> MachineImageGroup:
+    def get_image_family_by_name(self, namespace: str, family_name: str) -> MachineImageFamily:
         pass
 
     @abstractmethod
@@ -62,7 +58,7 @@ class ImagesClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def get_image_group_by_name(self, namespace: str, family_name: str, group_name: str) -> MachineImageGroup:
+    def get_latest_image_group_by_family_name(self, namespace: str, family_name: str) -> MachineImageGroup:
         pass
 
     @abstractmethod
@@ -70,7 +66,11 @@ class ImagesClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def get_image_by_id(self, image_id: str) -> MachineImage:
+    def get_image_group_by_name(self, namespace: str, family_name: str, group_name: str) -> MachineImageGroup:
+        pass
+
+    @abstractmethod
+    def get_image(self, image_id: str) -> MachineImage:
         pass
 
     @abstractmethod

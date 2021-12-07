@@ -13,12 +13,7 @@ yellowdog-sdk API
 :mod:`yellowdog_client` -- Platform Client
 ==========================================
 
-:class:`yellowdog_client.PlatformClient` is the main class, which is used to access various YellowDog services. When created with a provided configuration, the user can utilize:
-
-- Compute service
-- Account service
-- Scheduler service
-- Object store service
+:class:`yellowdog_client.PlatformClient` is the main class, which is used to access all YellowDog services.
 
 .. autoclass:: yellowdog_client.PlatformClient
     :members:

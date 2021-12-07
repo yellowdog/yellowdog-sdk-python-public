@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from .azure_compute_source import AzureComputeSource
 from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
@@ -43,4 +43,4 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     useSpot: Optional[bool] = None
     spotMaxPrice: Optional[float] = None
     userData: Optional[str] = None
-    """The user-data script to be passed to the provisioned instance at startup."""
+    instanceTags: Optional[Dict[str, str]] = None

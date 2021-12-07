@@ -57,8 +57,7 @@ created in the `YellowDog Platform Portal`::
         requirementName="my requirement for 3 nodes",
         requirementNamespace="MY_PROJECT",
         requirementTag="tests",
-        targetInstanceCount=3,
-        autoReprovision=False
+        targetInstanceCount=3
     )
 
     compute_requirement = client.compute_client.provision_compute_requirement_template(request)
@@ -71,24 +70,25 @@ Alternatively, you can provision compute directly from a source as follows:
     from yellowdog_client.model import ComputeRequirement
     from yellowdog_client.model import SingleSourceProvisionStrategy
 
-    source = OciInstancesComputeSource(
-        name="3 OCI instances",
-        limit=3,
-        credential="MY_KEYRING/OCI_CREDENTIAL",
-        region="eu-frankfurt-1",
-        availabilityDomain="hHlw:EU-FRANKFURT-1-AD-1",
-        compartmentId="ocid1.compartment.oc1..unique_compartment_identifier",
-        subnetId="ocid1.subnet.oc1.eu-frankfurt-1.unique_subnet_identifier",
-        imageId="ocid1.image.oc1.eu-frankfurt-1.unique_image_identifier"
-    )
+    source =
 
     requirement = ComputeRequirement(
         name="my OCI requirement for 3 nodes"
         namespace="MY_PROJECT"
         tag="tests"
-        autoReprovision=True
         provisionStrategy=SingleSourceProvisionStrategy(
-            sources=[source]
+            sources=[
+                OciInstancesComputeSource(
+                    name="3 OCI instances",
+                    limit=3,
+                    credential="MY_KEYRING/OCI_CREDENTIAL",
+                    region="eu-frankfurt-1",
+                    availabilityDomain="hHlw:EU-FRANKFURT-1-AD-1",
+                    compartmentId="ocid1.compartment.oc1..unique_compartment_identifier",
+                    subnetId="ocid1.subnet.oc1.eu-frankfurt-1.unique_subnet_identifier",
+                    imageId="ocid1.image.oc1.eu-frankfurt-1.unique_image_identifier"
+                )
+            ]
         )
     )
 
@@ -179,23 +179,22 @@ Provisioned worker pools are linked to compute requirements and created in a sim
     from yellowdog_client.model import AllWorkersReleasedShutdownCondition
     from yellowdog_client.model import ProvisionedWorkerPoolProperties
 
-    template_request = ComputeRequirementTemplateUsage(
-        templateId="ydid:crt:000000:UNIQUE_ID",
-        requirementNamespace="my_tests",
-        requirementName="HelloWorldCompute",
-        targetInstanceCount=1
+    worker_pool = client.work_client.provision_worker_pool(
+        ComputeRequirementTemplateUsage(
+            templateId="ydid:crt:000000:UNIQUE_ID",
+            requirementNamespace="my_tests",
+            requirementName="HelloWorldCompute",
+            targetInstanceCount=1
+        ),
+        ProvisionedWorkerPoolProperties(
+            autoShutdownConditions=[
+                AllWorkersReleasedShutdownCondition(
+                    delay=timedelta(seconds=30)
+                )
+            ],
+            workerTag="HelloWorldTag"
+        )
     )
-
-    shutdown_condition = AllWorkersReleasedShutdownCondition(
-        delay = timedelta(seconds=30)
-    )
-
-    worker_pool_properties = ProvisionedWorkerPoolProperties(
-        autoShutdownConditions=[shutdown_condition],
-        workerTag="HelloWorldTag",
-    )
-
-    worker_pool = client.work_client.provision_worker_pool(template_request, worker_pool_properties)
 
 To create a work requirement, utilizing the above worker pool (linked by tag "HelloWorldTag")::
 
@@ -204,33 +203,31 @@ To create a work requirement, utilizing the above worker pool (linked by tag "He
     from yellowdog_client.model import TaskGroup
     from yellowdog_client.model import WorkRequirement
 
-    run_specification = RunSpecification(
-        taskTypes=["docker"],
-        minimumQueueConcurrency=1,
-        idealQueueConcurrency=1,
-        shareWorkers=False,
-        maximumTaskRetries=3,
-        workerTags=["HelloWorldTag"]
-    )
-
     task = Task(
         name="EchoHelloWorld",
         taskType="docker",
         taskData="hello-world"
     )
 
-    task_group = TaskGroup(
-        name="HelloWorldGroup",
-        tag="",
-        runSpecification=run_specification,
-        priority=0
-    )
-
     work_requirement = WorkRequirement(
         namespace="my_tests",
         name="HelloWorldWork",
         tag="HelloWorldTag",
-        taskGroups=[task_group],
+        taskGroups=[
+            TaskGroup(
+                name="HelloWorldGroup",
+                tag="",
+                runSpecification=RunSpecification(
+                    taskTypes=["docker"],
+                    minimumQueueConcurrency=1,
+                    idealQueueConcurrency=1,
+                    shareWorkers=False,
+                    maximumTaskRetries=3,
+                    workerTags=["HelloWorldTag"]
+                ),
+                priority=0
+            )
+        ],
         priority=0
     )
 

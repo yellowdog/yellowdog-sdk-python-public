@@ -42,29 +42,41 @@ class WorkClientImpl(WorkClient):
         return self.__service_proxy.update_work_requirement(work_requirement)
 
     def get_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
-        return self.__service_proxy.get_work_requirement(work_requirement)
-
-    def hold_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
-        return self.__service_proxy.transition_work_requirement(work_requirement, WorkRequirementStatus.HELD)
-
-    def start_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
-        return self.__service_proxy.transition_work_requirement(work_requirement, WorkRequirementStatus.WORKING)
-
-    def cancel_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
-        return self.__service_proxy.transition_work_requirement(work_requirement, WorkRequirementStatus.CANCELLING)
-
-    def find_all_work_requirements(self) -> List[WorkRequirementSummary]:
-        return self.__service_proxy.find_all_work_requirements()
-
-    def get_work_requirement_by_name(self, namespace: str, work_requirement_name: str) -> WorkRequirement:
-        return self.__service_proxy.get_work_requirement_by_name(namespace, work_requirement_name)
+        return self.get_work_requirement_by_id(work_requirement.id)
 
     def get_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
         return self.__service_proxy.get_work_requirement_by_id(work_requirement_id)
 
+    def get_work_requirement_by_name(self, namespace: str, work_requirement_name: str) -> WorkRequirement:
+        return self.__service_proxy.get_work_requirement_by_name(namespace, work_requirement_name)
+
+    def hold_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
+        return self.hold_work_requirement_by_id(work_requirement.id)
+
+    def hold_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
+        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.HELD)
+
+    def start_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
+        return self.start_work_requirement_by_id(work_requirement.id)
+
+    def start_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
+        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.WORKING)
+
+    def cancel_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
+        return self.cancel_work_requirement_by_id(work_requirement.id)
+
+    def cancel_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
+        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.CANCELLING)
+
+    def find_all_work_requirements(self) -> List[WorkRequirementSummary]:
+        return self.__service_proxy.find_all_work_requirements()
+
     def add_work_requirement_listener(self, work_requirement: WorkRequirement, listener: SubscriptionEventListener[WorkRequirement]) -> None:
         self._check_has_id(work_requirement)
-        self.__requirement_subscriptions.add_listener(work_requirement, listener)
+        self.add_work_requirement_listener_by_id(work_requirement.id, listener)
+
+    def add_work_requirement_listener_by_id(self, work_requirement_id: str, listener: SubscriptionEventListener[WorkRequirement]) -> None:
+        self.__requirement_subscriptions.add_listener(work_requirement_id, listener)
 
     def remove_work_requirement_listener(self, listener: SubscriptionEventListener[WorkRequirement]) -> None:
         self.__requirement_subscriptions.remove_listener(listener)
@@ -72,9 +84,16 @@ class WorkClientImpl(WorkClient):
     def get_work_requirement_helper(self, work_requirement: WorkRequirement) -> WorkRequirementHelper:
         return WorkRequirementHelper(work_requirement, self)
 
+    def get_work_requirement_helper_by_id(self, work_requirement_id: str) -> WorkRequirementHelper:
+        work_requirement = self.get_work_requirement_by_id(work_requirement_id)
+        return self.get_work_requirement_helper(work_requirement)
+
     def add_tasks_to_task_group(self, task_group: TaskGroup, tasks: List[Task]) -> List[Task]:
         self._check_has_id(task_group)
-        return self.__service_proxy.add_tasks_to_task_group(task_group, tasks)
+        return self.add_tasks_to_task_group_by_id(task_group.id, tasks)
+
+    def add_tasks_to_task_group_by_id(self, task_group_id: str, tasks: List[Task]) -> List[Task]:
+        return self.__service_proxy.add_tasks_to_task_group(task_group_id, tasks)
 
     def add_tasks_to_task_group_by_name(self, namespace: str, requirement_name: str, task_group_name: str, tasks: List[Task]) -> List[Task]:
         return self.__service_proxy.add_tasks_to_task_group_by_name(namespace, requirement_name, task_group_name, tasks)
@@ -87,7 +106,10 @@ class WorkClientImpl(WorkClient):
 
     def cancel_task(self, task: Task) -> Task:
         self._check_has_id(task)
-        return self.__service_proxy.cancel_task(task)
+        return self.cancel_task_by_id(task.id)
+
+    def cancel_task_by_id(self, task_id: str) -> Task:
+        return self.__service_proxy.cancel_task(task_id)
 
     def find_tasks(self, search: TaskSearch) -> List[Task]:
         slice = self.find_tasks_slice(search, SliceReference())

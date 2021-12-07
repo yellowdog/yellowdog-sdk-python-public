@@ -42,6 +42,7 @@ class PlatformClient(Closeable):
         self.object_store_client: ObjectStoreClient = self.__clients.add(object_store_client)
         """Object store client. Used for file upload and download"""
         self.allowances_client: AllowancesClient = self.__clients.add(allowances_client)
+        """Allowances client. User to constrain how much compute can be used"""
 
     @staticmethod
     def create(services_schema: ServicesSchema, api_key: ApiKey) -> "PlatformClient":

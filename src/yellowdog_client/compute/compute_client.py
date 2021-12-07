@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from .compute_requirement_helper import ComputeRequirementHelper
 from yellowdog_client.common import Closeable
@@ -22,11 +22,12 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def update_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
+    def update_compute_requirement(self, compute_requirement: ComputeRequirement, reprovision: Optional[bool] = None) -> ComputeRequirement:
         """
         Submits an existing requirement to YellowDog Compute in order to provision any changes.
 
         :param compute_requirement: the requirement to submit to YellowDog Compute
+        :param reprovision:        indicates that YellowDog Compute should provision instances to restore the instance count even if targetInstanceCount is unchanged
         :return: the latest view of the requirement returned from YellowDog Compute
         """
 
@@ -78,11 +79,33 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def stop_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
+        """
+        Instructs YellowDog Compute to stop all running instances provisioned for the specified requirement.
+
+        :param compute_requirement_id: the ID of the requirement to stop
+        :return: the latest view of the requirement returned from YellowDog Compute
+        """
+
+        pass
+
+    @abstractmethod
     def start_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
         """
         Instructs YellowDog Compute to start all stopped instances provisioned for the specified requirement.
 
         :param compute_requirement: the requirement to start
+        :return: the latest view of the requirement returned from YellowDog Compute
+        """
+
+        pass
+
+    @abstractmethod
+    def start_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
+        """
+        Instructs YellowDog Compute to start all stopped instances provisioned for the specified requirement.
+
+        :param compute_requirement_id: the ID of the requirement to start
         :return: the latest view of the requirement returned from YellowDog Compute
         """
 
@@ -100,11 +123,33 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def terminate_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
+        """
+        Instructs YellowDog Compute to terminate the specified requirement.
+
+        :param compute_requirement_id: the ID of the requirement to terminate
+        :return: the latest view of the requirement returned from YellowDog Compute
+        """
+
+        pass
+
+    @abstractmethod
     def reprovision_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
         """
         Instructs YellowDog Compute to provision more instances if required such that the number of running instances meets the targetInstanceCount.
 
         :param compute_requirement: the requirement to terminate
+        :return: the latest view of the requirement returned from YellowDog Compute
+        """
+
+        pass
+
+    @abstractmethod
+    def reprovision_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
+        """
+        Instructs YellowDog Compute to provision more instances if required such that the number of running instances meets the targetInstanceCount.
+
+        :param compute_requirement_id: the ID of the requirement to terminate
         :return: the latest view of the requirement returned from YellowDog Compute
         """
 
@@ -182,6 +227,17 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def is_compute_requirement_updating_by_id(self, compute_requirement_id: str) -> bool:
+        """
+        Checks the current busy state of the specified requirement, returning true if the requirement is being updated by YellowDog Compute; otherwise, false.
+
+        :param compute_requirement_id: the ID of the requirement to check
+        :return: true, if the requirement is being updated by YellowDog Compute; otherwise, false
+        """
+
+        pass
+
+    @abstractmethod
     def add_compute_requirement_listener(self, compute_requirement: ComputeRequirement, listener: SubscriptionEventListener[ComputeRequirement]) -> None:
         """
         Adds an event listener to receive notifications of changes for the specified requirement.
@@ -189,6 +245,18 @@ class ComputeClient(ABC, Closeable):
 
         :param compute_requirement: the requirement for which to receive notifications
         :param listener:           the event listener that will be invoked for notifications
+        """
+
+        pass
+
+    @abstractmethod
+    def add_compute_requirement_listener_by_id(self, compute_requirement_id: str, listener: SubscriptionEventListener[ComputeRequirement]) -> None:
+        """
+        Adds an event listener to receive notifications of changes for the specified requirement.
+        The client manages subscriptions to YellowDog Compute such that the first listener created for a requirement will cause a Server-Sent Events subscription to be initiated; additional listeners for the same requirement share that subscription.
+
+        :param compute_requirement_id: the ID of the requirement for which to receive notifications
+        :param listener:             the event listener that will be invoked for notifications
         """
 
         pass
@@ -209,7 +277,18 @@ class ComputeClient(ABC, Closeable):
         """
         Constructs a new compute requirement helper for the specified requirement.
 
-        :param compute_requirement: the requirement for which the helper will be constructed
+        :param compute_requirement: the compute requirement for which the helper will be constructed
+        :return: a new compute requirement helper
+        """
+
+        pass
+
+    @abstractmethod
+    def get_compute_requirement_helper_by_id(self, compute_requirement_id: str) -> ComputeRequirementHelper:
+        """
+        Constructs a new compute requirement helper for the specified requirement.
+
+        :param compute_requirement_id: the ID of the compute requirement for which the helper will be constructed
         :return: a new compute requirement helper
         """
 
@@ -226,19 +305,23 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def add_compute_source_template(self, source_template: ComputeSourceTemplate) -> ComputeSourceTemplate:
+    def add_compute_source_template(self, compute_source_template: ComputeSourceTemplate) -> ComputeSourceTemplate:
         pass
 
     @abstractmethod
-    def update_compute_source_template(self, source_template: ComputeSourceTemplate) -> ComputeSourceTemplate:
+    def update_compute_source_template(self, compute_source_template: ComputeSourceTemplate) -> ComputeSourceTemplate:
         pass
 
     @abstractmethod
-    def delete_compute_source_template(self, source_template: ComputeSourceTemplate) -> None:
+    def delete_compute_source_template(self, compute_source_template: ComputeSourceTemplate) -> None:
         pass
 
     @abstractmethod
-    def get_compute_source_template_by_id(self, source_template_id: str) -> ComputeSourceTemplate:
+    def delete_compute_source_template_by_id(self, compute_source_template_id: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_compute_source_template(self, compute_source_template_id: str) -> ComputeSourceTemplate:
         pass
 
     @abstractmethod
@@ -246,19 +329,23 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def add_compute_requirement_template(self, requirement_template: ComputeRequirementTemplate) -> ComputeRequirementTemplate:
+    def add_compute_requirement_template(self, compute_requirement_template: ComputeRequirementTemplate) -> ComputeRequirementTemplate:
         pass
 
     @abstractmethod
-    def update_compute_requirement_template(self, requirement_template: ComputeRequirementTemplate) -> ComputeRequirementTemplate:
+    def update_compute_requirement_template(self, compute_requirement_template: ComputeRequirementTemplate) -> ComputeRequirementTemplate:
         pass
 
     @abstractmethod
-    def delete_compute_requirement_template(self, requirement_template: ComputeRequirementTemplate) -> None:
+    def delete_compute_requirement_template(self, compute_requirement_template: ComputeRequirementTemplate) -> None:
         pass
 
     @abstractmethod
-    def get_compute_requirement_template_by_id(self, requirement_template_id: str) -> ComputeRequirementTemplate:
+    def delete_compute_requirement_template_by_id(self, compute_requirement_template_id: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_compute_requirement_template(self, compute_requirement_template_id: str) -> ComputeRequirementTemplate:
         pass
 
     @abstractmethod
@@ -272,34 +359,34 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def provision_compute_requirement_template(self, template_usage: ComputeRequirementTemplateUsage) -> ComputeRequirement:
+    def provision_compute_requirement_template(self, compute_requirement_template_usage: ComputeRequirementTemplateUsage) -> ComputeRequirement:
         """
         Provisions a new compute requirement based on the specified template and requirement properties.
 
-        :param template_usage: An object defining the template ID and requirement properties
+        :param compute_requirement_template_usage: An object defining the template ID and requirement properties
         :return: the provisioned compute requirement
         """
 
         pass
 
     @abstractmethod
-    def test_compute_requirement_template(self, template_usage: ComputeRequirementTemplateUsage) -> ComputeRequirementTemplateTestResult:
+    def test_compute_requirement_template(self, compute_requirement_template_usage: ComputeRequirementTemplateUsage) -> ComputeRequirementTemplateTestResult:
         """
         Generates a new compute requirement based on the specified template and requirement properties.
         Includes other related information such as a BestComputeSourceReport if relevant.
 
-        :param template_usage: An object defining the template ID and requirement properties
+        :param compute_requirement_template_usage: An object defining the template ID and requirement properties
         :return: the template test result
         """
 
         pass
 
     @abstractmethod
-    def get_best_compute_source_report_by_requirement_id(self, provisioned_requirement_id: str) -> BestComputeSourceReport:
+    def get_best_compute_source_report_by_compute_requirement(self, provisioned_compute_requirement_id: str) -> BestComputeSourceReport:
         """
         Gets the provision report for a compute requirement provisioned from a dynamic template.
 
-        :param provisioned_requirement_id: the ID of the provisioned compute requirement
+        :param provisioned_compute_requirement_id: the ID of the provisioned compute requirement
         :return: the provision report for a compute requirement provisioned from a dynamic template
         """
 

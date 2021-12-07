@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Dict, Optional
 
 from .cloud_provider import CloudProvider
 from .compute_source import ComputeSource
@@ -17,6 +17,7 @@ class SimulatorComputeSource(ComputeSource):
     provider: Optional[CloudProvider] = field(default=None, init=False)
     subregion: Optional[str] = field(default=None, init=False)
     userData: Optional[str] = field(default=None, init=False)
+    instanceTags: Optional[Dict[str, str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)

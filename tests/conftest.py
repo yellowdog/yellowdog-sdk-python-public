@@ -65,6 +65,7 @@ def populated_compute_requirement_dict():
             "type": "co.yellowdog.platform.model.WaterfallProvisionStrategy"
         },
         "targetInstanceCount": 20,
+        "expectedInstanceCount": 0,
         "status": "STOPPED",
         "id": "req_id",
         "createdTime": iso_format(datetime(2010, 12, 31, 18, 30, 45, 123456)),
@@ -100,7 +101,7 @@ def populated_compute_requirement_dict():
             }
         ],
         "nextStatus": "TERMINATING",
-        "autoReprovision": True,
+        "maintainInstanceCount": False,
         "statusChangedTime": iso_format(datetime(2013, 12, 31, 18, 30, 45, 123456)),
         "createdById": "123"
     }
@@ -188,7 +189,6 @@ def populated_compute_requirement():
     obj_in_raw.instances = [instance_aws, instance_azure]
     obj_in_raw.status = ComputeRequirementStatus.STOPPED
     obj_in_raw.nextStatus = ComputeRequirementStatus.TERMINATING
-    obj_in_raw.autoReprovision = True
     obj_in_raw.statusChangedTime = datetime(2013, 12, 31, 18, 30, 45, 123000, timezone.utc)
     obj_in_raw.createdById = "123"
 

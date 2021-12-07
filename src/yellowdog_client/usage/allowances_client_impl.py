@@ -12,11 +12,20 @@ class AllowancesClientImpl(AllowancesClient):
     def add_allowance(self, allowance: Allowance) -> Allowance:
         return self.__service_proxy.add_allowance(allowance)
 
+    def delete_allowance(self, allowance: Allowance) -> None:
+        self.delete_allowance_by_id(allowance.id)
+
     def delete_allowance_by_id(self, allowance_id: str) -> None:
         self.__service_proxy.delete_allowance_by_id(allowance_id)
 
+    def get_allowance(self, allowance: Allowance) -> Allowance:
+        return self.get_allowance_by_id(allowance.id)
+
     def get_allowance_by_id(self, allowance_id: str) -> Allowance:
         return self.__service_proxy.get_allowance_by_id(allowance_id)
+
+    def boost_allowance(self, allowance: Allowance, boost_hours: int) -> Allowance:
+        return self.boost_allowance_by_id(allowance.id, boost_hours)
 
     def boost_allowance_by_id(self, allowance_id: str, boost_hours: int) -> Allowance:
         return self.__service_proxy.boost_allowance_by_id(allowance_id, boost_hours)

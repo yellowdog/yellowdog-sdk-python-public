@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
 from .compute_source_status import ComputeSourceStatus
@@ -46,4 +46,4 @@ class OciInstancePoolComputeSource(OciComputeSource):
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterNetwork: Optional[bool] = None
     userData: Optional[str] = None
-    """The user-data script to be passed to the provisioned instance at startup."""
+    instanceTags: Optional[Dict[str, str]] = None

@@ -78,11 +78,33 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def hold_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
+        """
+        Instructs the Scheduler to hold the supplied work requirement, no further tasks will be executed until the work requirement is started again.
+
+        :param work_requirement_id: the ID of the work requirement to hold
+        :return: the latest state of the work requirement after the hold instruction was submitted
+        """
+
+        pass
+
+    @abstractmethod
     def start_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
         """
         Instructs the Scheduler to start the supplied work requirement after it was held.
 
         :param work_requirement: the work requirement to start after being held
+        :return: the latest state of the work requirement after the start instruction was submitted
+        """
+
+        pass
+
+    @abstractmethod
+    def start_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
+        """
+        Instructs the Scheduler to start the supplied work requirement after it was held.
+
+        :param work_requirement_id: the ID of the work requirement to start after being held
         :return: the latest state of the work requirement after the start instruction was submitted
         """
 
@@ -100,6 +122,17 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def cancel_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
+        """
+        Instructs the Scheduler to cancel the supplied work requirement, no further tasks will be executed and all workers shall be released.
+
+        :param work_requirement_id: the ID of the work requirement to cancel
+        :return: the latest state of the work requirement after the cancel instruction was submitted
+        """
+
+        pass
+
+    @abstractmethod
     def add_work_requirement_listener(self, work_requirement: WorkRequirement, listener: SubscriptionEventListener[WorkRequirement]) -> None:
         """
         Adds an event listener to receive notifications of changes for the specified work requirement.
@@ -107,6 +140,18 @@ class WorkClient(ABC, Closeable):
 
         :param work_requirement: the work requirement for which to receive notifications
         :param listener:        the event listener that will be invoked for notifications
+        """
+
+        pass
+
+    @abstractmethod
+    def add_work_requirement_listener_by_id(self, work_requirement_id: str, listener: SubscriptionEventListener[WorkRequirement]) -> None:
+        """
+        Adds an event listener to receive notifications of changes for the specified work requirement.
+        The client manages subscriptions to YellowDog Scheduler such that the first listener created for a requirement will cause a Server-Sent Events subscription to be initiated; additional listeners for the same requirement share that subscription.
+
+        :param work_requirement_id: the ID of the work requirement for which to receive notifications
+        :param listener:          the event listener that will be invoked for notifications
         """
 
         pass
@@ -127,7 +172,18 @@ class WorkClient(ABC, Closeable):
         """
         Constructs a new work requirement helper for the specified requirement.
 
-        :param work_requirement: the requirement for which the helper will be constructed
+        :param work_requirement: the work requirement for which the helper will be constructed
+        :return: a new work requirement helper
+        """
+
+        pass
+
+    @abstractmethod
+    def get_work_requirement_helper_by_id(self, work_requirement_id: str) -> WorkRequirementHelper:
+        """
+        Constructs a new work requirement helper for the specified requirement.
+
+        :param work_requirement_id: the ID of the work requirement for which the helper will be constructed
         :return: a new work requirement helper
         """
 
@@ -156,14 +212,26 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def add_tasks_to_task_group_by_name(self, namespace: str, requirement_name: str, task_group_name: str, tasks: List[Task]) -> List[Task]:
+    def add_tasks_to_task_group_by_id(self, task_group_id: str, tasks: List[Task]) -> List[Task]:
         """
         Submits NEW tasks to the YellowDog Scheduler service to be added to the specified task group.
 
-        :param namespace:       the namespace
-        :param requirement_name: the work requirement name
-        :param task_group_name:   the task group name
-        :param tasks:           the submitted tasks
+        :param task_group_id: the ID of the task group to add the tasks to
+        :param tasks:       the submitted tasks
+        :return: the latest state of the tasks after they have been submitted
+        """
+
+        pass
+
+    @abstractmethod
+    def add_tasks_to_task_group_by_name(self, namespace: str, work_requirement_name: str, task_group_name: str, tasks: List[Task]) -> List[Task]:
+        """
+        Submits NEW tasks to the YellowDog Scheduler service to be added to the specified task group.
+
+        :param namespace:           the namespace
+        :param work_requirement_name: the work requirement name
+        :param task_group_name:       the task group name
+        :param tasks:               the submitted tasks
         :return: the latest state of the tasks after they have been submitted
         """
 
@@ -194,9 +262,20 @@ class WorkClient(ABC, Closeable):
     @abstractmethod
     def cancel_task(self, task: Task) -> Task:
         """
-        Instructs the Scheduler to cancel the supplied task.
+        Instructs the Scheduler to cancel the specified task.
 
         :param task: the task to cancel
+        :return: the latest state of the task after the cancel instruction was submitted
+        """
+
+        pass
+
+    @abstractmethod
+    def cancel_task_by_id(self, task_id: str) -> Task:
+        """
+        Instructs the Scheduler to cancel the specified task.
+
+        :param task_id: the ID of the task to cancel
         :return: the latest state of the task after the cancel instruction was submitted
         """
 

@@ -3,8 +3,6 @@ from typing import List, Optional
 
 from .cloud_provider import CloudProvider
 from .double_range import DoubleRange
-from .worker_claim_behaviour import WorkerClaimBehaviour
-from .worker_release_behaviour import WorkerReleaseBehaviour
 
 
 @dataclass
@@ -18,15 +16,14 @@ class RunSpecification:
     """Range constraint on number of vCPUs that are required to execute tasks"""
     ram: Optional[DoubleRange] = None
     """Range constraint on GB of RAM that are required to execute tasks"""
-    minimumQueueConcurrency: int = 0
-    """The minimum number of Workers that must be claimed before starting the associated TaskGroup."""
-    idealQueueConcurrency: int = 0
-    """The ideal number of Workers that should be claimed for the associated TaskGroup."""
-    workerClaimBehaviour: WorkerClaimBehaviour = WorkerClaimBehaviour.STARTUP_ONLY
-    workerReleaseBehaviour: WorkerReleaseBehaviour = WorkerReleaseBehaviour.NO_PENDING_TASKS
-    """Defines the behaviour the YellowDog Scheduler should use when releasing Workers from the associated TaskGroup."""
-    shareWorkers: Optional[bool] = False
-    """If true, then allow claimed Workers to be shared with other task groups; otherwise, Workers are exclusive."""
+    minWorkers: Optional[int] = None
+    """The minimum number of Workers that the associated TaskGroup requires. This many workers must be claimed before the associated TaskGroup will start working."""
+    maxWorkers: Optional[int] = None
+    """The maximum number of Workers that can be claimed for the associated TaskGroup."""
+    tasksPerWorker: Optional[int] = None
+    """Determines the number of worker claims based on splitting the number of unfinished tasks across workers."""
+    exclusiveWorkers: Optional[bool] = None
+    """If true, then do not allow claimed Workers to be shared with other task groups; otherwise, Workers can be shared."""
     maximumTaskRetries: int = 0
     """The maximum number of times a task can be retried after it has failed."""
     providers: Optional[List[CloudProvider]] = None

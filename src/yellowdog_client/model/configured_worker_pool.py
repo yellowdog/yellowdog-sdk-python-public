@@ -17,6 +17,8 @@ class ConfiguredWorkerPool(WorkerPool):
     createdTime: Optional[datetime] = None
     status: Optional[WorkerPoolStatus] = None
     statusChangedTime: Optional[datetime] = None
+    expectedNodeCount: int = 0
+    awaitingNodes: bool = False
     workerSummary: Optional[WorkerSummary] = None
     nodeSummary: Optional[NodeSummary] = None
     properties: Optional[ConfiguredWorkerPoolProperties] = None

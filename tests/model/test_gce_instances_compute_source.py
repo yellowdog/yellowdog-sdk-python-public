@@ -37,6 +37,7 @@ def test_serialize__gce_instance_group_compute_source():
         "credential": "gce_credential",
         "userData": "gce_userData",
         "sshKeys": "gce_sshKeys",
+        "specifyMinimum": False,
         "project": "gce_project",
         "region": "gce_region",
         "zone": "gce_zone",

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
 from .compute_source_status import ComputeSourceStatus
@@ -37,8 +37,9 @@ class OciInstancesComputeSource(OciComputeSource):
     """The OCI availability domain where instances will be provisioned."""
     flexOcpus: Optional[float] = None
     flexRam: Optional[float] = None
+    preemptible: bool = False
     limit: int = 0
     assignPublicIp: bool = True
     """Indicates if provisioned instances should be assigned public IP addresses."""
     userData: Optional[str] = None
-    """The user-data script to be passed to the provisioned instance at startup."""
+    instanceTags: Optional[Dict[str, str]] = None

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Dict, Optional
 
 
 @dataclass
@@ -11,4 +11,5 @@ class ComputeRequirementTemplateUsage:
     targetInstanceCount: int = 0
     imagesId: Optional[str] = None
     userData: Optional[str] = None
-    autoReprovision: bool = False
+    instanceTags: Optional[Dict[str, str]] = None
+    maintainInstanceCount: bool = False

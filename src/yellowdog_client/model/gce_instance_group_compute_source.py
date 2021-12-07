@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
 from .compute_source_status import ComputeSourceStatus
@@ -30,7 +30,7 @@ class GceInstanceGroupComputeSource(GceComputeSource):
     assignPublicIp: bool = True
     """Indicates if provisioned instances should be assigned public IP addresses."""
     userData: Optional[str] = None
-    """The user-data script to be passed to the provisioned instance at startup."""
+    instanceTags: Optional[Dict[str, str]] = None
     sshKeys: Optional[str] = None
     """A list of public SSH keys. If provided, instances will be accessible with the matching private keys through SSH."""
     zone: Optional[str] = None

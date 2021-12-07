@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Set
+from typing import Dict, Optional, Set
 
 from .alibaba_compute_source import AlibabaComputeSource
 from .alibaba_instance_charge_type import AlibabaInstanceChargeType
@@ -58,3 +58,4 @@ class AlibabaInstancesComputeSource(AlibabaComputeSource):
     ramRoleName: Optional[str] = None
     """The name of the RAM Role to use for the provisioned instances."""
     userData: Optional[str] = None
+    instanceTags: Optional[Dict[str, str]] = None

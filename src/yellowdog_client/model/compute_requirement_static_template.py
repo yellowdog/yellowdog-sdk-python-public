@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from .compute_requirement_template import ComputeRequirementTemplate
 from .compute_source_usage import ComputeSourceUsage
@@ -16,3 +16,4 @@ class ComputeRequirementStaticTemplate(ComputeRequirementTemplate):
     description: Optional[str] = None
     imagesId: Optional[str] = None
     userData: Optional[str] = None
+    instanceTags: Optional[Dict[str, str]] = None

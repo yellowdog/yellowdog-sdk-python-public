@@ -8,8 +8,7 @@ def test_serialize__compute_requirement_summary():
         requirementName="request_requirementName",
         requirementNamespace="request_requirementNamespace",
         requirementTag="request_requirementTag",
-        targetInstanceCount=10,
-        autoReprovision=True
+        targetInstanceCount=10
     )
 
     obj_in_dict = {
@@ -18,7 +17,7 @@ def test_serialize__compute_requirement_summary():
         "requirementNamespace": "request_requirementNamespace",
         "requirementTag": "request_requirementTag",
         "targetInstanceCount": 10,
-        "autoReprovision": True
+        "maintainInstanceCount": False
     }
 
     should_serde(obj_in_raw, obj_in_dict)
