@@ -9,6 +9,7 @@ from yellowdog_client.model import Identified, ProvisionedWorkerPool, Provisione
     ComputeRequirementTemplateUsage, WorkerPool, WorkerPoolSummary, NodeSearch, Node, \
     SliceReference, Slice, NodeActionQueueSnapshot, NodeActionGroup, NodeAction, NodeIdFilter, \
     WorkerPoolToken, AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, ConfiguredWorkerPool
+from ..common.pagination import paginate
 
 T = TypeVar('T', bound=WorkerPool)
 
@@ -99,14 +100,7 @@ class WorkerPoolClientImpl(WorkerPoolClient):
         return self.__service_proxy.find_all_worker_pools()
 
     def find_nodes(self, search: NodeSearch) -> List[Node]:
-        slice = self.find_nodes_slice(search, SliceReference())
-        items = slice.items
-
-        while slice.nextSliceId is not None:
-            slice = self.find_nodes_slice(search, SliceReference(slice.nextSliceId))
-            items += slice.items
-
-        return items
+        return paginate(lambda sr: self.find_nodes_slice(search, sr))
 
     def find_nodes_slice(self, search: NodeSearch, slice_reference: SliceReference) -> Slice[Node]:
         return self.__service_proxy.find_nodes_slice(search, slice_reference)

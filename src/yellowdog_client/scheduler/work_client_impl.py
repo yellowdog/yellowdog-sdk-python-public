@@ -14,6 +14,7 @@ from yellowdog_client.model import Task
 from yellowdog_client.model import TaskSearch
 from yellowdog_client.model import SliceReference
 from yellowdog_client.model import Slice
+from yellowdog_client.common.pagination import paginate
 
 
 class WorkClientImpl(WorkClient):
@@ -112,14 +113,7 @@ class WorkClientImpl(WorkClient):
         return self.__service_proxy.cancel_task(task_id)
 
     def find_tasks(self, search: TaskSearch) -> List[Task]:
-        slice = self.find_tasks_slice(search, SliceReference())
-        items = slice.items
-
-        while slice.nextSliceId is not None:
-            slice = self.find_tasks_slice(search, SliceReference(slice.nextSliceId))
-            items += slice.items
-
-        return items
+        return paginate(lambda sr: self.find_tasks_slice(search, sr))
 
     def find_tasks_slice(self, search: TaskSearch, slice_reference: SliceReference) -> Slice:
         return self.__service_proxy.find_tasks_slice(search, slice_reference)

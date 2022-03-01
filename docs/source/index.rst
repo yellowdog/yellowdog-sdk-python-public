@@ -18,11 +18,13 @@ Download & Install
 
 Add yellowdog-sdk to your `requirements.txt`:
 
-    yellowdog-sdk==|version|
+    yellowdog-sdk==\ |version|
 
 Then install with:
 
     $ pip install -r requirements.txt
+
+Imports are from the ``yellowdog_client`` package, e.g.:
 
 .. code-block:: python
 

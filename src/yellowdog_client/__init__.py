@@ -4,7 +4,7 @@ Authenticating
 --------------
 
 To start using this SDK, you first need to create an ``Application`` in the YellowDog Platform
-Portal. This provides you with an api ``key`` and ``secret`` to authenticate to the platform.
+Portal. This provides you with an api ``key`` and ``secret`` to authenticate with the platform.
 
 The PlatformClient provides access to all functionality and may be constructed as follows::
 
@@ -17,12 +17,12 @@ The PlatformClient provides access to all functionality and may be constructed a
     )
 
 The PlatformClient is split into several clients, each covering a specific area of functionality.
-Each of these clients are available as attributes on the PlatformClient.
+All clients are available as attributes of the PlatformClient.
 
 Compute Client
 --------------
 
-The ComputeClient gives access to control compute requirements, their instances and templates.
+The ComputeClient allows control of compute requirements, their instances and templates.
 
 Finding data
 ============
@@ -31,12 +31,12 @@ To retrieve all currently active compute requirements::
 
     requirements = client.compute_client.find_all_compute_requirements()
 
-To retrieve the details of specific compute requirement::
+To retrieve the details of a specific compute requirement::
 
     req_id = "ydid:compreq:000000:6c9343f5-ddd7-4903-bcbf-12c7a6bf1e1a"
     requirement = client.compute_client.find_compute_requirement_by_id(req_id)
 
-To get latest status of the compute requirement::
+To get latest status of a compute requirement::
 
     requirement = client.compute_client.get_compute_requirement(requirement)
 
@@ -47,7 +47,7 @@ To retrieve all available compute requirement templates::
 Provisioning
 ============
 
-One way to provision compute is to use a template which either you or somebody else has already
+One way to provision compute is to use a template that either you or somebody else has already
 created in the `YellowDog Platform Portal`::
 
     from yellowdog_client.model import ComputeRequirementTemplateUsage
@@ -62,15 +62,13 @@ created in the `YellowDog Platform Portal`::
 
     compute_requirement = client.compute_client.provision_compute_requirement_template(request)
 
-Alternatively, you can provision compute directly from a source as follows:
+Alternatively, you can provision compute directly from a source, as follows:
 
 .. code-block:: python
 
     from yellowdog_client.model import OciInstancesComputeSource
     from yellowdog_client.model import ComputeRequirement
     from yellowdog_client.model import SingleSourceProvisionStrategy
-
-    source =
 
     requirement = ComputeRequirement(
         name="my OCI requirement for 3 nodes"
@@ -97,9 +95,10 @@ Alternatively, you can provision compute directly from a source as follows:
 .. note::
 
     To grant access to a specific cloud provider, you need to have a keyring created in
-    `YellowDog Platform Portal` along with credentials for that provider.
+    the `YellowDog Platform Portal` along with credentials for that provider.
 
-    In this example, keyring named `MY_KEYRING` is used with credential named `OCI_CREDENTIAL` inside.
+    In this example, a keyring named `MY_KEYRING` is used, containing a credential
+    named `OCI_CREDENTIAL`.
 
     To create a keyring, go to `YellowDog Platform Portal`, navigate to `ACCOUNT` -> `Keyrings` ->
     `Create Keyring`
@@ -107,16 +106,16 @@ Alternatively, you can provision compute directly from a source as follows:
 Controlling
 ===========
 
-With requirements up and running, you can stop, reprovision, terminate compute requirements or
-control individual instances
+With requirements up and running, you can stop, reprovision, or terminate compute requirements, or
+control individual instances.
 
-Stopping a compute requirement will stop all active instances in compute requirement::
+Stopping a compute requirement will stop all active instances in the compute requirement::
 
     client.compute_client.stop_compute_requirement(requirement)
 
 .. warning::
 
-    Not all cloud providers support stopping cloud instances
+    Not all cloud providers support stopping cloud instances.
 
 Starting a compute requirement will start all stopped instances::
 
@@ -126,23 +125,23 @@ Terminating a compute requirement will terminate all active instances::
 
     client.compute_client.terminate_compute_requirement(requirement)
 
-You can also be used to terminate individual instances of compute requirement
+You can also terminate individual instances of a compute requirement.
 
-Stopping individual instances of compute requirement::
+Stopping individual instances of a compute requirement::
 
     instance1 = requirement.instances[0]
     instance2 = requirement.instances[1]
     client.compute_client.stop_instances(requirement, [instance1, instance2])
 
-Starting individual instances of compute requirement::
+Starting individual instances of a compute requirement::
 
     client.compute_client.start_instances(requirement, [instance1, instance2])
 
-Restarting individual instances of compute requirement::
+Restarting individual instances of a compute requirement::
 
     client.compute_client.restart_instances(requirement, [instance1, instance2])
 
-Terminating individual instances of compute requirement::
+Terminating individual instances of a compute requirement::
 
     client.compute_client.terminate_instances(requirement, [instance1, instance2])
 
@@ -164,7 +163,7 @@ To retrieve all created work requirements::
 
     work_requirements = client.work_client.find_all_work_requirements()
 
-To retrieve information about the work requirement by id::
+To retrieve information about a work requirement by its id::
 
     req_id = "ydid:workreq:000000:UNIQUE_ID"
     work_requirement = client.work_client.get_work_requirement_by_id(req_id)
@@ -238,7 +237,7 @@ To create a work requirement, utilizing the above worker pool (linked by tag "He
 Controlling
 ===========
 
-To shutdown a worker pool::
+To shut down a worker pool::
 
     client.worker_pool_client.shutdown_worker_pool(compute_requirement.id)
 
@@ -255,17 +254,17 @@ To cancel a work requirement::
 Object Store Client
 -------------------
 
-The ObjectStoreClient allows uploading and downloading files across multiple cloud providers storage.
+The ObjectStoreClient allows uploading and downloading files across multiple cloud providers' storage.
 
 Finding data
 ============
 
-To retrieve all uploaded objects within the namespace::
+To retrieve all uploaded objects within a namespace::
 
     namespace_objects = client.object_store_client.get_namespace_object_paths(ObjectPathsRequest("MY_NAMESPACE"))
     # [ObjectPath, ObjectPath, ...]
 
-To retrieve a details about the stored file::
+To retrieve details about a stored file::
 
     object_details = client.object_store_client.get_object_detail("MY_NAMESPACE", "my_file.txt")
     # ObjectDetail
@@ -273,16 +272,16 @@ To retrieve a details about the stored file::
 Transfer engine
 ===============
 
-Both uploads and downloads rely on transfer engine, which runs on background threads. Uploads and downloads can be
-started/stopped any time by stopping/starting the engines.
+Both uploads and downloads rely on transfer engines, which run in background threads. Uploads and downloads can be
+started/stopped any time by starting/stopping the engines.
 
 To start the transfer engines::
 
-    client.object_store_client.start()
+    client.object_store_client.start_transfers()
 
 To stop the transfer engines::
 
-    client.object_store_client.stop()
+    client.object_store_client.stop_transfers()
 
 Uploading
 =========
@@ -300,7 +299,7 @@ If we want to cancel an upload, the session can be aborted::
 
     session.abort()
 
-All file transfers are executed in the background. To block the thread until the upload is completed, use
+All file transfers are executed in the background. To block the thread until the upload is complete, use
 :mod:`concurrent.futures`::
 
     from yellowdog_client.object_store.model import FileTransferStatus
@@ -329,7 +328,7 @@ As with upload, download sessions can be started and stopped::
     session.abort()
     # Session is now aborted
 
-If we want to wait for file download, use :mod:`concurrent.futures`::
+To wait for file download to complete, use :mod:`concurrent.futures`::
 
     future = session.when_status_matches(lambda status: status == FileTransferStatus.Completed)
     futures.wait((future,))
@@ -348,7 +347,7 @@ For example, to upload multiple .zip files found within a given directory::
     upload_batch = upload_batch_builder.get_batch_if_objects_found()
     upload_batch.start()
 
-To wait for all files upload to finish::
+To wait for all file uploads to finish::
 
     future = upload_batch.when_status_matches(lambda status: status == FileTransferStatus.Completed)
     futures.wait((future,))
@@ -357,11 +356,11 @@ To create a batch download of all .txt files found within the namespace::
 
     download_batch_builder = client.object_store_client.build_download_batch()
     download_batch_builder.destination_folder = "C:/my_downloaded_files"
-    download_batch_builder.find_source_objects.find_source_objects("MY_NAMESPACE", "*.txt")
+    download_batch_builder.find_source_objects("MY_NAMESPACE", "*.txt")
     download_batch = download_batch_builder.get_batch_if_objects_found()
     download_batch.start()
 
-To wait for all files download to finish::
+To wait for all file downloads to finish::
 
     future = download_batch.when_status_matches(lambda status: status == FileTransferStatus.Completed)
     futures.wait((future,))
@@ -373,7 +372,8 @@ To wait for all files download to finish::
 Keyring Client
 --------------
 
-The Keyring Client gives access to retrieve YellowDog keyrings and add/remove credentials from those keyrings.
+The KeyringClient allows retrieval of YellowDog keyrings and the addition/removal of
+credentials from those keyrings.
 
 Finding data
 ============
@@ -414,14 +414,14 @@ To add new credentials to the keyring::
     :class:`yellowdog_client.account.KeyringClient`
 
 Images Client
---------------
+-------------
 
 .. seealso::
 
     :class:`yellowdog_client.images.ImagesClient`
 
 Usage Client
---------------
+------------
 
 .. seealso::
 

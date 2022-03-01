@@ -29,7 +29,7 @@ class AlibabaInstancesComputeSource(AlibabaComputeSource):
     """The Alibaba Cloud region where instances will be provisioned."""
     securityGroupId: str
     """The ID of the Alibaba Cloud Security Group for the provisioned instances."""
-    vswitchId: str
+    vSwitchId: str
     """The ID of the virtual switch to use for the provisioned instances."""
     instanceType: str
     """The Alibaba Cloud instance type for the provisioned instances."""

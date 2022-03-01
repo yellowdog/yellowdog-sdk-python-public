@@ -119,6 +119,10 @@ from .image_access import ImageAccess
 from .image_os_type import ImageOsType
 from .instance import Instance
 from .instance_status import InstanceStatus
+from .instance_type import InstanceType
+from .instance_type_offering import InstanceTypeOffering
+from .instance_type_region import InstanceTypeRegion
+from .instance_type_search import InstanceTypeSearch
 from .instance_usage import InstanceUsage
 from .instance_usage_filter import InstanceUsageFilter
 from .instant_range import InstantRange
@@ -182,10 +186,13 @@ from .oci_instance_pool_compute_source import OciInstancePoolComputeSource
 from .oci_instances_compute_source import OciInstancesComputeSource
 from .oci_namespace_storage_configuration import OciNamespaceStorageConfiguration
 from .password_state import PasswordState
+from .processor_architecture import ProcessorArchitecture
 from .provision_template_worker_pool_request import ProvisionTemplateWorkerPoolRequest
 from .provisioned_worker_pool import ProvisionedWorkerPool
 from .provisioned_worker_pool_properties import ProvisionedWorkerPoolProperties
 from .range import Range
+from .region import Region
+from .region_search import RegionSearch
 from .requirement_allowance import RequirementAllowance
 from .requirements_allowance import RequirementsAllowance
 from .retry_properties import RetryProperties
@@ -205,6 +212,8 @@ from .string_attribute_constraint import StringAttributeConstraint
 from .string_attribute_definition import StringAttributeDefinition
 from .string_attribute_preference import StringAttributePreference
 from .string_attribute_value import StringAttributeValue
+from .sub_region import SubRegion
+from .sub_region_search import SubRegionSearch
 from .tagged import Tagged
 from .task import Task
 from .task_group import TaskGroup
@@ -362,6 +371,10 @@ __all__ = [
     "ImageOsType",
     "Instance",
     "InstanceStatus",
+    "InstanceType",
+    "InstanceTypeOffering",
+    "InstanceTypeRegion",
+    "InstanceTypeSearch",
     "InstanceUsage",
     "InstanceUsageFilter",
     "InstantRange",
@@ -425,10 +438,13 @@ __all__ = [
     "OciInstancesComputeSource",
     "OciNamespaceStorageConfiguration",
     "PasswordState",
+    "ProcessorArchitecture",
     "ProvisionTemplateWorkerPoolRequest",
     "ProvisionedWorkerPool",
     "ProvisionedWorkerPoolProperties",
     "Range",
+    "Region",
+    "RegionSearch",
     "RequirementAllowance",
     "RequirementsAllowance",
     "RetryProperties",
@@ -448,6 +464,8 @@ __all__ = [
     "StringAttributeDefinition",
     "StringAttributePreference",
     "StringAttributeValue",
+    "SubRegion",
+    "SubRegionSearch",
     "Tagged",
     "Task",
     "TaskGroup",

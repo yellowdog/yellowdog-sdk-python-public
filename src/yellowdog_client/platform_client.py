@@ -8,6 +8,7 @@ from .scheduler import WorkClient, WorkClientImpl, WorkServiceProxy, WorkerPoolC
 from .object_store import ObjectStoreClient, ObjectStoreServiceProxy
 from .usage import AllowancesClient, AllowancesClientImpl, AllowancesServiceProxy
 from .images import ImagesClient, ImagesClientImpl, ImagesServiceProxy
+from .cloud_info import CloudInfoClient, CloudInfoClientImpl, CloudInfoProxy
 
 
 class PlatformClient(Closeable):
@@ -26,7 +27,8 @@ class PlatformClient(Closeable):
             work_client: WorkClient,
             worker_pool_client: WorkerPoolClient,
             object_store_client: ObjectStoreClient,
-            allowances_client: AllowancesClient
+            allowances_client: AllowancesClient,
+            cloud_info_client: CloudInfoClient
     ) -> None:
         self.__clients = ClientCollection()
         self.compute_client: ComputeClient = self.__clients.add(compute_client)
@@ -42,6 +44,8 @@ class PlatformClient(Closeable):
         self.object_store_client: ObjectStoreClient = self.__clients.add(object_store_client)
         """Object store client. Used for file upload and download"""
         self.allowances_client: AllowancesClient = self.__clients.add(allowances_client)
+        """Allowances client. User to constrain how much compute can be used"""
+        self.cloud_info_client: CloudInfoClient = self.__clients.add(cloud_info_client)
         """Allowances client. User to constrain how much compute can be used"""
 
     @staticmethod
@@ -68,6 +72,7 @@ class PlatformClient(Closeable):
         scheduler_url = services_schema.defaultUrl if services_schema.schedulerServiceUrl is None else services_schema.schedulerServiceUrl
         object_store_url = services_schema.defaultUrl if services_schema.objectStoreServiceUrl is None else services_schema.objectStoreServiceUrl
         usage_url = services_schema.defaultUrl if services_schema.usageServiceUrl is None else services_schema.usageServiceUrl
+        cloud_info_url = services_schema.defaultUrl if services_schema.cloudInfoServiceUrl is None else services_schema.cloudInfoServiceUrl
 
         compute_client = ComputeClientImpl(ComputeServiceProxy(proxy.append_base_url(compute_url)))
         keyring_client = KeyringClientImpl(KeyringServiceProxy(proxy.append_base_url(account_url)))
@@ -76,6 +81,7 @@ class PlatformClient(Closeable):
         worker_pool_client = WorkerPoolClientImpl(WorkerPoolServiceProxy(proxy.append_base_url(scheduler_url)))
         object_store_client = ObjectStoreClient(ObjectStoreServiceProxy(proxy.append_base_url(object_store_url)))
         allowances_client = AllowancesClientImpl(AllowancesServiceProxy(proxy.append_base_url(usage_url)))
+        cloud_info_client = CloudInfoClientImpl(CloudInfoProxy(proxy.append_base_url(cloud_info_url)))
 
         return PlatformClient(
             keyring_client=keyring_client,
@@ -84,7 +90,8 @@ class PlatformClient(Closeable):
             work_client=work_client,
             worker_pool_client=worker_pool_client,
             object_store_client=object_store_client,
-            allowances_client=allowances_client
+            allowances_client=allowances_client,
+            cloud_info_client=cloud_info_client
         )
 
     def close(self) -> None:

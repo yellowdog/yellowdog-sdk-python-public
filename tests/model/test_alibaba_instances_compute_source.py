@@ -22,7 +22,7 @@ def test_serialize__alibaba_instances_compute_source():
         instanceChargeType=AlibabaInstanceChargeType.POST_PAID,
         spotStrategy=AlibabaSpotStrategy.SPOT_AS_PRICE_GO,
         ramRoleName="alibaba_ramRoleName",
-        vswitchId="alibaba_vswitchId",
+        vSwitchId="alibaba_vswitchId",
         spotPriceLimit=10.0
     )
     obj_in_raw.status = ComputeSourceStatus.UPDATING
@@ -49,7 +49,7 @@ def test_serialize__alibaba_instances_compute_source():
         "instanceChargeType": "POST_PAID",
         "spotStrategy": "SPOT_AS_PRICE_GO",
         "ramRoleName": "alibaba_ramRoleName",
-        "vswitchId": "alibaba_vswitchId",
+        "vSwitchId": "alibaba_vswitchId",
         "spotPriceLimit": 10.0
     }
 
