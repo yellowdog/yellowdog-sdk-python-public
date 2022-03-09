@@ -14,6 +14,8 @@ class GceInstance(Instance):
     id: Optional[str] = field(default=None, init=False)
     """The ID of this instance."""
     preemptible: bool = False
+    spot: bool = False
+    confidential: bool = False
     createdTime: Optional[datetime] = None
     """The date and time when this instance was first created."""
     sourceId: Optional[str] = None

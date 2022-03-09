@@ -37,5 +37,7 @@ class GceInstanceGroupComputeSource(GceComputeSource):
     network: Optional[str] = None
     subnetwork: Optional[str] = None
     preemptible: bool = False
+    spot: bool = False
+    confidential: bool = False
     acceleratorType: Optional[str] = None
     acceleratorCount: int = 0
