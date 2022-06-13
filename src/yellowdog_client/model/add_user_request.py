@@ -6,5 +6,4 @@ from typing import Optional
 class AddUserRequest:
     username: str
     name: str
-    password: str
     email: Optional[str] = None

@@ -178,7 +178,7 @@ Provisioned worker pools are linked to compute requirements and created in a sim
     from yellowdog_client.model import AllWorkersReleasedShutdownCondition
     from yellowdog_client.model import ProvisionedWorkerPoolProperties
 
-    worker_pool = client.work_client.provision_worker_pool(
+    worker_pool = client.worker_pool_client.provision_worker_pool(
         ComputeRequirementTemplateUsage(
             templateId="ydid:crt:000000:UNIQUE_ID",
             requirementNamespace="my_tests",
@@ -205,34 +205,27 @@ To create a work requirement, utilizing the above worker pool (linked by tag "He
     task = Task(
         name="EchoHelloWorld",
         taskType="docker",
-        taskData="hello-world"
+        arguments=["hello-world"]
     )
 
     work_requirement = WorkRequirement(
         namespace="my_tests",
         name="HelloWorldWork",
-        tag="HelloWorldTag",
         taskGroups=[
             TaskGroup(
                 name="HelloWorldGroup",
-                tag="",
                 runSpecification=RunSpecification(
                     taskTypes=["docker"],
-                    minimumQueueConcurrency=1,
-                    idealQueueConcurrency=1,
-                    shareWorkers=False,
+                    maxWorkers=1,
                     maximumTaskRetries=3,
                     workerTags=["HelloWorldTag"]
-                ),
-                priority=0
+                )
             )
-        ],
-        priority=0
+        ]
     )
 
     work_requirement = client.work_client.add_work_requirement(work_requirement)
-    tasks = client.work_client.add_tasks_to_task_group_by_name(work_requirement.namespace, work_requirement.name,
-                                                               task_group.name, [task])
+    tasks = client.work_client.add_tasks_to_task_group(work_requirement.taskGroups[0], [task])
 
 Controlling
 ===========

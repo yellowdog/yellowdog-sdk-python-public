@@ -13,6 +13,7 @@ class RequirementAllowance(Allowance):
     type: str = field(default="co.yellowdog.platform.model.RequirementAllowance", init=False)
     id: Optional[str] = field(default=None, init=False)
     createdById: Optional[str] = field(default=None, init=False)
+    remainingHours: Optional[float] = field(default=None, init=False)
     requirementId: str
     effectiveFrom: datetime
     resetType: AllowanceResetType
@@ -21,7 +22,6 @@ class RequirementAllowance(Allowance):
     description: Optional[str] = None
     effectiveUntil: Optional[datetime] = None
     allowedHours: int = 0
-    remainingHours: float = 0
     boostHours: Optional[int] = None
     resetInterval: Optional[int] = None
     hardLimitGraceMinutes: Optional[int] = None

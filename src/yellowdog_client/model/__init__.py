@@ -8,6 +8,7 @@ from .add_configured_worker_pool_request import AddConfiguredWorkerPoolRequest
 from .add_configured_worker_pool_response import AddConfiguredWorkerPoolResponse
 from .add_node_actions_request import AddNodeActionsRequest
 from .add_user_request import AddUserRequest
+from .add_user_response import AddUserResponse
 from .alibaba_compute_source import AlibabaComputeSource
 from .alibaba_credential import AlibabaCredential
 from .alibaba_instance import AlibabaInstance
@@ -199,6 +200,7 @@ from .retry_properties import RetryProperties
 from .run_specification import RunSpecification
 from .s3_namespace_storage_configuration import S3NamespaceStorageConfiguration
 from .services_schema import ServicesSchema
+from .set_password_request import SetPasswordRequest
 from .simulator_compute_source import SimulatorComputeSource
 from .simulator_instance import SimulatorInstance
 from .single_source_provision_strategy import SingleSourceProvisionStrategy
@@ -260,6 +262,7 @@ __all__ = [
     "AddConfiguredWorkerPoolResponse",
     "AddNodeActionsRequest",
     "AddUserRequest",
+    "AddUserResponse",
     "AlibabaComputeSource",
     "AlibabaCredential",
     "AlibabaInstance",
@@ -451,6 +454,7 @@ __all__ = [
     "RunSpecification",
     "S3NamespaceStorageConfiguration",
     "ServicesSchema",
+    "SetPasswordRequest",
     "SimulatorComputeSource",
     "SimulatorInstance",
     "SingleSourceProvisionStrategy",

@@ -15,7 +15,7 @@ class MachineImage(Identified, Named):
     createdTime: Optional[datetime] = field(default=None, init=False)
     """The date and time when this machine image record was first created. NB: This may not be indicative of the time the actual image was created."""
     name: str
-    """The machine image family name"""
+    """The machine image name"""
     provider: CloudProvider
     """The compute provider in whose system the image is registered."""
     providerImageId: str

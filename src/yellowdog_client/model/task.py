@@ -19,6 +19,8 @@ class Task(Identified, Named, Tagged):
     """The system generated fully qualified name of the task in the form {namespace}/{workRequirementName}/{taskGroupName}/{taskName}. This is only generated if all ancestor entities are named."""
     status: Optional[TaskStatus] = field(default=None, init=False)
     """The task status."""
+    retryCount: Optional[int] = field(default=None, init=False)
+    """How many times the task has failed and then been set back to WAITING to be retried."""
     taskGroupId: Optional[str] = field(default=None, init=False)
     workerId: Optional[str] = field(default=None, init=False)
     taskType: str
@@ -26,8 +28,6 @@ class Task(Identified, Named, Tagged):
     name: Optional[str] = None
     """The user allocated name used to uniquely identify the task within its task group."""
     tag: Optional[str] = None
-    retryCount: int = 0
-    """How many times the task has failed and then been set back to WAITING to be retried."""
     arguments: Optional[List[str]] = None
     """A list of arguments that will be passed to the task type run command when the task is executed."""
     taskData: Optional[str] = None

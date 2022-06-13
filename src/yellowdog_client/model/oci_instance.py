@@ -21,6 +21,8 @@ class OciInstance(Instance):
     """The amount of ram in GB provisioned on this flex type instance."""
     createdTime: Optional[datetime] = None
     """The date and time when this instance was first created."""
+    removedTime: Optional[datetime] = None
+    """The date and time when this instance was recognized to no longer be utilized by the provider."""
     sourceId: Optional[str] = None
     """The ID of the compute source from which this instance was provisioned."""
     imageId: Optional[str] = None

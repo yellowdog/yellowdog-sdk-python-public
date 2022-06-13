@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict, Optional, Set
 
 from .cloud_provider import CloudProvider
 from .compute_source import ComputeSource
@@ -18,6 +18,7 @@ class SimulatorComputeSource(ComputeSource):
     subregion: Optional[str] = field(default=None, init=False)
     userData: Optional[str] = field(default=None, init=False)
     instanceTags: Optional[Dict[str, str]] = field(default=None, init=False)
+    credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
@@ -25,10 +26,13 @@ class SimulatorComputeSource(ComputeSource):
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
     expectedExhaustionTermination: Optional[datetime] = field(default=None, init=False)
     name: str
+    credential: Optional[str] = None
     region: str = "sim-region"
     instanceType: str = "sim-instance"
     imageId: str = "sim-image"
     limit: int = 0
+    instanceCreationCount: int = 0
+    """The total number of instances created for this source."""
     instanceStartupTimeSeconds: int = 0
     """The simulated startup time for an instance."""
     instanceStartupTimeVariance: float = 0

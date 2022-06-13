@@ -9,20 +9,9 @@ with open("src/yellowdog_client/_version.py") as fp:
 master_version_split = version['__version__'].split(".")
 master_version = "%s.%s.%s" % (master_version_split[0], master_version_split[1], master_version_split[2])
 
-branch_name = os.environ.get("BRANCH_NAME", "dev")
-revision = os.environ.get("REVISION", "1")
-branch = ".dev"
-if branch_name == "dev" or branch_name.startswith("/feature") or branch_name.startswith("feature"):
-    branch = ".dev"
-if branch_name == "test":
-    branch = ".a"
-if branch_name == "staging":
-    branch = ".rc"
-if branch_name == "master":
-    branch = ""
-    revision = ""
+suffix = os.environ.get("VERSION_SUFFIX", ".dev0")
 
-final_version = '%s%s%s' % (master_version, branch, revision)
+final_version = f"{master_version}{suffix}"
 
 # Hack to update the module version which the docs build later depends on
 with open("src/yellowdog_client/_version.py", "w") as fp:

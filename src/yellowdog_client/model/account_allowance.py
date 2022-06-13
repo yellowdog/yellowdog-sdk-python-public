@@ -13,6 +13,7 @@ class AccountAllowance(Allowance):
     type: str = field(default="co.yellowdog.platform.model.AccountAllowance", init=False)
     id: Optional[str] = field(default=None, init=False)
     createdById: Optional[str] = field(default=None, init=False)
+    remainingHours: Optional[float] = field(default=None, init=False)
     effectiveFrom: datetime
     resetType: AllowanceResetType
     limitEnforcement: AllowanceLimitEnforcement
@@ -20,7 +21,6 @@ class AccountAllowance(Allowance):
     description: Optional[str] = None
     effectiveUntil: Optional[datetime] = None
     allowedHours: int = 0
-    remainingHours: float = 0
     boostHours: Optional[int] = None
     resetInterval: Optional[int] = None
     hardLimitGraceMinutes: Optional[int] = None

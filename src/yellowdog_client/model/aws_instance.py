@@ -17,6 +17,8 @@ class AwsInstance(Instance):
     """The AWS EC2 instance lifecycle value for this instance."""
     createdTime: Optional[datetime] = None
     """The date and time when this instance was first created."""
+    removedTime: Optional[datetime] = None
+    """The date and time when this instance was recognized to no longer be utilized by the provider."""
     sourceId: Optional[str] = None
     """The ID of the compute source from which this instance was provisioned."""
     imageId: Optional[str] = None
