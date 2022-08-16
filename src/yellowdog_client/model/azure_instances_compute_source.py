@@ -15,6 +15,8 @@ class AzureInstancesComputeSource(AzureComputeSource):
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
+    requestedInstanceCount: Optional[int] = field(default=None, init=False)
+    expectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
@@ -44,5 +46,9 @@ class AzureInstancesComputeSource(AzureComputeSource):
     """Indicates if provisioned instances should be assigned public IP addresses."""
     useSpot: Optional[bool] = None
     spotMaxPrice: Optional[float] = None
+    createProximityPlacementGroup: Optional[bool] = None
+    """Indicates if instances should be provisioned within a proximity placement group."""
+    useAcceleratedNetworking: Optional[bool] = None
+    """Indicates if instances should be provisioned with a primary networking interface with accelerated networking."""
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None

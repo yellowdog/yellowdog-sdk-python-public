@@ -21,6 +21,8 @@ class SimulatorComputeSource(ComputeSource):
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
+    requestedInstanceCount: Optional[int] = field(default=None, init=False)
+    expectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
@@ -31,6 +33,8 @@ class SimulatorComputeSource(ComputeSource):
     instanceType: str = "sim-instance"
     imageId: str = "sim-image"
     limit: int = 0
+    implicitCapacity: Optional[int] = None
+    """The implicit capacity of this source that is not directly discoverable by the compute service, independent of limit."""
     instanceCreationCount: int = 0
     """The total number of instances created for this source."""
     instanceStartupTimeSeconds: int = 0

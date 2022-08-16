@@ -20,6 +20,8 @@ class OciInstancePoolComputeSource(OciComputeSource):
     """The OCID of the Cluster Network if used."""
     instancePoolId: Optional[str] = field(default=None, init=False)
     """The OCID of the instance pool in which instances are started."""
+    requestedInstanceCount: Optional[int] = field(default=None, init=False)
+    expectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)

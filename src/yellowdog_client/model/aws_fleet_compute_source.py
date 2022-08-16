@@ -22,6 +22,8 @@ class AwsFleetComputeSource(AwsComputeSource):
     createdFromId: Optional[str] = field(default=None, init=False)
     fleetId: Optional[str] = field(default=None, init=False)
     """The ID of the AWS EC2 Fleet."""
+    requestedInstanceCount: Optional[int] = field(default=None, init=False)
+    expectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)

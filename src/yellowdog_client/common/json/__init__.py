@@ -92,8 +92,9 @@ def object_deserializer(value: dict, cls: type, **kwargs) -> object:
     for attr_name, attr_value in value.items():
         try:
             attr_type = type_hints[attr_name]
-        except KeyError as ex:
-            raise NestedDeserializationError(attr_value, class_name, attr_name, "Unrecognised attribute") from ex
+        except KeyError:
+            # Silently ignore for backwards compatibility with new fields introduced into the API
+            continue
 
         try:
             loaded_attr = load(attr_value, attr_type, **kwargs)
