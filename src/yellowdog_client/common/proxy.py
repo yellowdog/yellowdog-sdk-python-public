@@ -2,13 +2,13 @@ from dataclasses import dataclass, asdict
 from datetime import timedelta
 from typing import TypeVar, Type, Dict, Optional
 
+from requests import Request, Session, Response, HTTPError
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from requests import Request, Session, Response, HTTPError
 
 from yellowdog_client.model.exceptions import BaseCustomException
-from .json import Json
 from .credentials import ApiKeyAuthenticationHeadersProvider
+from .json import Json
 from .server_sent_events.sse4python import EventSource, WebRequestFactory
 
 T = TypeVar('T')
@@ -133,14 +133,21 @@ class Proxy:
 
     @staticmethod
     def _try_convert_to_file_transfer_exception(response: Response) -> Optional[Exception]:
-        res = None
-        if response.text:
-            # noinspection PyBroadException
-            try:
-                res = Json.loads(response.text, BaseCustomException)
-            except Exception:
-                # something may be wrong. Different error structure
-                pass
+        if not response.text:
+            return None
+
+        # noinspection PyBroadException
+        try:
+            res = Json.loads(response.text, BaseCustomException)
+        except Exception:
+            # If conversion fails, we return None so that normal exception handling can resume
+            return None
+
+        # If the conversion succeeds, but we don't have an error type, then the lenient deserialization has
+        # allowed the conversion, but it isn't really a custom exception so handle it as normal
+        if not hasattr(res, "errorType"):
+            return None
+
         return res
 
     @staticmethod

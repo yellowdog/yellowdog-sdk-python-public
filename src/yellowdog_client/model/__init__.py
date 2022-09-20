@@ -94,6 +94,7 @@ from .constants import Constants
 from .create_keyring_request import CreateKeyringRequest
 from .create_keyring_response import CreateKeyringResponse
 from .credential import Credential
+from .currency import Currency
 from .double_range import DoubleRange
 from .error_response import ErrorResponse
 from .existing_password_request import ExistingPasswordRequest
@@ -121,7 +122,8 @@ from .image_os_type import ImageOsType
 from .instance import Instance
 from .instance_status import InstanceStatus
 from .instance_type import InstanceType
-from .instance_type_offering import InstanceTypeOffering
+from .instance_type_price import InstanceTypePrice
+from .instance_type_price_search import InstanceTypePriceSearch
 from .instance_type_region import InstanceTypeRegion
 from .instance_type_search import InstanceTypeSearch
 from .instance_usage import InstanceUsage
@@ -186,7 +188,9 @@ from .oci_instance import OciInstance
 from .oci_instance_pool_compute_source import OciInstancePoolComputeSource
 from .oci_instances_compute_source import OciInstancesComputeSource
 from .oci_namespace_storage_configuration import OciNamespaceStorageConfiguration
+from .operating_system_licence import OperatingSystemLicence
 from .password_state import PasswordState
+from .price import Price
 from .processor_architecture import ProcessorArchitecture
 from .provision_template_worker_pool_request import ProvisionTemplateWorkerPoolRequest
 from .provisioned_worker_pool import ProvisionedWorkerPool
@@ -233,6 +237,7 @@ from .unclaimed_after_startup_shutdown_condition import UnclaimedAfterStartupShu
 from .update_application_request import UpdateApplicationRequest
 from .update_keyring_request import UpdateKeyringRequest
 from .update_user_request import UpdateUserRequest
+from .usage_type import UsageType
 from .user import User
 from .user_login_request import UserLoginRequest
 from .waterfall_provision_strategy import WaterfallProvisionStrategy
@@ -348,6 +353,7 @@ __all__ = [
     "CreateKeyringRequest",
     "CreateKeyringResponse",
     "Credential",
+    "Currency",
     "DoubleRange",
     "ErrorResponse",
     "ExistingPasswordRequest",
@@ -375,7 +381,8 @@ __all__ = [
     "Instance",
     "InstanceStatus",
     "InstanceType",
-    "InstanceTypeOffering",
+    "InstanceTypePrice",
+    "InstanceTypePriceSearch",
     "InstanceTypeRegion",
     "InstanceTypeSearch",
     "InstanceUsage",
@@ -440,7 +447,9 @@ __all__ = [
     "OciInstancePoolComputeSource",
     "OciInstancesComputeSource",
     "OciNamespaceStorageConfiguration",
+    "OperatingSystemLicence",
     "PasswordState",
+    "Price",
     "ProcessorArchitecture",
     "ProvisionTemplateWorkerPoolRequest",
     "ProvisionedWorkerPool",
@@ -487,6 +496,7 @@ __all__ = [
     "UpdateApplicationRequest",
     "UpdateKeyringRequest",
     "UpdateUserRequest",
+    "UsageType",
     "User",
     "UserLoginRequest",
     "WaterfallProvisionStrategy",

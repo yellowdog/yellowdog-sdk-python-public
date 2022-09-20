@@ -38,7 +38,7 @@ class ComputeRequirement(Identified, Named, Tagged):
     name: str
     """The user allocated name used to uniquely identify this compute requirement within its namespace."""
     provisionStrategy: ComputeProvisionStrategy
-    """The compute provision strategy that YellowDog Compute must use when provisioning computer machine instances to meet this requirement."""
+    """The compute provision strategy that YellowDog Compute must use when provisioning instances to meet this requirement."""
     tag: Optional[str] = None
     targetInstanceCount: int = 0
     """The number of instances to be provisioned to meet this compute requirement."""
@@ -47,6 +47,6 @@ class ComputeRequirement(Identified, Named, Tagged):
     maintainInstanceCount: bool = False
     """Indicates if the Compute Service should automatically attempt to provision new instances if the number of RUNNING instances is below the specified targetInstanceCount"""
     instances: Optional[List[Instance]] = None
-    """A collection of model objects describing the computer machine instances provisioned for this requirement."""
+    """A collection of model objects describing the instances provisioned for this requirement."""
     nextStatus: Optional[ComputeRequirementStatus] = None
     """The next status of this compute requirement when a status transition is being requested."""

@@ -1,5 +1,6 @@
 from yellowdog_client.common import Proxy
-from yellowdog_client.model import RegionSearch, Slice, Region, SubRegion, SubRegionSearch, InstanceTypeSearch, InstanceType
+from yellowdog_client.model import RegionSearch, Slice, Region, SubRegion, SubRegionSearch, InstanceTypeSearch, \
+    InstanceType, InstanceTypePrice, InstanceTypePriceSearch
 
 
 class CloudInfoProxy:
@@ -14,3 +15,6 @@ class CloudInfoProxy:
 
     def slice_instance_types(self, search: InstanceTypeSearch) -> Slice[InstanceType]:
         return self._proxy.get(Slice[InstanceType], "instanceTypes", self._proxy.to_params(search))
+
+    def slice_instance_type_prices(self, search: InstanceTypePriceSearch) -> Slice[InstanceTypePrice]:
+        return self._proxy.get(Slice[InstanceTypePrice], "instanceTypePrices", self._proxy.to_params(search))

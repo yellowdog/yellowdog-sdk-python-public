@@ -8,7 +8,7 @@ from .compute_source import ComputeSource
 @dataclass
 class WaterfallProvisionStrategy(ComputeProvisionStrategy):
     """
-    Instructs YellowDog Compute to provision computer machine instances by acquiring the maximum available from each compute source in order,
+    Instructs YellowDog Compute to provision instances by acquiring the maximum available from each compute source in order,
     until the required number of instances is reached.
     """
 
