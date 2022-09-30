@@ -43,7 +43,7 @@ class AwsFleetComputeSource(AwsComputeSource):
     availabilityZone: Optional[str] = None
     """The AWS availability zone within the region where instances will be provisioned."""
     limit: int = 0
-    assignPublicIp: bool = True
+    assignPublicIp: bool = False
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a cluster placement group."""

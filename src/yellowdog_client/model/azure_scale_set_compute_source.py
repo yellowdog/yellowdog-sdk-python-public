@@ -42,6 +42,7 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     environment: Optional[str] = None
     availabilityZone: Optional[str] = None
     limit: int = 0
+    assignPublicIp: bool = False
     useSpot: Optional[bool] = None
     spotMaxPrice: Optional[float] = None
     createProximityPlacementGroup: Optional[bool] = None

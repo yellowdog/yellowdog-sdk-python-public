@@ -37,7 +37,7 @@ class AwsSpotComputeSource(AwsComputeSource):
     limit: int = 0
     spotPriceMax: Optional[float] = None
     """The maximum price that will be paid for instances provisioned from this source."""
-    assignPublicIp: bool = True
+    assignPublicIp: bool = False
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a cluster placement group."""

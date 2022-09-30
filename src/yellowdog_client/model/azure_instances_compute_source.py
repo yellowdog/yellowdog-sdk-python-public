@@ -42,8 +42,7 @@ class AzureInstancesComputeSource(AzureComputeSource):
     environment: Optional[str] = None
     availabilityZone: Optional[str] = None
     limit: int = 0
-    assignPublicIp: bool = True
-    """Indicates if provisioned instances should be assigned public IP addresses."""
+    assignPublicIp: bool = False
     useSpot: Optional[bool] = None
     spotMaxPrice: Optional[float] = None
     createProximityPlacementGroup: Optional[bool] = None

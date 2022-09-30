@@ -42,7 +42,7 @@ class AwsOnDemandComputeSource(AwsComputeSource):
     otherwise, if false, YellowDog Compute will provision as many instances as possible up to the number requested from this compute source.
     """
 
-    assignPublicIp: bool = True
+    assignPublicIp: bool = False
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a cluster placement group."""

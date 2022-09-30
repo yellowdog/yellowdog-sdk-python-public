@@ -44,7 +44,7 @@ class OciInstancePoolComputeSource(OciComputeSource):
     flexOcpus: Optional[float] = None
     flexRam: Optional[float] = None
     limit: int = 0
-    assignPublicIp: bool = True
+    assignPublicIp: bool = False
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterNetwork: Optional[bool] = None
     userData: Optional[str] = None

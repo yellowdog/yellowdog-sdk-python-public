@@ -53,7 +53,7 @@ class AlibabaInstancesComputeSource(AlibabaComputeSource):
     otherwise, if false, YellowDog Compute will provision as many instances as possible up to the number requested from this compute source.
     """
 
-    assignPublicIp: bool = True
+    assignPublicIp: bool = False
     """Indicates if provisioned instances should be assigned public IP addresses."""
     keyName: Optional[str] = None
     """The name of the Alibaba Cloud key pair to use when logging into any instances provisioned from this source."""

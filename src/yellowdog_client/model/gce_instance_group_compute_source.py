@@ -29,7 +29,7 @@ class GceInstanceGroupComputeSource(GceComputeSource):
     machineType: str
     image: str
     limit: int = 0
-    assignPublicIp: bool = True
+    assignPublicIp: bool = False
     """Indicates if provisioned instances should be assigned public IP addresses."""
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
