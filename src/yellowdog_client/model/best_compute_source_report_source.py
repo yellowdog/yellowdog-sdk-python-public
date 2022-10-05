@@ -10,6 +10,7 @@ from .compute_source_traits import ComputeSourceTraits
 class BestComputeSourceReportSource:
     sourceTemplateId: Optional[str] = None
     provisionedSourceId: Optional[str] = None
+    type: Optional[str] = None
     name: Optional[str] = None
     provider: Optional[CloudProvider] = None
     region: Optional[str] = None

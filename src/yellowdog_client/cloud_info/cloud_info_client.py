@@ -2,8 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from yellowdog_client.common import Closeable
-from yellowdog_client.model import InstanceType, InstanceTypePrice, InstanceTypePriceSearch, InstanceTypeSearch, Region, \
-    RegionSearch, Slice, SubRegion, SubRegionSearch
+from yellowdog_client.model import InstanceType, InstanceTypePrice, InstanceTypePriceSearch, InstanceTypeSearch, Region, RegionSearch, Slice, SubRegion, SubRegionSearch
 
 
 class CloudInfoClient(ABC, Closeable):
