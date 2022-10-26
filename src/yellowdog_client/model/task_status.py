@@ -17,6 +17,8 @@ class TaskStatus(Enum):
     """The task has been completed."""
     FAILED = "FAILED", False, True
     """The task has failed."""
+    ABORTED = "ABORTED", False, True
+    """The task has been aborted whilst in progress."""
     CANCELLED = "CANCELLED", False, True
     """The task has been cancelled by the user."""
     DISCARDED = "DISCARDED", False, True

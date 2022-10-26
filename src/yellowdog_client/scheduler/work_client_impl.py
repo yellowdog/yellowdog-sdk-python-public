@@ -105,12 +105,12 @@ class WorkClientImpl(WorkClient):
     def get_task_by_id(self, task_id: str) -> Task:
         return self.__service_proxy.get_task_by_id(task_id)
 
-    def cancel_task(self, task: Task) -> Task:
+    def cancel_task(self, task: Task, abort: bool) -> Task:
         self._check_has_id(task)
-        return self.cancel_task_by_id(task.id)
+        return self.cancel_task_by_id(task.id, abort)
 
-    def cancel_task_by_id(self, task_id: str) -> Task:
-        return self.__service_proxy.cancel_task(task_id)
+    def cancel_task_by_id(self, task_id: str, abort: bool) -> Task:
+        return self.__service_proxy.cancel_task(task_id, abort)
 
     def find_tasks(self, search: TaskSearch) -> List[Task]:
         return paginate(lambda sr: self.find_tasks_slice(search, sr))

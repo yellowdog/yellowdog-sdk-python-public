@@ -13,8 +13,8 @@ class TaskOutput:
     """The pre-configured directory name; only if the source is set to TaskOutputSource.OTHER_DIRECTORY."""
     filePattern: Optional[str] = None
     """An ant-style pattern to select output files by path."""
-    uploadOnFailed: bool = False
-    """Indicates that the outputs should still be uploaded even if the task execution fails."""
+    alwaysUpload: bool = False
+    """Indicates that the outputs should still be uploaded even if the task execution failed or was aborted."""
     required: bool = False
     """Indicates that at least one output should be found otherwise the task execution is failed."""
 
@@ -43,5 +43,5 @@ class TaskOutput:
         """Specifies that the text file containing the output from the task execution process should be uploaded."""
         return TaskOutput(
             source=TaskOutputSource.PROCESS_OUTPUT,
-            uploadOnFailed=True
+            alwaysUpload=True
         )

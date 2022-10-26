@@ -6,6 +6,7 @@ from .flatten_path import FlattenPath
 from .identified import Identified
 from .named import Named
 from .tagged import Tagged
+from .task_error import TaskError
 from .task_input import TaskInput
 from .task_output import TaskOutput
 from .task_status import TaskStatus
@@ -23,6 +24,7 @@ class Task(Identified, Named, Tagged):
     """How many times the task has failed and then been set back to WAITING to be retried."""
     taskGroupId: Optional[str] = field(default=None, init=False)
     workerId: Optional[str] = field(default=None, init=False)
+    errors: Optional[List[TaskError]] = field(default=None, init=False)
     taskType: str
     """The type of the task, used to identify the program to use to execute the task."""
     name: Optional[str] = None
@@ -38,6 +40,8 @@ class Task(Identified, Named, Tagged):
     """The time the task was last started by a Worker."""
     finishedTime: Optional[datetime] = None
     """The time the task was finished."""
+    abortRequestedTime: Optional[datetime] = None
+    """The time when task abort was requested."""
     inputs: Optional[List[TaskInput]] = None
     """Input object specifications that determine objects to be downloaded prior to running the task."""
     flattenInputPaths: Optional[FlattenPath] = None

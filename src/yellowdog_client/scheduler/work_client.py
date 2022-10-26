@@ -260,22 +260,24 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def cancel_task(self, task: Task) -> Task:
+    def cancel_task(self, task: Task, abort: bool) -> Task:
         """
         Instructs the Scheduler to cancel the specified task.
 
-        :param task: the task to cancel
+        :param task:  the task to cancel
+        :param abort: if the task should be aborted if it has been allocated to a worker
         :return: the latest state of the task after the cancel instruction was submitted
         """
 
         pass
 
     @abstractmethod
-    def cancel_task_by_id(self, task_id: str) -> Task:
+    def cancel_task_by_id(self, task_id: str, abort: bool) -> Task:
         """
         Instructs the Scheduler to cancel the specified task.
 
         :param task_id: the ID of the task to cancel
+        :param abort:  if the task should be aborted if it has been allocated to a worker
         :return: the latest state of the task after the cancel instruction was submitted
         """
 
