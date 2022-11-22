@@ -14,7 +14,7 @@ class WorkerStatus(Enum):
     FOUND = "FOUND", True, True
     """The Worker was considered to be lost but its heartbeat has returned, however it has not yet requested instruction."""
     SHUTDOWN = "SHUTDOWN", False, False
-    """The Worker has been instructed to shutdown"""
+    """The Worker has been instructed to shut down."""
 
     def __new__(cls, value, active: bool, healthy: bool):
         obj = object.__new__(cls)

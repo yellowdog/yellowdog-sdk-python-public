@@ -10,10 +10,10 @@ class ComputeRequirementStatus(Enum):
 
     NEW = "NEW"
     """The compute requirement has been created and submitted to YellowDog Compute."""
-    PENDING = "PENDING"
+    PROVISIONING = "PROVISIONING"
     """
-    YellowDog Compute is in the process of provisioning instances to meet the requirement.
-    The requirement will remain in PENDING state until all newly provisioned instances have transitioned to RUNNING or TERMINATED (in the case where a provider cancels provision).
+    YellowDog Compute is in the process of provisioning computer machine instances to meet the requirement.
+    The requirement will remain in PROVISIONING state until all newly provisioned instances have transitioned to RUNNING or TERMINATED (in the case where a provider cancels provision).
     """
 
     STARTING = "STARTING"

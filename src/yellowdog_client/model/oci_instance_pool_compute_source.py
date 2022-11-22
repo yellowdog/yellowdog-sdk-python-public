@@ -16,8 +16,6 @@ class OciInstancePoolComputeSource(OciComputeSource):
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
-    clusterNetworkId: Optional[str] = field(default=None, init=False)
-    """The OCID of the Cluster Network if used."""
     instancePoolId: Optional[str] = field(default=None, init=False)
     """The OCID of the instance pool in which instances are started."""
     requestedInstanceCount: Optional[int] = field(default=None, init=False)

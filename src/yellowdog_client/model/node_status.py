@@ -3,14 +3,14 @@ from enum import Enum
 
 class NodeStatus(Enum):
     """Indicates the status of a node."""
-    ALIVE = "ALIVE", True, False
-    """The node is alive."""
+    RUNNING = "RUNNING", True, False
+    """The node is running and its heartbeat is being received."""
     LATE = "LATE", True, False
     """The node's heartbeat is late."""
     LOST = "LOST", False, False
     """The node's heartbeat has not been received for long enough that it is considered lost."""
-    UNREGISTERED = "UNREGISTERED", False, True
-    """The node has unregistered from the worker pool."""
+    DEREGISTERED = "DEREGISTERED", False, True
+    """The node has been deregistered from the worker pool."""
     TERMINATED = "TERMINATED", False, True
     """The node has been terminated."""
 

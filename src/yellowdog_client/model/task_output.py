@@ -6,7 +6,7 @@ from .task_output_source import TaskOutputSource
 
 @dataclass
 class TaskOutput:
-    """Defines task outputs to be uploaded following worker execution of the task."""
+    """Defines task outputs to be uploaded following worker execution of the"""
     source: TaskOutputSource
     """The source context where the outputs can be found."""
     directoryName: Optional[str] = None

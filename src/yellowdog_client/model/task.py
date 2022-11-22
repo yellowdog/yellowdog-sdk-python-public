@@ -45,6 +45,6 @@ class Task(Identified, Named, Tagged):
     inputs: Optional[List[TaskInput]] = None
     """Input object specifications that determine objects to be downloaded prior to running the task."""
     flattenInputPaths: Optional[FlattenPath] = None
-    """Indicates if the input objects' paths should be flattened when they are donwloaded."""
+    """Indicates if the input objects' paths should be flattened when they are downloaded."""
     outputs: Optional[List[TaskOutput]] = None
-    """Output object specifications that determine objects to be downloaded prior to running the task."""
+    """Output object specifications that determine objects to be uploaded after running the task."""

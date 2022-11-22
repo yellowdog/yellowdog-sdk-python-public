@@ -1,26 +1,27 @@
 from typing import List, Optional
 
-from .compute_service_proxy import ComputeServiceProxy
-from .compute_requirement_helper import ComputeRequirementHelper
-from .compute_client import ComputeClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
 from yellowdog_client.common.server_sent_events import SubscriptionManager
-from yellowdog_client.model import Instance, ComputeRequirementTemplate
+from yellowdog_client.model import BestComputeSourceReport
 from yellowdog_client.model import ComputeRequirement, ComputeRequirementTemplateUsage
 from yellowdog_client.model import ComputeRequirementStatus
 from yellowdog_client.model import ComputeRequirementSummary
+from yellowdog_client.model import ComputeRequirementTemplateSummary
+from yellowdog_client.model import ComputeRequirementTemplateTestResult
 from yellowdog_client.model import ComputeSourceTemplate
 from yellowdog_client.model import ComputeSourceTemplateSummary
-from yellowdog_client.model import ComputeRequirementTemplateSummary
+from yellowdog_client.model import Instance, ComputeRequirementTemplate
 from yellowdog_client.model import InstanceStatus
-from yellowdog_client.model import BestComputeSourceReport
-from yellowdog_client.model import ComputeRequirementTemplateTestResult
+from .compute_client import ComputeClient
+from .compute_requirement_helper import ComputeRequirementHelper
+from .compute_service_proxy import ComputeServiceProxy
 
 
 class ComputeClientImpl(ComputeClient):
     def __init__(self, service_proxy: ComputeServiceProxy) -> None:
         self.__service_proxy: ComputeServiceProxy = service_proxy
-        self.__requirement_subscriptions = SubscriptionManager(self.__service_proxy.stream_compute_requirement_updates, ComputeRequirement)
+        self.__requirement_subscriptions = SubscriptionManager(self.__service_proxy.stream_compute_requirement_updates,
+                                                               ComputeRequirement)
 
     @staticmethod
     def _check_requirement_has_id(compute_requirement: Optional[ComputeRequirement]) -> None:
@@ -76,7 +77,8 @@ class ComputeClientImpl(ComputeClient):
         return self.reprovision_compute_requirement_by_id(compute_requirement.id)
 
     def reprovision_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
-        return self.__service_proxy.transition_compute_requirement(compute_requirement_id, ComputeRequirementStatus.PENDING)
+        return self.__service_proxy.transition_compute_requirement(compute_requirement_id,
+                                                                   ComputeRequirementStatus.PROVISIONING)
 
     def stop_instances(self, compute_requirement: ComputeRequirement, instances: List[Instance]) -> None:
         self._transition_instances(compute_requirement, InstanceStatus.STOPPED, instances)

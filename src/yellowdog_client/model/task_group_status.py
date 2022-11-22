@@ -18,16 +18,16 @@ class TaskGroupStatus(Enum):
 
     READY = "READY", False, False, False, False
     """
-    The task group has claimed at least the minimum required number of workers and is ready to start working.
+    The task group has claimed at least the minimum required number of workers and is ready to start running.
     The task group will remain in READY state until the WorkRequirement is started.
     """
 
     UNFULFILLED = "UNFULFILLED", False, False, False, True
-    """The task group (or parent work requirement) was unable to claim the minimum required number of workers to start working and fulfilOnSubmit was specified for the work requirement."""
+    """The task group (or parent work requirement) was unable to claim the minimum required number of workers to start running and fulfilOnSubmit was specified for the work requirement."""
     WAITING = "WAITING", True, False, False, False
     """The task group has been started but is waiting for a dependency task group to complete before executing any tasks."""
-    WORKING = "WORKING", True, True, False, False
-    """The task group is running and tasks are being executed by Workers."""
+    RUNNING = "RUNNING", True, True, False, False
+    """The task group is running and tasks can be executed by Workers."""
     STARVED = "STARVED", True, True, False, False
     """The task group was in progress but it has lost all its workers and none of its tasks are being executed."""
     HELD = "HELD", True, False, False, False
@@ -39,7 +39,7 @@ class TaskGroupStatus(Enum):
     COMPLETED = "COMPLETED", True, False, False, True
     """All tasks within the task group have been completed."""
     FAILING = "FAILING", True, False, True, False
-    """All tasks within the task group have been finished and most may be completed but at least one has failed."""
+    """At least one task in the task group has failed and the task group is in the process of discarding any outstanding tasks."""
     FAILED = "FAILED", True, False, False, True
     """All tasks within the task group have been finished and most may be completed but at least one has failed."""
     CANCELLING = "CANCELLING", True, False, True, False

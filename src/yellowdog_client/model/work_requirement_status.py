@@ -14,8 +14,8 @@ class WorkRequirementStatus(Enum):
     """The work requirement is waiting to be started once sufficient workers have been claimed."""
     UNFULFILLED = "UNFULFILLED", False, True
     """The work requirement was unable to claim sufficient workers on submit and has been finished."""
-    WORKING = "WORKING", True, False
-    """The work requirement is in progress and its tasks are being executed."""
+    RUNNING = "RUNNING", True, False
+    """The work requirement is in progress and its tasks can be executed."""
     STARVED = "STARVED", True, False
     """The work requirement was in progress but it has lost all its workers and none of its tasks are being executed."""
     HELD = "HELD", False, False

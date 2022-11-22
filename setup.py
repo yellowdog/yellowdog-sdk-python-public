@@ -9,7 +9,7 @@ with open("src/yellowdog_client/_version.py") as fp:
 master_version_split = version['__version__'].split(".")
 master_version = "%s.%s.%s" % (master_version_split[0], master_version_split[1], master_version_split[2])
 
-suffix = os.environ.get("VERSION_SUFFIX", ".dev0")
+suffix = os.environ.get("VERSION_SUFFIX", "")
 
 final_version = f"{master_version}{suffix}"
 

@@ -27,10 +27,10 @@ class TaskGroup(Identified, Named, Tagged):
     priority: float = 0
     """The task group priority."""
     dependentOn: Optional[str] = None
-    """The name of another task group within the same WorkRequirement that must be successfully completed before the task group is started. (Not yet implemented)"""
-    autoComplete: bool = True
-    """If true, the task group will be completed automatically once all contained tasks are finished."""
-    autoFail: bool = True
-    """If true, the task group will be failed automatically if any contained tasks fail."""
+    """The name of another task group within the same WorkRequirement that must be successfully completed before the task group is started."""
+    finishIfAllTasksFinished: bool = True
+    """If true, the task group will finish automatically once all contained tasks are finished."""
+    finishIfAnyTaskFailed: bool = False
+    """If true, the task group will finish automatically if any contained tasks fail."""
     completedTaskTtl: Optional[timedelta] = None
     """The time to live for completed tasks. If set, tasks that have been completed for longer than this period will be deleted."""

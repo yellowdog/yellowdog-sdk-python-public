@@ -43,6 +43,7 @@ from .aws_fleet_spot_options import AwsFleetSpotOptions
 from .aws_instance import AwsInstance
 from .aws_on_demand_compute_source import AwsOnDemandComputeSource
 from .aws_spot_compute_source import AwsSpotComputeSource
+from .aws_spot_request_instance import AwsSpotRequestInstance
 from .azure_account_authentication_properties import AzureAccountAuthenticationProperties
 from .azure_client_credential import AzureClientCredential
 from .azure_compute_credential import AzureComputeCredential
@@ -227,6 +228,8 @@ from .task_group import TaskGroup
 from .task_group_status import TaskGroupStatus
 from .task_input import TaskInput
 from .task_input_source import TaskInputSource
+from .task_input_verification import TaskInputVerification
+from .task_input_verification_status import TaskInputVerificationStatus
 from .task_output import TaskOutput
 from .task_output_source import TaskOutputSource
 from .task_search import TaskSearch
@@ -303,6 +306,7 @@ __all__ = [
     "AwsInstance",
     "AwsOnDemandComputeSource",
     "AwsSpotComputeSource",
+    "AwsSpotRequestInstance",
     "AzureAccountAuthenticationProperties",
     "AzureClientCredential",
     "AzureComputeCredential",
@@ -487,6 +491,8 @@ __all__ = [
     "TaskGroupStatus",
     "TaskInput",
     "TaskInputSource",
+    "TaskInputVerification",
+    "TaskInputVerificationStatus",
     "TaskOutput",
     "TaskOutputSource",
     "TaskSearch",

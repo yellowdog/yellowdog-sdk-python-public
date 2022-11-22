@@ -7,7 +7,7 @@ from .cloud_provider import CloudProvider
 @dataclass
 class NodeDetails:
     """Describes the details of a worker pool node."""
-    instanceId: Optional[str] = None
+    instanceId: str
     """The ID of the node's instance."""
     provider: Optional[CloudProvider] = None
     """The provider of the node's instance."""

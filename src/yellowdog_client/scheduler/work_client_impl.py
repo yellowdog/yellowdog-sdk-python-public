@@ -1,20 +1,20 @@
 from typing import Optional, List
 
-from .work_client import WorkClient
-from .work_service_proxy import WorkServiceProxy
-from .work_requirement_helper import WorkRequirementHelper
-from yellowdog_client.common.server_sent_events import SubscriptionManager
+from yellowdog_client.common.pagination import paginate
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
+from yellowdog_client.common.server_sent_events import SubscriptionManager
 from yellowdog_client.model import Identified
+from yellowdog_client.model import Slice
+from yellowdog_client.model import SliceReference
+from yellowdog_client.model import Task
+from yellowdog_client.model import TaskGroup
+from yellowdog_client.model import TaskSearch
 from yellowdog_client.model import WorkRequirement
 from yellowdog_client.model import WorkRequirementStatus
 from yellowdog_client.model import WorkRequirementSummary
-from yellowdog_client.model import TaskGroup
-from yellowdog_client.model import Task
-from yellowdog_client.model import TaskSearch
-from yellowdog_client.model import SliceReference
-from yellowdog_client.model import Slice
-from yellowdog_client.common.pagination import paginate
+from .work_client import WorkClient
+from .work_requirement_helper import WorkRequirementHelper
+from .work_service_proxy import WorkServiceProxy
 
 
 class WorkClientImpl(WorkClient):
@@ -61,7 +61,7 @@ class WorkClientImpl(WorkClient):
         return self.start_work_requirement_by_id(work_requirement.id)
 
     def start_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
-        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.WORKING)
+        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.RUNNING)
 
     def cancel_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
         return self.cancel_work_requirement_by_id(work_requirement.id)

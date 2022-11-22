@@ -17,7 +17,7 @@ class RunSpecification:
     ram: Optional[DoubleRange] = None
     """Range constraint on GB of RAM that are required to execute tasks"""
     minWorkers: Optional[int] = None
-    """The minimum number of Workers that the associated TaskGroup requires. This many workers must be claimed before the associated TaskGroup will start working."""
+    """The minimum number of Workers that the associated TaskGroup requires. This many workers must be claimed before the associated TaskGroup will start running."""
     maxWorkers: Optional[int] = None
     """The maximum number of Workers that can be claimed for the associated TaskGroup."""
     tasksPerWorker: Optional[int] = None
