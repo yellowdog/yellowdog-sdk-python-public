@@ -15,6 +15,7 @@ class TaskSearch:
     finishedTime: Optional[InstantRange] = None
     hasInputs: Optional[bool] = None
     hasOutputs: Optional[bool] = None
+    hasErrors: Optional[bool] = None
     tag: Optional[str] = None
     statuses: Optional[List[TaskStatus]] = None
     sortField: Optional[str] = None
