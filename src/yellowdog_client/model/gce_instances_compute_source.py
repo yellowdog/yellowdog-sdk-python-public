@@ -38,6 +38,8 @@ class GceInstancesComputeSource(GceComputeSource):
     otherwise, if false, YellowDog Compute will provision as many instances as possible up to the number requested from this compute source.
     """
 
+    createCompactPlacementPolicy: Optional[bool] = None
+    """Indicates if instances should be provisioned using a compact placement policy."""
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
     sshKeys: Optional[str] = None
