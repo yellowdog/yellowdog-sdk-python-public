@@ -1,28 +1,28 @@
-from typing import Optional, Dict, List, Callable, Set
 import os
-import time
-from datetime import timedelta
-from threading import Lock
 # noinspection PyCompatibility
 from concurrent.futures import Future
+from datetime import timedelta
+from threading import Lock
+from typing import Optional, Dict, List, Callable, Set, cast
 
+import time
 from cancel_token import CancellationToken
 # noinspection PyPackageRequirements
 from pydispatch import Dispatcher
 
-from .abstract_service_session_facade import AbstractServiceSessionFacade as SessionFacade
-from .abstract_self_binding_status_predicate import SelfBindingStatusMatchPredicate
-from .abstract_chunk_transfer_task import AbstractChunkTransferTask
 from yellowdog_client.common import CountdownEvent, Closeable
 from yellowdog_client.model.exceptions import ErrorType
 from yellowdog_client.object_store.model import FileTransferDirection
-from yellowdog_client.object_store.model import FileTransferStatus
-from yellowdog_client.object_store.model import FileTransferException
-from yellowdog_client.object_store.model import FileTransferEventArgs
 from yellowdog_client.object_store.model import FileTransferErrorEventArgs
+from yellowdog_client.object_store.model import FileTransferEventArgs
+from yellowdog_client.object_store.model import FileTransferException
 from yellowdog_client.object_store.model import FileTransferProgressEventArgs
+from yellowdog_client.object_store.model import FileTransferStatus
 from yellowdog_client.object_store.model import TransferStatistics
 from yellowdog_client.object_store.utils.hash_utils import HashUtils
+from .abstract_chunk_transfer_task import AbstractChunkTransferTask
+from .abstract_self_binding_status_predicate import SelfBindingStatusMatchPredicate
+from .abstract_service_session_facade import AbstractServiceSessionFacade as SessionFacade
 
 
 class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
@@ -306,10 +306,9 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
         if type(exception) == FileTransferException and exception.error_type.is_fatal_session_error():
             self._abort_transfer(final_status=FileTransferStatus.Failed, abort_server=False)
 
-    def _notify_on_exception(self, exception):
-        # type: (Exception) -> None
+    def _notify_on_exception(self, exception: Exception) -> None:
         if type(exception) == FileTransferException:
-            # noinspection PyUnresolvedReferences
+            exception = cast(FileTransferException, exception)
             self._notify_on_error(
                 error_type=exception.error_type,
                 message=exception.message,

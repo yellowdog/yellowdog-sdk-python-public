@@ -1,14 +1,15 @@
+from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy
 from .client_collection import ClientCollection
-from .model import ServicesSchema, ApiKey
+from .cloud_info import CloudInfoClient, CloudInfoClientImpl, CloudInfoProxy
 from .common import Proxy, Closeable
 from .common.credentials import ApiKeyAuthenticationHeadersProvider
-from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy
 from .compute import ComputeClient, ComputeClientImpl, ComputeServiceProxy
-from .scheduler import WorkClient, WorkClientImpl, WorkServiceProxy, WorkerPoolClient, WorkerPoolClientImpl, WorkerPoolServiceProxy
-from .object_store import ObjectStoreClient, ObjectStoreServiceProxy
-from .usage import AllowancesClient, AllowancesClientImpl, AllowancesServiceProxy
 from .images import ImagesClient, ImagesClientImpl, ImagesServiceProxy
-from .cloud_info import CloudInfoClient, CloudInfoClientImpl, CloudInfoProxy
+from .model import ServicesSchema, ApiKey
+from .object_store import ObjectStoreClient, ObjectStoreServiceProxy
+from .scheduler import WorkClient, WorkClientImpl, WorkServiceProxy, WorkerPoolClient, WorkerPoolClientImpl, \
+    WorkerPoolServiceProxy
+from .usage import AllowancesClient, AllowancesClientImpl, AllowancesServiceProxy
 
 
 class PlatformClient(Closeable):
@@ -57,8 +58,7 @@ class PlatformClient(Closeable):
         :param api_key: the api key to use for authenticating with the YellowDog platform
         :returns: created YellowDog Platform client
         """
-        api_key_authentication_headers_provider = ApiKeyAuthenticationHeadersProvider()
-        api_key_authentication_headers_provider.key = api_key
+        api_key_authentication_headers_provider = ApiKeyAuthenticationHeadersProvider(api_key)
 
         proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,

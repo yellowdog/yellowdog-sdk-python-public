@@ -1,25 +1,30 @@
-from typing import Optional, Tuple
+from typing import Dict
 
 from requests.auth import AuthBase
 
-from .api_key_constants import ApiKeyConstants
-from .api_key_utils import ApiKeyUtils
 from yellowdog_client.model import ApiKey
-from .requests_api_key_authentication import RequestsApiKeyAuthentication
+
+_AUTH_HEADER = "Authorization"
+_AUTH_HEADER_API_KEY_TYPE = "yd-key"
+_AUTH_HEADER_API_KEY_FIELD_SEPARATOR = ":"
 
 
-class ApiKeyAuthenticationHeadersProvider(object):
-    def __init__(self):
-        self.key = None     # type: Optional[ApiKey]
+class ApiKeyAuthenticationHeadersProvider(AuthBase):
+    def __init__(self, key: ApiKey):
+        if key is None:
+            raise ValueError("ApiKey must not be None")
+        self.__key = key
 
-    def build_header(self):
-        # type: () -> Tuple[str, str]
-        if not self.key:
-            raise ValueError("Please set API KEY")
-        return ApiKeyConstants.AUTH_HEADER, ApiKeyUtils.build_api_key_auth_header_with_credentials(self.key)
+    def __call__(self, r):
+        api_key_auth_headers = self._build_header()
+        r.headers.update(api_key_auth_headers)
+        return r
 
-    def get_requests_authentication_base(self):
-        # type: () -> AuthBase
-        if not self.key:
-            raise ValueError("Please set API KEY")
-        return RequestsApiKeyAuthentication(self.key)
+    def _build_header(self, ) -> Dict[str, str]:
+        auth_header = "%s %s%s%s" % (
+            _AUTH_HEADER_API_KEY_TYPE,
+            self.__key.id,
+            _AUTH_HEADER_API_KEY_FIELD_SEPARATOR,
+            self.__key.secret
+        )
+        return {_AUTH_HEADER: auth_header}

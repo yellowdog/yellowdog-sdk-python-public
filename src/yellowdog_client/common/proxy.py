@@ -61,7 +61,7 @@ class Proxy:
             request=Request(
                 method=method,
                 url=self._base_url + url,
-                auth=self._authentication_headers_provider.get_requests_authentication_base(),
+                auth=self._authentication_headers_provider,
                 json=json,
                 params=params
             ),
@@ -73,14 +73,14 @@ class Proxy:
     def stream(self, url: str = "") -> EventSource:
         return EventSource(
             url=self._base_url + url,
-            factory=WebRequestFactory(self._authentication_headers_provider.get_requests_authentication_base())
+            factory=WebRequestFactory(self._authentication_headers_provider)
         )
 
     def execute_with_timeout(self, method: str, timeout: int, url: str = "", data: object = None,
                              headers: Dict[str, str] = None) -> Response:
         request = Request(
             method=method,
-            auth=self._authentication_headers_provider.get_requests_authentication_base(),
+            auth=self._authentication_headers_provider,
             url=self._base_url + url,
             headers=headers,
             data=data

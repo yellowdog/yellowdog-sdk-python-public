@@ -1,16 +1,18 @@
+import traceback
 from queue import Queue
-from typing import List
 from threading import Event
+from typing import List
+
 import time
 
-from .abstract_object_store_service_proxy import AbstractObjectStoreServiceProxy as Proxy
-from .abstract_notification_dispatcher import AbstractNotificationDispatcher as NotificationDispatcher
-from .abstract_session import AbstractSession
 from yellowdog_client.object_store.model import FileTransferStatus
-from yellowdog_client.object_store.utils.background_thread_factory import BackgroundThreadFactory as ThreadFactory
 from yellowdog_client.object_store.utils.background_thread import BackgroundThread
+from yellowdog_client.object_store.utils.background_thread_factory import BackgroundThreadFactory as ThreadFactory
 from yellowdog_client.object_store.utils.chunk_transfer_throttle import ChunkTransferThrottle as Throttle
 from .abstract_chunk_transfer_task import AbstractChunkTransferTask
+from .abstract_notification_dispatcher import AbstractNotificationDispatcher as NotificationDispatcher
+from .abstract_object_store_service_proxy import AbstractObjectStoreServiceProxy as Proxy
+from .abstract_session import AbstractSession
 
 
 class AbstractTransferEngine(object):
@@ -93,8 +95,7 @@ class AbstractTransferEngine(object):
             thread.start()
         return transfer_threads
 
-    def _process_chunk_tasks(self):
-        # type: () -> None
+    def _process_chunk_tasks(self) -> None:
         while True:
             try:
                 self._transferring.wait()
@@ -102,6 +103,7 @@ class AbstractTransferEngine(object):
                 self._synchronised_chunk_transfer(task=task)
             except Exception as ex:
                 print("Unexpected error occurred while processing chunk task %s" % str(ex))
+                print(traceback.format_exc())
 
     def _synchronised_chunk_transfer(self, task):
         # type: (AbstractChunkTransferTask) -> None

@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yellowdog-sdk"
+dynamic = ["version"]
+authors = [
+    { name = "YellowDog Limited", email = "support@yellowdog.co" }
+]
+description = "SDK for the YellowDog Platform"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.7',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Intended Audience :: Developers',
+    'Programming Language :: Python',
+    'License :: OSI Approved :: Apache Software License'
+]
+dependencies = [
+    'jsons==1.4.0',
+    'requests==2.25.1',
+    "python-dispatch==0.1.31",
+    "sseclient==0.0.24",
+    "cancel-token==0.1.5",
+    "isodate==0.6.0"
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest==7.2.0",
+    "pytest-httpserver==1.0.6",
+    "typing_compat==0.1.0"
+]
+docs = [
+    "sphinx==4.3.0",
+    "sphinx-autodoc-typehints==1.12.0",
+    "sphinx-automodapi==0.13"
+]
+deploy = [
+    "twine==3.3.0"
+]
+
+
+[project.urls]
+"Homepage" = "https://yellowdog.co"
+"Source" = "https://github.com/yellowdog/yellowdog-sdk-python-public"
+
+[tool.setuptools.dynamic]
+version = { attr = "yellowdog_client._version.__version__" }

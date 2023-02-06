@@ -1,53 +1,34 @@
 from typing import Callable, Optional
 
-from yellowdog_client.object_store.model import TransferProperties
-from yellowdog_client.object_store.abstracts import AbstractTransferBatch
 from yellowdog_client.model import FlattenPath
+from yellowdog_client.object_store.abstracts import AbstractTransferBatch
+from yellowdog_client.object_store.model import TransferProperties
 
 
-class AbstractDownloadBatchBuilder(object):
+class AbstractDownloadBatchBuilder:
     """
     Abstract class for :class:`yellowdog_client.object_store.download.DownloadBatchBuilder`
 
     .. versionadded:: 0.5.0
     """
 
-    flatten_file_name_mapper = None         # type: Optional[Callable[[str], str]]
-    """
-    Custom function, which flattens file name after download
-    
-    :type: Callable[[str], str]
-    """
+    flatten_file_name_mapper: Optional[Callable[[str], str]] = None
+    """Custom function, which flattens file name after download"""
 
-    file_name_mapper = None                 # type: Callable[[str], str]
-    """
-    Custom function, which renames file name after download
+    file_name_mapper: Callable[[str], str] = None
+    """Custom function, which renames file name after download"""
 
-    :type: Callable[[str], str]
-    """
+    transfer_properties: TransferProperties = None
+    """Transfer properties to use when creating a new batch"""
 
-    transfer_properties = None              # type: TransferProperties
-    """
-    Transfer properties to use when creating a new batch
+    destination_folder: str = None
+    """Target directory, where files need to be downloaded"""
 
-    :type: :class:`yellowdog_client.object_store.model.TransferProperties`
-    """
-
-    destination_folder = None               # type: str
-    """
-    Target directory, where files need to be downloaded
-
-    :type: str
-    """
-
-    def set_flatten_file_name_mapper(self, value):
-        # type: (Optional[FlattenPath]) -> None
+    def set_flatten_file_name_mapper(self, value: Optional[FlattenPath]) -> None:
         raise NotImplementedError("set_flatten_file_name_mapper needs implementation")
 
-    def find_source_objects(self, namespace, object_name_pattern):
-        # type: (str, str) -> None
+    def find_source_objects(self, namespace: str, object_name_pattern: str) -> None:
         raise NotImplementedError("find_source_objects needs implementation")
 
-    def get_batch_if_objects_found(self):
-        # type: () -> Optional[AbstractTransferBatch]
+    def get_batch_if_objects_found(self) -> Optional[AbstractTransferBatch]:
         raise NotImplementedError("get_batch_if_objects_found needs implementation")

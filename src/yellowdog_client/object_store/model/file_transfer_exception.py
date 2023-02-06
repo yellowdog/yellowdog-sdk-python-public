@@ -15,16 +15,16 @@ class FileTransferException(Exception):
     :type: :class:`yellowdog_client.model.ErrorType`
     """
 
-    detail = None                   # type: Set[str]
+    detail = None  # type: Set[str]
     """
     Details of exception
     
     :type: Set[str]
     """
 
-    def __init__(self, error_type, message, detail=None):
-        # type: (ErrorType, str, Optional[Set[str]]) -> None
-        super(Exception, self).__init__(message)
+    def __init__(self, error_type: ErrorType, message: str, detail: Optional[Set[str]] = None):
+        super().__init__(message)
+        self.message = message
         self.error_type = error_type
         if detail is not None:
             self.detail = detail

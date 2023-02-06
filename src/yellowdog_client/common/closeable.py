@@ -1,15 +1,13 @@
 import traceback
+from typing import Type
 
 
 class Closeable(object):
-    def __enter__(self):
-        # type: () -> Closeable
+    def __enter__(self) -> 'Closeable':
         return self
 
-    def __exit__(self, exception_type, exception_value, exception_traceback):
-        # type: (type, Exception, traceback) -> None
+    def __exit__(self, exception_type: Type, exception_value: Exception, exception_traceback: traceback) -> None:
         self.close()
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         raise NotImplementedError("Needs implementation")
