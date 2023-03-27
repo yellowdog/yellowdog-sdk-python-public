@@ -20,6 +20,7 @@ class AlibabaInstancesComputeSource(AlibabaComputeSource):
     createdFromId: Optional[str] = field(default=None, init=False)
     requestedInstanceCount: Optional[int] = field(default=None, init=False)
     expectedInstanceCount: Optional[int] = field(default=None, init=False)
+    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
@@ -29,18 +30,26 @@ class AlibabaInstancesComputeSource(AlibabaComputeSource):
     credential: str
     region: str
     """The Alibaba Cloud region where instances will be provisioned."""
-    securityGroupId: str
-    """The ID of the Alibaba Cloud Security Group for the provisioned instances."""
     vSwitchId: str
     """The ID of the virtual switch to use for the provisioned instances."""
+    securityGroupId: str
+    """The ID of the Alibaba Cloud Security Group for the provisioned instances."""
     instanceType: str
     """The Alibaba Cloud instance type for the provisioned instances."""
     imageId: str
     """The region-specific Alibaba Cloud ID for the image to use for the provisioned instances."""
     availabilityZone: Optional[str] = None
     """The Alibaba Cloud availability zone within the region where instances will be provisioned."""
+    userData: Optional[str] = None
+    instanceTags: Optional[Dict[str, str]] = None
+    ramRoleName: Optional[str] = None
+    """The name of the RAM Role to use for the provisioned instances."""
+    keyName: Optional[str] = None
+    """The name of the Alibaba Cloud key pair to use when logging into any instances provisioned from this source."""
     instanceChargeType: Optional[AlibabaInstanceChargeType] = None
     """The Alibaba Cloud charge type to use for the provisioned instances."""
+    assignPublicIp: bool = False
+    """Indicates if provisioned instances should be assigned public IP addresses."""
     spotStrategy: Optional[AlibabaSpotStrategy] = None
     """The Alibaba Cloud spot strategy to use when provisioning instances."""
     spotPriceLimit: Optional[float] = None
@@ -53,11 +62,3 @@ class AlibabaInstancesComputeSource(AlibabaComputeSource):
     otherwise, if false, YellowDog Compute will provision as many instances as possible up to the number requested from this compute source.
     """
 
-    assignPublicIp: bool = False
-    """Indicates if provisioned instances should be assigned public IP addresses."""
-    keyName: Optional[str] = None
-    """The name of the Alibaba Cloud key pair to use when logging into any instances provisioned from this source."""
-    ramRoleName: Optional[str] = None
-    """The name of the RAM Role to use for the provisioned instances."""
-    userData: Optional[str] = None
-    instanceTags: Optional[Dict[str, str]] = None

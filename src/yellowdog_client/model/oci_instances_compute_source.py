@@ -18,6 +18,7 @@ class OciInstancesComputeSource(OciComputeSource):
     createdFromId: Optional[str] = field(default=None, init=False)
     requestedInstanceCount: Optional[int] = field(default=None, init=False)
     expectedInstanceCount: Optional[int] = field(default=None, init=False)
+    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)

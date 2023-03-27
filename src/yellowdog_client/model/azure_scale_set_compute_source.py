@@ -17,20 +17,25 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     createdFromId: Optional[str] = field(default=None, init=False)
     requestedInstanceCount: Optional[int] = field(default=None, init=False)
     expectedInstanceCount: Optional[int] = field(default=None, init=False)
+    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
     expectedExhaustionTermination: Optional[datetime] = field(default=None, init=False)
     name: str
     credential: str
+    region: str
+    """The Azure region where instances will be provisioned."""
     networkResourceGroupName: str
     networkName: str
     subnetName: str
     vmSize: str
-    region: str
-    """The Azure region where instances will be provisioned."""
     imageId: str
     """The YellowDog prefixed Azure image ID for the image to use for the provisioned instances."""
+    availabilityZone: Optional[str] = None
+    environment: Optional[str] = None
+    userData: Optional[str] = None
+    instanceTags: Optional[Dict[str, str]] = None
     adminUserCredential: Optional[str] = None
     """
     Optionally specifies the name of an AzureInstanceCredential that provides the admin user name and password to use for root (Linux) or administrator (Windows).
@@ -39,15 +44,10 @@ class AzureScaleSetComputeSource(AzureComputeSource):
 
     sshKey: Optional[str] = None
     """The public SSH key. If provided, instances will be accessible with the matching private key through SSH."""
-    environment: Optional[str] = None
-    availabilityZone: Optional[str] = None
-    limit: int = 0
     assignPublicIp: bool = False
-    useSpot: Optional[bool] = None
-    spotMaxPrice: Optional[float] = None
     createProximityPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a proximity placement group."""
     useAcceleratedNetworking: Optional[bool] = None
-    """Indicates if instances should be provisioned with a primary networking interface with accelerated networking."""
-    userData: Optional[str] = None
-    instanceTags: Optional[Dict[str, str]] = None
+    useSpot: Optional[bool] = None
+    spotMaxPrice: Optional[float] = None
+    limit: int = 0

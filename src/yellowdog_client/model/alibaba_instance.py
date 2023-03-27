@@ -37,3 +37,5 @@ class AlibabaInstance(Instance):
     """The public IP address of this instance."""
     hostname: Optional[str] = None
     """The hostname of this instance."""
+    spot: bool = False
+    """Indicates if this instance was provisioned via spot pricing vs on-demand."""

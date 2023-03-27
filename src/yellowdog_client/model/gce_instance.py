@@ -14,7 +14,6 @@ class GceInstance(Instance):
     id: Optional[str] = field(default=None, init=False)
     """The ID of this instance."""
     preemptible: bool = False
-    spot: bool = False
     confidential: bool = False
     createdTime: Optional[datetime] = None
     """The date and time when this instance was first created."""
@@ -40,3 +39,5 @@ class GceInstance(Instance):
     """The public IP address of this instance."""
     hostname: Optional[str] = None
     """The hostname of this instance."""
+    spot: bool = False
+    """Indicates if this instance was provisioned via spot pricing vs on-demand."""

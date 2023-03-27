@@ -23,6 +23,7 @@ class SimulatorComputeSource(ComputeSource):
     createdFromId: Optional[str] = field(default=None, init=False)
     requestedInstanceCount: Optional[int] = field(default=None, init=False)
     expectedInstanceCount: Optional[int] = field(default=None, init=False)
+    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
@@ -32,11 +33,8 @@ class SimulatorComputeSource(ComputeSource):
     region: str = "sim-region"
     instanceType: str = "sim-instance"
     imageId: str = "sim-image"
-    limit: int = 0
     implicitCapacity: Optional[int] = None
     """The implicit capacity of this source that is not directly discoverable by the compute service, independent of limit."""
-    instanceCreationCount: int = 0
-    """The total number of instances created for this source."""
     instanceStartupTimeSeconds: int = 0
     """The simulated startup time for an instance."""
     instanceStartupTimeVariance: float = 0
@@ -47,3 +45,4 @@ class SimulatorComputeSource(ComputeSource):
     """A variance multiplier (from 0 to 1) applied randomly to the instance shutdown time."""
     unexpectedInstanceTerminationProbabilityPerSecond: float = 0
     """The probability (from 0 to 1) that any instance will be unexpectedly terminated in any given second."""
+    limit: int = 0

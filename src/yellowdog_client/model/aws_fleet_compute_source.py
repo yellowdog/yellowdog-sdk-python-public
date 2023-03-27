@@ -24,6 +24,7 @@ class AwsFleetComputeSource(AwsComputeSource):
     """The ID of the AWS EC2 Fleet."""
     requestedInstanceCount: Optional[int] = field(default=None, init=False)
     expectedInstanceCount: Optional[int] = field(default=None, init=False)
+    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
@@ -42,28 +43,28 @@ class AwsFleetComputeSource(AwsComputeSource):
     """Determines which instance purchase options (On-Demand and/or Spot) are available to AWS EC2 Fleet."""
     availabilityZone: Optional[str] = None
     """The AWS availability zone within the region where instances will be provisioned."""
-    limit: int = 0
+    subnetId: Optional[str] = None
+    """The ID of the subnet to use for the provisioned instances."""
+    userData: Optional[str] = None
+    instanceTags: Optional[Dict[str, str]] = None
+    iamRoleArn: Optional[str] = None
+    """The ARN of the IAM role to use for the provisioned instances."""
+    keyName: Optional[str] = None
+    """The name of the EC2 key pair to use when logging into any instances provisioned from this source."""
+    enableDetailedMonitoring: Optional[bool] = None
+    """Indicates if provisioned instances should have detailed CloudWatch monitoring enabled."""
     assignPublicIp: bool = False
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a cluster placement group."""
     createElasticFabricAdapter: Optional[bool] = None
     """Indicates if instances should be provisioned with an Elastic Fabric Adapter network interface."""
-    enableDetailedMonitoring: Optional[bool] = None
-    """Indicates if provisioned instances should have detailed CloudWatch monitoring enabled."""
-    keyName: Optional[str] = None
-    """The name of the EC2 key pair to use when logging into any instances provisioned from this source."""
-    iamRoleArn: Optional[str] = None
-    """The ARN of the IAM role to use for the provisioned instances."""
-    subnetId: Optional[str] = None
-    """The ID of the subnet to use for the provisioned instances."""
+    limit: int = 0
+    maintainCapacity: bool = False
+    """Indicates if AWS EC2 Fleet should maintain the instance count independently of YellowDog Compute, replacing the reprovision functionality."""
+    instanceOverrides: Optional[List[AwsFleetInstanceOverride]] = None
+    """Extra instance provision options that can override the main parameters set in this source."""
     onDemandOptions: Optional[AwsFleetOnDemandOptions] = None
     """Options related to provisioning On-Demand instances."""
     spotOptions: Optional[AwsFleetSpotOptions] = None
     """Options related to provisioning Spot instances."""
-    instanceOverrides: Optional[List[AwsFleetInstanceOverride]] = None
-    """Extra instance provision options that can override the main parameters set in this source."""
-    maintainCapacity: bool = False
-    """Indicates if AWS EC2 Fleet should maintain the instance count independently of YellowDog Compute, replacing the reprovision functionality."""
-    userData: Optional[str] = None
-    instanceTags: Optional[Dict[str, str]] = None
