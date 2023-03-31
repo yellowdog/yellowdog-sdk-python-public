@@ -1,41 +1,42 @@
-from typing import List
+from typing import Callable
 
-from yellowdog_client.common.pagination import paginate, with_slice_reference
 from yellowdog_client.model import InstanceTypeSearch, Slice, InstanceType, SubRegionSearch, SubRegion, RegionSearch, \
-    Region
+    Region, SliceReference
 
 from .cloud_info_client import CloudInfoClient
 from .cloud_info_proxy import CloudInfoProxy
+from yellowdog_client.common.search_client import SearchClient
 from ..model import InstanceTypePriceSearch, InstanceTypePrice
 
 
 class CloudInfoClientImpl(CloudInfoClient):
+
     def __init__(self, service_proxy: CloudInfoProxy) -> None:
         self.__service_proxy: CloudInfoProxy = service_proxy
 
-    def find_regions(self, search: RegionSearch) -> List[Region]:
-        return paginate(lambda sr: self.slice_regions(with_slice_reference(search, sr)))
+    def get_regions(self, region_search: RegionSearch) -> SearchClient[Region]:
+        def get_next_slice(slice_reference: SliceReference) -> Slice[Region]:
+            return self.__service_proxy.slice_regions(region_search, slice_reference)
 
-    def slice_regions(self, search: RegionSearch) -> Slice[Region]:
-        return self.__service_proxy.slice_regions(search)
+        return SearchClient(get_next_slice)
 
-    def find_sub_regions(self, search: SubRegionSearch) -> List[SubRegion]:
-        return paginate(lambda sr: self.slice_sub_regions(with_slice_reference(search, sr)))
+    def get_sub_regions(self, sub_region_search: SubRegionSearch) -> SearchClient[SubRegion]:
+        def get_next_slice(slice_reference: SliceReference) -> Slice[SubRegion]:
+            return self.__service_proxy.slice_sub_regions(sub_region_search, slice_reference)
 
-    def slice_sub_regions(self, search: SubRegionSearch) -> Slice[SubRegion]:
-        return self.__service_proxy.slice_sub_regions(search)
+        return SearchClient(get_next_slice)
 
-    def find_instance_types(self, search: InstanceTypeSearch) -> List[InstanceType]:
-        return paginate(lambda sr: self.slice_instance_types(with_slice_reference(search, sr)))
+    def get_instance_types(self, instance_type_search: InstanceTypeSearch) -> SearchClient[InstanceType]:
+        def get_next_slice(slice_reference: SliceReference) -> Slice[InstanceType]:
+            return self.__service_proxy.slice_instance_types(instance_type_search, slice_reference)
 
-    def slice_instance_types(self, search: InstanceTypeSearch) -> Slice[InstanceType]:
-        return self.__service_proxy.slice_instance_types(search)
+        return SearchClient(get_next_slice)
 
-    def find_instance_type_prices(self, search: InstanceTypePriceSearch) -> List[InstanceTypePrice]:
-        return paginate(lambda sr: self.slice_instance_type_prices(with_slice_reference(search, sr)))
+    def get_instance_type_prices(self, instance_type_price_search: InstanceTypePriceSearch) -> SearchClient[InstanceTypePrice]:
+        def get_next_slice(slice_reference: SliceReference) -> Slice[InstanceTypePrice]:
+            return self.__service_proxy.slice_instance_type_prices(instance_type_price_search, slice_reference)
 
-    def slice_instance_type_prices(self, search: InstanceTypePriceSearch) -> Slice[InstanceTypePrice]:
-        return self.__service_proxy.slice_instance_type_prices(search)
+        return SearchClient(get_next_slice)
 
     def close(self):
         pass

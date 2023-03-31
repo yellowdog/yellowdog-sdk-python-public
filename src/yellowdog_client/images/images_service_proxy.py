@@ -1,9 +1,8 @@
 from typing import List
 
-from .pageable import Pageable
-from .page import Page
 from yellowdog_client.common import Proxy
-from yellowdog_client.model import MachineImageFamily, MachineImageGroup, MachineImage, MachineImageFamilySummary, MachineImageFamilySearch
+from yellowdog_client.model import MachineImageFamily, MachineImageGroup, MachineImage, MachineImageFamilySummary, \
+    MachineImageFamilySearch, SliceReference, Slice
 
 
 class ImagesServiceProxy:
@@ -61,6 +60,5 @@ class ImagesServiceProxy:
     def get_all_image_families(self) -> List[MachineImageFamilySummary]:
         return self._proxy.get(List[MachineImageFamilySummary], "families")
 
-    def search_image_families_paged(self, search: MachineImageFamilySearch, pageable: Pageable) -> Page[MachineImageFamilySummary]:
-        page_size = pageable.pageSize if pageable.pageSize != 0 else 2147483647
-        return self._proxy.put(Page[MachineImageFamilySummary], search, "families/search?page=%s&size=%s" % (pageable.pageNumber, page_size))
+    def search_image_families(self, search: MachineImageFamilySearch, slice_reference: SliceReference) -> Slice[MachineImageFamilySummary]:
+        return self._proxy.get(Slice[MachineImageFamilySummary], "families", self._proxy.to_params(search, slice_reference))

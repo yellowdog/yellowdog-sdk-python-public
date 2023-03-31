@@ -1,10 +1,10 @@
-from typing import List
+from typing import Callable
 
 from .images_client import ImagesClient
 from .images_service_proxy import ImagesServiceProxy
-from .page import Page
-from .pageable import Pageable
-from yellowdog_client.model import MachineImageFamilySearch, MachineImageFamilySummary, MachineImage, MachineImageGroup, MachineImageFamily
+from yellowdog_client.model import MachineImageFamilySearch, MachineImageFamilySummary, MachineImage, MachineImageGroup, \
+    MachineImageFamily, SliceReference, Slice
+from yellowdog_client.common.search_client import SearchClient
 
 
 class ImagesClientImpl(ImagesClient):
@@ -59,14 +59,11 @@ class ImagesClientImpl(ImagesClient):
     def get_image(self, image_id: str) -> MachineImage:
         return self.__service_proxy.get_image_by_id(image_id)
 
-    def get_all_image_families(self) -> List[MachineImageFamilySummary]:
-        return self.__service_proxy.get_all_image_families()
+    def get_image_families(self, search: MachineImageFamilySearch) -> SearchClient[MachineImageFamilySummary]:
+        get_next_slice_function: Callable[[SliceReference], Slice[MachineImageFamilySummary]] = \
+            lambda slice_reference: self.__service_proxy.search_image_families(search, slice_reference)
 
-    def search_image_families(self, search: MachineImageFamilySearch) -> List[MachineImageFamilySummary]:
-        return self.search_image_families_paged(search, Pageable()).content
-
-    def search_image_families_paged(self, search: MachineImageFamilySearch, pageable: Pageable) -> Page[MachineImageFamilySummary]:
-        return self.__service_proxy.search_image_families_paged(search, pageable)
+        return SearchClient(get_next_slice_function)
 
     def close(self):
         pass

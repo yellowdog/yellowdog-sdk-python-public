@@ -1,9 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
-
-from .page import Page
-from .pageable import Pageable
-from yellowdog_client.common import Closeable
+from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.model import MachineImage, MachineImageFamily, MachineImageFamilySearch, MachineImageFamilySummary, MachineImageGroup
 
 
@@ -74,13 +70,5 @@ class ImagesClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def get_all_image_families(self) -> List[MachineImageFamilySummary]:
-        pass
-
-    @abstractmethod
-    def search_image_families(self, search: MachineImageFamilySearch) -> List[MachineImageFamilySummary]:
-        pass
-
-    @abstractmethod
-    def search_image_families_paged(self, search: MachineImageFamilySearch, pageable: Pageable) -> Page[MachineImageFamilySummary]:
+    def get_image_families(self, search: MachineImageFamilySearch) -> SearchClient[MachineImageFamilySummary]:
         pass
