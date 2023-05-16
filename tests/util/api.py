@@ -1,8 +1,8 @@
-from enum import Enum
 from http import HTTPStatus
-from typing import Type, TypeVar, Optional, Dict
 
+from enum import Enum
 from pytest_httpserver import HTTPServer
+from typing import Type, TypeVar, Optional, Dict, Union, List
 from werkzeug.wrappers import Response
 
 from util.data import make
@@ -34,7 +34,7 @@ class MockApi:
             self,
             uri: str,
             method: HttpMethod,
-            params: Dict[str, str] = None,
+            params: Dict[str, Union[str, List[Optional[str]]]] = None,
             request_type: Optional[Type[U]] = None,
             request: Optional[U] = None,
             response_type: Optional[Type[T]] = None,

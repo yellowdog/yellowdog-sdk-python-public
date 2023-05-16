@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Dict, List, Optional, Set
 
 from .aws_compute_source import AwsComputeSource
@@ -7,9 +6,10 @@ from .aws_fleet_instance_override import AwsFleetInstanceOverride
 from .aws_fleet_on_demand_options import AwsFleetOnDemandOptions
 from .aws_fleet_purchase_option import AwsFleetPurchaseOption
 from .aws_fleet_spot_options import AwsFleetSpotOptions
-from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
+from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_summary import InstanceSummary
 
 
 @dataclass
@@ -22,13 +22,10 @@ class AwsFleetComputeSource(AwsComputeSource):
     createdFromId: Optional[str] = field(default=None, init=False)
     fleetId: Optional[str] = field(default=None, init=False)
     """The ID of the AWS EC2 Fleet."""
-    requestedInstanceCount: Optional[int] = field(default=None, init=False)
-    expectedInstanceCount: Optional[int] = field(default=None, init=False)
-    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
+    instanceSummary: Optional[InstanceSummary] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
-    exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
-    expectedExhaustionTermination: Optional[datetime] = field(default=None, init=False)
+    exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     name: str
     credential: str
     region: str

@@ -71,14 +71,12 @@ def test_can_find_tasks(mock_api: MockApi, work_client: WorkClient):
     }
 
     mock_api.mock(f"/work/tasks", HttpMethod.GET, params={
-        **search_params,
-        "size": "1000"
+        **search_params
     }, response=first_slice)
 
     mock_api.mock(f"/work/tasks", HttpMethod.GET, params={
         **search_params,
-        "sliceId": first_slice.nextSliceId,
-        "size": "1000",
+        "sliceId": first_slice.nextSliceId
     }, response=second_slice)
 
     actual = work_client.find_tasks(search)

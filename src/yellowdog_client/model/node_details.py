@@ -15,6 +15,8 @@ class NodeDetails:
     """The region in which the node's instance is running."""
     sourceName: Optional[str] = None
     """The name of the compute source from which the node's instance was provisioned."""
+    sourceNumber: Optional[int] = None
+    """The number of the compute source based on its order within the parent compute requirement."""
     instanceType: Optional[str] = None
     """The instance type of the instance."""
     hostname: Optional[str] = None

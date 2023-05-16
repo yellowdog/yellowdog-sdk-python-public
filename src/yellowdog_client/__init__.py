@@ -125,12 +125,16 @@ Terminating a compute requirement will terminate all active instances::
 
     client.compute_client.terminate_compute_requirement(requirement)
 
+Retrieving instance information for a compute requirement::
+
+    instances = client.compute_client.get_instances(InstanceSearch(computeRequirementId=requirement.id)).list_all()
+
 You can also terminate individual instances of a compute requirement.
 
 Stopping individual instances of a compute requirement::
 
-    instance1 = requirement.instances[0]
-    instance2 = requirement.instances[1]
+    instance1 = instances[0]
+    instance2 = instances[1]
     client.compute_client.stop_instances(requirement, [instance1, instance2])
 
 Starting individual instances of a compute requirement::

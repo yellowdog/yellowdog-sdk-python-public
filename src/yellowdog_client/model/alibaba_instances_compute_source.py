@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Dict, Optional, Set
 
 from .alibaba_compute_source import AlibabaComputeSource
 from .alibaba_instance_charge_type import AlibabaInstanceChargeType
 from .alibaba_spot_strategy import AlibabaSpotStrategy
-from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
+from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_summary import InstanceSummary
 
 
 @dataclass
@@ -18,13 +18,10 @@ class AlibabaInstancesComputeSource(AlibabaComputeSource):
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
-    requestedInstanceCount: Optional[int] = field(default=None, init=False)
-    expectedInstanceCount: Optional[int] = field(default=None, init=False)
-    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
+    instanceSummary: Optional[InstanceSummary] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
-    exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
-    expectedExhaustionTermination: Optional[datetime] = field(default=None, init=False)
+    exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     name: str
     """The name of the compute source. This must be unique within a compute requirement."""
     credential: str

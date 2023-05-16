@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Dict, Optional, Set
 
 from .azure_compute_source import AzureComputeSource
-from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
+from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_summary import InstanceSummary
 
 
 @dataclass
@@ -15,13 +15,10 @@ class AzureInstancesComputeSource(AzureComputeSource):
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
-    requestedInstanceCount: Optional[int] = field(default=None, init=False)
-    expectedInstanceCount: Optional[int] = field(default=None, init=False)
-    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
+    instanceSummary: Optional[InstanceSummary] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
-    exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
-    expectedExhaustionTermination: Optional[datetime] = field(default=None, init=False)
+    exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     name: str
     credential: str
     region: str

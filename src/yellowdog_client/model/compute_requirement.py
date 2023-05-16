@@ -1,12 +1,11 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from .compute_provision_strategy import ComputeProvisionStrategy
 from .compute_requirement_status import ComputeRequirementStatus
 from .compute_requirement_supported_operations import ComputeRequirementSupportedOperations
 from .identified import Identified
-from .instance import Instance
 from .named import Named
 from .tagged import Tagged
 
@@ -46,7 +45,5 @@ class ComputeRequirement(Identified, Named, Tagged):
     """The number of alive instances expected based on existing instances and the most recent provision action."""
     maintainInstanceCount: bool = False
     """Indicates if the Compute Service should automatically attempt to provision new instances if the number of RUNNING instances is below the specified targetInstanceCount"""
-    instances: Optional[List[Instance]] = None
-    """A collection of model objects describing the instances provisioned for this requirement."""
     nextStatus: Optional[ComputeRequirementStatus] = None
     """The next status of this compute requirement when a status transition is being requested."""

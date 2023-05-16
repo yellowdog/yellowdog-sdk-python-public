@@ -1,28 +1,25 @@
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Dict, Optional, Set
 
 from .aws_compute_source import AwsComputeSource
-from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
+from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_summary import InstanceSummary
 
 
 @dataclass
-class AwsSpotComputeSource(AwsComputeSource):
-    """Defines a source of compute composed of AWS Spot Request (non-persistent) instances."""
-    type: str = field(default="co.yellowdog.platform.model.AwsSpotComputeSource", init=False)
+class AwsInstancesComputeSource(AwsComputeSource):
+    """Defines a source of compute composed of AWS EC2 instances using the RunInstances API."""
+    type: str = field(default="co.yellowdog.platform.model.AwsInstancesComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
-    requestedInstanceCount: Optional[int] = field(default=None, init=False)
-    expectedInstanceCount: Optional[int] = field(default=None, init=False)
-    cumulativeExpectedInstanceCount: Optional[int] = field(default=None, init=False)
+    instanceSummary: Optional[InstanceSummary] = field(default=None, init=False)
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
-    exhaustionStatus: Optional[ComputeSourceExhaustionStatus] = field(default=None, init=False)
-    expectedExhaustionTermination: Optional[datetime] = field(default=None, init=False)
+    exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     name: str
     credential: str
     region: str
@@ -51,6 +48,15 @@ class AwsSpotComputeSource(AwsComputeSource):
     """Indicates if instances should be provisioned within a cluster placement group."""
     createElasticFabricAdapter: Optional[bool] = None
     """Indicates if instances should be provisioned with an Elastic Fabric Adapter network interface."""
-    spotPriceMax: Optional[float] = None
-    """The maximum price that will be paid for instances provisioned from this source."""
     limit: int = 0
+    specifyMinimum: bool = False
+    """
+    Indicates if YellowDog Compute should specify the minimum when requesting instances from AWS.
+    If true, then no instances are provisioned unless all requested instances are available;
+    otherwise, if false, YellowDog Compute will provision as many instances as possible up to the number requested from this compute source.
+    """
+
+    spot: bool = False
+    """Indicates if spot instances should be requested rather than on-demand."""
+    spotMaxPrice: Optional[float] = None
+    """The maximum price that will be paid for instances provisioned from this source."""

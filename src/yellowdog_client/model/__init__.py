@@ -41,9 +41,7 @@ from .aws_fleet_purchase_option import AwsFleetPurchaseOption
 from .aws_fleet_spot_allocation_strategy import AwsFleetSpotAllocationStrategy
 from .aws_fleet_spot_options import AwsFleetSpotOptions
 from .aws_instance import AwsInstance
-from .aws_on_demand_compute_source import AwsOnDemandComputeSource
-from .aws_spot_compute_source import AwsSpotComputeSource
-from .aws_spot_request_instance import AwsSpotRequestInstance
+from .aws_instances_compute_source import AwsInstancesComputeSource
 from .azure_account_authentication_properties import AzureAccountAuthenticationProperties
 from .azure_client_credential import AzureClientCredential
 from .azure_compute_credential import AzureComputeCredential
@@ -70,10 +68,10 @@ from .compute_provision_strategy import ComputeProvisionStrategy
 from .compute_requirement import ComputeRequirement
 from .compute_requirement_dynamic_template import ComputeRequirementDynamicTemplate
 from .compute_requirement_dynamic_template_test_result import ComputeRequirementDynamicTemplateTestResult
+from .compute_requirement_search import ComputeRequirementSearch
 from .compute_requirement_static_template import ComputeRequirementStaticTemplate
 from .compute_requirement_static_template_test_result import ComputeRequirementStaticTemplateTestResult
 from .compute_requirement_status import ComputeRequirementStatus
-from .compute_requirement_summary import ComputeRequirementSummary
 from .compute_requirement_supported_operations import ComputeRequirementSupportedOperations
 from .compute_requirement_template import ComputeRequirementTemplate
 from .compute_requirement_template_summary import ComputeRequirementTemplateSummary
@@ -81,7 +79,9 @@ from .compute_requirement_template_test_result import ComputeRequirementTemplate
 from .compute_requirement_template_usage import ComputeRequirementTemplateUsage
 from .compute_requirement_usage import ComputeRequirementUsage
 from .compute_requirement_usage_filter import ComputeRequirementUsageFilter
+from .compute_requirements_summary import ComputeRequirementsSummary
 from .compute_source import ComputeSource
+from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_template import ComputeSourceTemplate
@@ -121,7 +121,10 @@ from .identified import Identified
 from .image_access import ImageAccess
 from .image_os_type import ImageOsType
 from .instance import Instance
+from .instance_id import InstanceId
+from .instance_search import InstanceSearch
 from .instance_status import InstanceStatus
+from .instance_summary import InstanceSummary
 from .instance_type import InstanceType
 from .instance_type_price import InstanceTypePrice
 from .instance_type_price_search import InstanceTypePriceSearch
@@ -304,9 +307,7 @@ __all__ = [
     "AwsFleetSpotAllocationStrategy",
     "AwsFleetSpotOptions",
     "AwsInstance",
-    "AwsOnDemandComputeSource",
-    "AwsSpotComputeSource",
-    "AwsSpotRequestInstance",
+    "AwsInstancesComputeSource",
     "AzureAccountAuthenticationProperties",
     "AzureClientCredential",
     "AzureComputeCredential",
@@ -333,10 +334,10 @@ __all__ = [
     "ComputeRequirement",
     "ComputeRequirementDynamicTemplate",
     "ComputeRequirementDynamicTemplateTestResult",
+    "ComputeRequirementSearch",
     "ComputeRequirementStaticTemplate",
     "ComputeRequirementStaticTemplateTestResult",
     "ComputeRequirementStatus",
-    "ComputeRequirementSummary",
     "ComputeRequirementSupportedOperations",
     "ComputeRequirementTemplate",
     "ComputeRequirementTemplateSummary",
@@ -344,7 +345,9 @@ __all__ = [
     "ComputeRequirementTemplateUsage",
     "ComputeRequirementUsage",
     "ComputeRequirementUsageFilter",
+    "ComputeRequirementsSummary",
     "ComputeSource",
+    "ComputeSourceExhaustion",
     "ComputeSourceExhaustionStatus",
     "ComputeSourceStatus",
     "ComputeSourceTemplate",
@@ -384,7 +387,10 @@ __all__ = [
     "ImageAccess",
     "ImageOsType",
     "Instance",
+    "InstanceId",
+    "InstanceSearch",
     "InstanceStatus",
+    "InstanceSummary",
     "InstanceType",
     "InstanceTypePrice",
     "InstanceTypePriceSearch",
