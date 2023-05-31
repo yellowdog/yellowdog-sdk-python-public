@@ -51,5 +51,5 @@ class WorkServiceProxy:
     def cancel_task(self, task_id: str, abort: bool) -> Task:
         return self._proxy.put(Task, url="tasks/%s/cancel?abort=%s" % (task_id, abort))
 
-    def find_tasks_slice(self, search: TaskSearch, slice_reference: SliceReference) -> Slice[Task]:
+    def search_tasks(self, search: TaskSearch, slice_reference: SliceReference) -> Slice[Task]:
         return self._proxy.get(Slice[Task], "tasks", self._proxy.to_params(search, slice_reference))

@@ -3,7 +3,7 @@ from datetime import timedelta
 from typing import List, Optional, TypeVar
 
 from .worker_pool_helper import WorkerPoolHelper
-from yellowdog_client.common import Closeable
+from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
 from yellowdog_client.model import AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, ComputeRequirementTemplateUsage, ConfiguredWorkerPool, Node, NodeAction, NodeActionGroup, NodeActionQueueSnapshot, NodeSearch, ProvisionedWorkerPool, ProvisionedWorkerPoolProperties, Slice, SliceReference, WorkerPool, WorkerPoolSummary, WorkerPoolToken
 
@@ -395,6 +395,17 @@ class WorkerPoolClient(ABC, Closeable):
 
         :param node_id: the ID of the node
         :return: the current state of the action queue
+        """
+
+        pass
+
+    @abstractmethod
+    def get_nodes(self, search: NodeSearch) -> SearchClient[Node]:
+        """
+        Returns a SearchClient that offers the ability to search nodes.
+
+        :param search: the search
+        :return: the search client
         """
 
         pass

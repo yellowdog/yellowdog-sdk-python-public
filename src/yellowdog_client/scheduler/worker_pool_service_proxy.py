@@ -45,7 +45,7 @@ class WorkerPoolServiceProxy:
     def stream_worker_pool_updates(self, worker_pool_id: str) -> EventSource:
         return self._proxy.stream("%s/updates" % worker_pool_id)
 
-    def find_nodes_slice(self, search: NodeSearch, slice_reference: SliceReference) -> Slice[Node]:
+    def search_nodes(self, search: NodeSearch, slice_reference: SliceReference) -> Slice[Node]:
         return self._proxy.get(Slice[Node], "nodes", self._proxy.to_params(search, slice_reference))
 
     def find_all_worker_pools(self):

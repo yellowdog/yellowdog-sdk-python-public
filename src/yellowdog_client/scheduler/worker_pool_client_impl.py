@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import TypeVar, List, Optional
+from typing import TypeVar, List, Optional, Callable
 
 from .worker_pool_helper import WorkerPoolHelper
 from .worker_pool_service_proxy import WorkerPoolServiceProxy
@@ -9,6 +9,7 @@ from yellowdog_client.model import Identified, ProvisionedWorkerPool, Provisione
     ComputeRequirementTemplateUsage, WorkerPool, WorkerPoolSummary, NodeSearch, Node, \
     SliceReference, Slice, NodeActionQueueSnapshot, NodeActionGroup, NodeAction, NodeIdFilter, \
     WorkerPoolToken, AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, ConfiguredWorkerPool
+from yellowdog_client.common import SearchClient
 from ..common.pagination import paginate
 
 T = TypeVar('T', bound=WorkerPool)
@@ -103,7 +104,7 @@ class WorkerPoolClientImpl(WorkerPoolClient):
         return paginate(lambda sr: self.find_nodes_slice(search, sr))
 
     def find_nodes_slice(self, search: NodeSearch, slice_reference: SliceReference) -> Slice[Node]:
-        return self.__service_proxy.find_nodes_slice(search, slice_reference)
+        return self.__service_proxy.search_nodes(search, slice_reference)
 
     def get_node(self, node: Node) -> Node:
         return self.get_node_by_id(node.id)
@@ -144,6 +145,12 @@ class WorkerPoolClientImpl(WorkerPoolClient):
 
     def get_node_actions_by_id(self, node_id: str) -> NodeActionQueueSnapshot:
         return self.__service_proxy.get_node_actions(node_id)
+
+    def get_nodes(self, search: NodeSearch) -> SearchClient[Node]:
+        get_next_slice_function: Callable[[SliceReference], Slice[Node]] = \
+            lambda slice_reference: self.__service_proxy.search_nodes(search, slice_reference)
+
+        return SearchClient(get_next_slice_function)
 
     def close(self) -> None:
         self.__requirement_subscriptions.close()

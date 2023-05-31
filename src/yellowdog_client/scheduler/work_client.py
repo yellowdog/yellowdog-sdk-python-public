@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from pip._internal.utils.deprecation import deprecated
+
 from .work_requirement_helper import WorkRequirementHelper
-from yellowdog_client.common import Closeable
+from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
 from yellowdog_client.model import Slice, SliceReference, Task, TaskGroup, TaskSearch, WorkRequirement, WorkRequirementSummary
 
@@ -304,6 +306,17 @@ class WorkClient(ABC, Closeable):
         :param search:         the search
         :param slice_reference: the slice reference
         :return: a slice of tasks
+        """
+
+        pass
+
+    @abstractmethod
+    def get_tasks(self, search: TaskSearch) -> SearchClient[Task]:
+        """
+        Returns a SearchClient that offers the ability to search tasks.
+
+        :param search: the search
+        :return: the search client
         """
 
         pass

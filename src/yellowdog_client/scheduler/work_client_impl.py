@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Callable
 
 from yellowdog_client.common.pagination import paginate
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
@@ -15,6 +15,7 @@ from yellowdog_client.model import WorkRequirementSummary
 from .work_client import WorkClient
 from .work_requirement_helper import WorkRequirementHelper
 from .work_service_proxy import WorkServiceProxy
+from yellowdog_client.common import SearchClient
 
 
 class WorkClientImpl(WorkClient):
@@ -116,7 +117,13 @@ class WorkClientImpl(WorkClient):
         return paginate(lambda sr: self.find_tasks_slice(search, sr))
 
     def find_tasks_slice(self, search: TaskSearch, slice_reference: SliceReference) -> Slice:
-        return self.__service_proxy.find_tasks_slice(search, slice_reference)
+        return self.__service_proxy.search_tasks(search, slice_reference)
+
+    def get_tasks(self, search: TaskSearch) -> SearchClient[Task]:
+        get_next_slice_function: Callable[[SliceReference], Slice[Task]] = \
+            lambda slice_reference: self.__service_proxy.search_tasks(search, slice_reference)
+
+        return SearchClient(get_next_slice_function)
 
     def close(self) -> None:
         self.__requirement_subscriptions.close()

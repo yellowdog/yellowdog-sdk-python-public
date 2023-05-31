@@ -22,6 +22,7 @@ from .allowance import Allowance
 from .allowance_exhausted_notification import AllowanceExhaustedNotification
 from .allowance_limit_enforcement import AllowanceLimitEnforcement
 from .allowance_reset_type import AllowanceResetType
+from .allowance_search import AllowanceSearch
 from .api_key import ApiKey
 from .application import Application
 from .attribute_constraint import AttributeConstraint
@@ -133,6 +134,7 @@ from .instance_type_search import InstanceTypeSearch
 from .instance_usage import InstanceUsage
 from .instance_usage_filter import InstanceUsageFilter
 from .instant_range import InstantRange
+from .integer_range import IntegerRange
 from .internal_attribute_source import InternalAttributeSource
 from .internal_user import InternalUser
 from .keyring import Keyring
@@ -288,6 +290,7 @@ __all__ = [
     "AllowanceExhaustedNotification",
     "AllowanceLimitEnforcement",
     "AllowanceResetType",
+    "AllowanceSearch",
     "ApiKey",
     "Application",
     "AttributeConstraint",
@@ -399,6 +402,7 @@ __all__ = [
     "InstanceUsage",
     "InstanceUsageFilter",
     "InstantRange",
+    "IntegerRange",
     "InternalAttributeSource",
     "InternalUser",
     "Keyring",

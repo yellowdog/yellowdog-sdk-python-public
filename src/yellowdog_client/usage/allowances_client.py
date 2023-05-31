@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from yellowdog_client.common import Closeable
-from yellowdog_client.model import Allowance, AllowanceExhaustedNotification, ComputeRequirement
+from yellowdog_client.common import Closeable, SearchClient
+from yellowdog_client.model import Allowance, AllowanceExhaustedNotification, AllowanceSearch, ComputeRequirement
 
 
 class AllowancesClient(ABC, Closeable):
@@ -36,7 +36,7 @@ class AllowancesClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def find_all_allowances(self) -> List[Allowance]:
+    def get_allowances(self, allowance_search: AllowanceSearch) -> SearchClient[Allowance]:
         pass
 
     @abstractmethod

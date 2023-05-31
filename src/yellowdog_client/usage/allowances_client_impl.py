@@ -1,8 +1,10 @@
-from typing import List
+from typing import List, Callable
 
-from yellowdog_client.model import ComputeRequirement, AllowanceExhaustedNotification, Allowance
+from yellowdog_client.model import ComputeRequirement, AllowanceExhaustedNotification, Allowance, AllowanceSearch, \
+    SliceReference, Slice
 from .allowances_client import AllowancesClient
 from .allowances_service_proxy import AllowancesServiceProxy
+from yellowdog_client.common import SearchClient
 
 
 class AllowancesClientImpl(AllowancesClient):
@@ -30,8 +32,11 @@ class AllowancesClientImpl(AllowancesClient):
     def boost_allowance_by_id(self, allowance_id: str, boost_hours: int) -> Allowance:
         return self.__service_proxy.boost_allowance_by_id(allowance_id, boost_hours)
 
-    def find_all_allowances(self) -> List[Allowance]:
-        return self.__service_proxy.find_all_allowances()
+    def get_allowances(self, search: AllowanceSearch) -> SearchClient[Allowance]:
+        get_next_slice_function: Callable[[SliceReference], Slice[Allowance]] = \
+            lambda slice_reference: self.__service_proxy.search_allowances(search, slice_reference)
+
+        return SearchClient(get_next_slice_function)
 
     def check_compute_requirement_exhaustion(self, compute_requirement: ComputeRequirement) -> List[AllowanceExhaustedNotification]:
         return self.__service_proxy.check_compute_requirement_exhaustion(compute_requirement)
