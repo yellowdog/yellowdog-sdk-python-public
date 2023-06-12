@@ -248,6 +248,7 @@ class WorkerPoolClient(ABC, Closeable):
 
         :param search: the search
         :return: a list of nodes
+        @deprecated use #getNodes(NodeSearch) instead to search nodes.
         """
 
         pass
@@ -260,6 +261,7 @@ class WorkerPoolClient(ABC, Closeable):
         :param search:         the search
         :param slice_reference: the slice reference
         :return: a slice of nodes
+        @deprecated use #getNodes(NodeSearch) instead to search nodes.
         """
 
         pass

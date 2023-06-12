@@ -16,8 +16,6 @@ from .alibaba_instance_charge_type import AlibabaInstanceChargeType
 from .alibaba_instances_compute_source import AlibabaInstancesComputeSource
 from .alibaba_namespace_storage_configuration import AlibabaNamespaceStorageConfiguration
 from .alibaba_spot_strategy import AlibabaSpotStrategy
-from .all_nodes_inactive_shutdown_condition import AllNodesInactiveShutdownCondition
-from .all_workers_released_shutdown_condition import AllWorkersReleasedShutdownCondition
 from .allowance import Allowance
 from .allowance_exhausted_notification import AllowanceExhaustedNotification
 from .allowance_limit_enforcement import AllowanceLimitEnforcement
@@ -32,6 +30,7 @@ from .attribute_source import AttributeSource
 from .attribute_source_type import AttributeSourceType
 from .attribute_value import AttributeValue
 from .authentication_provider import AuthenticationProvider
+from .auto_shutdown import AutoShutdown
 from .aws_compute_source import AwsComputeSource
 from .aws_credential import AwsCredential
 from .aws_fleet_compute_source import AwsFleetComputeSource
@@ -154,10 +153,8 @@ from .named import Named
 from .namespace_objects_response import NamespaceObjectsResponse
 from .namespace_storage_configuration import NamespaceStorageConfiguration
 from .new_password_request import NewPasswordRequest
-from .no_registered_workers_shutdown_condition import NoRegisteredWorkersShutdownCondition
 from .node import Node
 from .node_action import NodeAction
-from .node_action_failed_shutdown_condition import NodeActionFailedShutdownCondition
 from .node_action_group import NodeActionGroup
 from .node_action_queue_snapshot import NodeActionQueueSnapshot
 from .node_action_queue_status import NodeActionQueueStatus
@@ -242,7 +239,6 @@ from .task_status import TaskStatus
 from .task_summary import TaskSummary
 from .transfer_status_response import TransferStatusResponse
 from .transfer_summary_response import TransferSummaryResponse
-from .unclaimed_after_startup_shutdown_condition import UnclaimedAfterStartupShutdownCondition
 from .update_application_request import UpdateApplicationRequest
 from .update_keyring_request import UpdateKeyringRequest
 from .update_user_request import UpdateUserRequest
@@ -258,7 +254,6 @@ from .worker_action import WorkerAction
 from .worker_pool import WorkerPool
 from .worker_pool_node_configuration import WorkerPoolNodeConfiguration
 from .worker_pool_properties import WorkerPoolProperties
-from .worker_pool_shutdown_condition import WorkerPoolShutdownCondition
 from .worker_pool_status import WorkerPoolStatus
 from .worker_pool_summary import WorkerPoolSummary
 from .worker_pool_token import WorkerPoolToken
@@ -284,8 +279,6 @@ __all__ = [
     "AlibabaInstancesComputeSource",
     "AlibabaNamespaceStorageConfiguration",
     "AlibabaSpotStrategy",
-    "AllNodesInactiveShutdownCondition",
-    "AllWorkersReleasedShutdownCondition",
     "Allowance",
     "AllowanceExhaustedNotification",
     "AllowanceLimitEnforcement",
@@ -300,6 +293,7 @@ __all__ = [
     "AttributeSourceType",
     "AttributeValue",
     "AuthenticationProvider",
+    "AutoShutdown",
     "AwsComputeSource",
     "AwsCredential",
     "AwsFleetComputeSource",
@@ -422,10 +416,8 @@ __all__ = [
     "NamespaceObjectsResponse",
     "NamespaceStorageConfiguration",
     "NewPasswordRequest",
-    "NoRegisteredWorkersShutdownCondition",
     "Node",
     "NodeAction",
-    "NodeActionFailedShutdownCondition",
     "NodeActionGroup",
     "NodeActionQueueSnapshot",
     "NodeActionQueueStatus",
@@ -510,7 +502,6 @@ __all__ = [
     "TaskSummary",
     "TransferStatusResponse",
     "TransferSummaryResponse",
-    "UnclaimedAfterStartupShutdownCondition",
     "UpdateApplicationRequest",
     "UpdateKeyringRequest",
     "UpdateUserRequest",
@@ -526,7 +517,6 @@ __all__ = [
     "WorkerPool",
     "WorkerPoolNodeConfiguration",
     "WorkerPoolProperties",
-    "WorkerPoolShutdownCondition",
     "WorkerPoolStatus",
     "WorkerPoolSummary",
     "WorkerPoolToken",

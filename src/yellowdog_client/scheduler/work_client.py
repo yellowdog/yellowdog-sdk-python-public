@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from pip._internal.utils.deprecation import deprecated
-
 from .work_requirement_helper import WorkRequirementHelper
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
@@ -294,6 +292,7 @@ class WorkClient(ABC, Closeable):
 
         :param search: the search
         :return: a list of tasks
+        @deprecated use #getTasks(TaskSearch) instead to search tasks.
         """
 
         pass
@@ -306,6 +305,7 @@ class WorkClient(ABC, Closeable):
         :param search:         the search
         :param slice_reference: the slice reference
         :return: a slice of tasks
+        @deprecated use #getTasks(TaskSearch) instead to search tasks.
         """
 
         pass
