@@ -179,8 +179,8 @@ Provisioned worker pools are linked to compute requirements and created in a sim
 
     from datetime import timedelta
     from yellowdog_client.model import ComputeRequirementTemplateUsage
-    from yellowdog_client.model import AllWorkersReleasedShutdownCondition
     from yellowdog_client.model import ProvisionedWorkerPoolProperties
+    from yellowdog_client.model import AutoShutdown
 
     worker_pool = client.worker_pool_client.provision_worker_pool(
         ComputeRequirementTemplateUsage(
@@ -190,11 +190,7 @@ Provisioned worker pools are linked to compute requirements and created in a sim
             targetInstanceCount=1
         ),
         ProvisionedWorkerPoolProperties(
-            autoShutdownConditions=[
-                AllWorkersReleasedShutdownCondition(
-                    delay=timedelta(seconds=30)
-                )
-            ],
+            idlePoolShutdown=AutoShutdown(timeout=timedelta(seconds=30)),
             workerTag="HelloWorldTag"
         )
     )
@@ -230,6 +226,18 @@ To create a work requirement, utilizing the above worker pool (linked by tag "He
 
     work_requirement = client.work_client.add_work_requirement(work_requirement)
     tasks = client.work_client.add_tasks_to_task_group(work_requirement.taskGroups[0], [task])
+
+
+By default, a worker pool is decoupled from a specific piece of work. This means that workers in the pool can be
+claimed by any tasks, as long as those workers are capable of doing those tasks. To accommodate this behaviour,
+a worker pool is automatically shutdown when it has become idle for 10 minutes. This provides a buffer period
+for new work to be added before the worker pool is automatically shutdown.
+
+An alternative pattern is to tightly couple a worker pool to specific pieces of work using worker tags ("HelloWorldTag" in
+this example). Workers with this tag will only be claimed by tasks that also have that tag. When using this
+pattern, the default autoshutdown period is inefficient and you may either reduce it (as in this example), or add all of your
+work first and switch off the autoshutdown period entirely.
+
 
 Controlling
 ===========
