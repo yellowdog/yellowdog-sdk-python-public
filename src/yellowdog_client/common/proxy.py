@@ -87,14 +87,16 @@ class Proxy:
         )
 
         session = Session()
-        prepared_request = request.prepare()
-        response = session.send(request=prepared_request, timeout=timeout)
+        prepared_request = session.prepare_request(request)
+        settings = session.merge_environment_settings(prepared_request.url, {}, None, None, None)
+        response = session.send(request=prepared_request, timeout=timeout, **settings)
         return self._handle_response(response)
 
     @classmethod
     def execute_session_with_retries(cls, request: Request, prefix_url: str, retry_count: int, backoff_factor_sec: int) -> Response:
         session = Session()
-        prepared_request = request.prepare()
+        prepared_request = session.prepare_request(request)
+        settings = session.merge_environment_settings(prepared_request.url, {}, None, None, None)
         session.mount(
             prefix=prefix_url,
             adapter=HTTPAdapter(max_retries=Retry(
@@ -102,7 +104,7 @@ class Proxy:
                 backoff_factor=backoff_factor_sec
             ))
         )
-        response = session.send(request=prepared_request)
+        response = session.send(request=prepared_request, **settings)
         return cls._handle_response(response)
 
     @staticmethod
