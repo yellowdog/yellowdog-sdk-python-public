@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Optional
 
 from .credential import Credential
@@ -14,3 +15,7 @@ class AwsCredential(Credential):
     secretAccessKey: str
     """The AWS Secret Access Key"""
     description: Optional[str] = None
+    sessionToken: Optional[str] = None
+    """The AWS Session Token if this credential is temporary"""
+    expiryTime: Optional[datetime] = None
+    """The expiry time if this credential is temporary"""

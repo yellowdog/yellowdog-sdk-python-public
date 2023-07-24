@@ -31,6 +31,7 @@ from .attribute_source_type import AttributeSourceType
 from .attribute_value import AttributeValue
 from .authentication_provider import AuthenticationProvider
 from .auto_shutdown import AutoShutdown
+from .aws_account_role_credential import AwsAccountRoleCredential
 from .aws_compute_source import AwsComputeSource
 from .aws_credential import AwsCredential
 from .aws_fleet_compute_source import AwsFleetComputeSource
@@ -130,6 +131,8 @@ from .instance_type_price import InstanceTypePrice
 from .instance_type_price_search import InstanceTypePriceSearch
 from .instance_type_region import InstanceTypeRegion
 from .instance_type_search import InstanceTypeSearch
+from .instance_type_with_prices import InstanceTypeWithPrices
+from .instance_type_with_prices_search import InstanceTypeWithPricesSearch
 from .instance_usage import InstanceUsage
 from .instance_usage_filter import InstanceUsageFilter
 from .instant_range import InstantRange
@@ -294,6 +297,7 @@ __all__ = [
     "AttributeValue",
     "AuthenticationProvider",
     "AutoShutdown",
+    "AwsAccountRoleCredential",
     "AwsComputeSource",
     "AwsCredential",
     "AwsFleetComputeSource",
@@ -393,6 +397,8 @@ __all__ = [
     "InstanceTypePriceSearch",
     "InstanceTypeRegion",
     "InstanceTypeSearch",
+    "InstanceTypeWithPrices",
+    "InstanceTypeWithPricesSearch",
     "InstanceUsage",
     "InstanceUsageFilter",
     "InstantRange",
