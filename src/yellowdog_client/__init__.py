@@ -29,12 +29,12 @@ Finding data
 
 To retrieve all currently active compute requirements::
 
-    requirements = client.compute_client.find_all_compute_requirements()
+    requirements = client.compute_client.get_compute_requirements(ComputeRequirementSearch()).list_all()
 
 To retrieve the details of a specific compute requirement::
 
     req_id = "ydid:compreq:000000:6c9343f5-ddd7-4903-bcbf-12c7a6bf1e1a"
-    requirement = client.compute_client.find_compute_requirement_by_id(req_id)
+    requirement = client.compute_client.get_compute_requirement_by_id(req_id)
 
 To get latest status of a compute requirement::
 
@@ -61,36 +61,6 @@ created in the `YellowDog Platform Portal`::
     )
 
     compute_requirement = client.compute_client.provision_compute_requirement_template(request)
-
-Alternatively, you can provision compute directly from a source, as follows:
-
-.. code-block:: python
-
-    from yellowdog_client.model import OciInstancesComputeSource
-    from yellowdog_client.model import ComputeRequirement
-    from yellowdog_client.model import SingleSourceProvisionStrategy
-
-    requirement = ComputeRequirement(
-        name="my OCI requirement for 3 nodes"
-        namespace="MY_PROJECT"
-        tag="tests"
-        provisionStrategy=SingleSourceProvisionStrategy(
-            sources=[
-                OciInstancesComputeSource(
-                    name="3 OCI instances",
-                    limit=3,
-                    credential="MY_KEYRING/OCI_CREDENTIAL",
-                    region="eu-frankfurt-1",
-                    availabilityDomain="hHlw:EU-FRANKFURT-1-AD-1",
-                    compartmentId="ocid1.compartment.oc1..unique_compartment_identifier",
-                    subnetId="ocid1.subnet.oc1.eu-frankfurt-1.unique_subnet_identifier",
-                    imageId="ocid1.image.oc1.eu-frankfurt-1.unique_image_identifier"
-                )
-            ]
-        )
-    )
-
-    requirement = client.compute_client.add_compute_requirement(requirement)
 
 .. note::
 
