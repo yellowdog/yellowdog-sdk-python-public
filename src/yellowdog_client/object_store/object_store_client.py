@@ -309,6 +309,14 @@ class ObjectStoreClient(Closeable, Dispatcher):
         """
         return self._service_proxy.get_object_detail(namespace=namespace, object_name=name)
 
+    def get_namespaces(self) -> List[str]:
+        """
+        Returns a list of all namespaces in ``object store``
+
+        :return: all namespaces
+        """
+        return self._service_proxy.get_namespaces()
+
     def get_namespace_object_paths(self, request: ObjectPathsRequest) -> List[ObjectPath]:
         """
         Returns a list of all stored objects within namespace in ``object store``

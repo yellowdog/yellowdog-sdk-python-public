@@ -55,6 +55,9 @@ class ObjectStoreServiceProxy(AbstractObjectStoreServiceProxy, Dispatcher):
     def get_object_detail(self, namespace: str, object_name: str) -> ObjectDetail:
         return self._proxy.get(ObjectDetail, "objects/%s/object" % namespace, params={'name': object_name})
 
+    def get_namespaces(self) -> List[str]:
+        return self._proxy.get(List[str], "objects")
+
     def get_namespace_object_paths(self, request: ObjectPathsRequest) -> List[ObjectPath]:
         object_paths_slice = self.get_namespace_object_paths_slice(self._sliced(request, SliceReference()))
         object_paths = object_paths_slice.items
