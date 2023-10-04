@@ -32,7 +32,9 @@ def _determine_subclass(value: dict, cls: type) -> type:
     else:
         return cls
 
-    subclasses = all_subclasses(cls)
+    naked_class = get_naked_class(cls)
+
+    subclasses = all_subclasses(naked_class)
     if subclasses:
         return {getattr(x, type_field): x for x in subclasses}[type_value]
     return cls

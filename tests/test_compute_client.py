@@ -1,13 +1,13 @@
 import pytest
-
-from util.api import MockApi, HttpMethod
-from util.data import make, make_string
 from yellowdog_client import PlatformClient
 from yellowdog_client.compute import ComputeClient
 from yellowdog_client.model import ServicesSchema, ApiKey, ComputeRequirement, SingleSourceProvisionStrategy, \
     SimulatorComputeSource, \
     ComputeRequirementStatus, ComputeRequirementSearch, SortDirection, Slice, Instance, SimulatorInstance, \
-    InstanceSearch, InstanceId
+    InstanceSearch, InstanceId, ComputeSourceTemplate, ComputeSource, StringAttributeValue
+
+from util.api import MockApi, HttpMethod
+from util.data import make, make_string
 
 
 @pytest.fixture
@@ -80,6 +80,21 @@ def test_can_search_instances(mock_api, compute_client: ComputeClient):
     mock_api.verify_all_requests_called()
 
 
+def test_can_get_compute_source_template_with_user_attributes(mock_api, compute_client: ComputeClient):
+    compute_source_template = _make_compute_source_template()
+
+    expected = mock_api.mock(
+        f"/compute/templates/sources/{compute_source_template.id}",
+        HttpMethod.GET,
+        response=compute_source_template
+    )
+
+    actual = compute_client.get_compute_source_template(compute_source_template.id)
+
+    assert actual == expected
+    mock_api.verify_all_requests_called()
+
+
 def _make_compute_requirement() -> ComputeRequirement:
     compute_requirement = ComputeRequirement(
         name=make_string(),
@@ -103,3 +118,22 @@ def _make_instance() -> Instance:
         sourceId=make_string()
     )
     return instance
+
+
+def _make_compute_source() -> ComputeSource:
+    return SimulatorComputeSource(
+        name=make_string()
+    )
+
+
+def _make_compute_source_template() -> ComputeSourceTemplate:
+    template = ComputeSourceTemplate(
+        source=_make_compute_source(),
+        attributes=[
+            StringAttributeValue(attribute="key", value=make_string())
+        ]
+    )
+
+    template.id = make_string()
+
+    return template

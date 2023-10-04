@@ -20,7 +20,7 @@ pip install tox                    # Install tox
 tox -e dev                         # Create a development environment
 ```
 
-Pycharm may then be configured by adding .tox/py37/bin/python as the interpreter.
+Pycharm may then be configured by adding .tox/dev/bin/python as the interpreter.
 
 ### Testing Against Multiple Python Versions
 

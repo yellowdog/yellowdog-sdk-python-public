@@ -32,7 +32,7 @@ def get(slice_reference: SliceReference) -> Slice[str]:
 
     if slice_reference.sliceId is None:
         return Slice(items=data_source[0:3], nextSliceId="slice-reference-1")
-    if slice_reference.sliceId is "slice-reference-1":
+    if slice_reference.sliceId == "slice-reference-1":
         return Slice(items=data_source[3:6], nextSliceId="slice-reference-2")
-    if slice_reference.sliceId is "slice-reference-2":
+    if slice_reference.sliceId == "slice-reference-2":
         return Slice(items=data_source[6:9], nextSliceId=None)
