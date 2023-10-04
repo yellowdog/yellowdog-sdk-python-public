@@ -6,6 +6,7 @@ from .add_application_request import AddApplicationRequest
 from .add_application_response import AddApplicationResponse
 from .add_configured_worker_pool_request import AddConfiguredWorkerPoolRequest
 from .add_configured_worker_pool_response import AddConfiguredWorkerPoolResponse
+from .add_group_request import AddGroupRequest
 from .add_node_actions_request import AddNodeActionsRequest
 from .add_user_request import AddUserRequest
 from .add_user_response import AddUserResponse
@@ -118,6 +119,10 @@ from .gcs_namespace_storage_configuration import GcsNamespaceStorageConfiguratio
 from .google_cloud_credential import GoogleCloudCredential
 from .grant_application_access_request import GrantApplicationAccessRequest
 from .grant_user_access_request import GrantUserAccessRequest
+from .group import Group
+from .group_role import GroupRole
+from .group_search import GroupSearch
+from .group_summary import GroupSummary
 from .identified import Identified
 from .image_access import ImageAccess
 from .image_os_type import ImageOsType
@@ -196,6 +201,8 @@ from .oci_instances_compute_source import OciInstancesComputeSource
 from .oci_namespace_storage_configuration import OciNamespaceStorageConfiguration
 from .operating_system_licence import OperatingSystemLicence
 from .password_state import PasswordState
+from .permission import Permission
+from .permission_detail import PermissionDetail
 from .price import Price
 from .processor_architecture import ProcessorArchitecture
 from .provision_template_worker_pool_request import ProvisionTemplateWorkerPoolRequest
@@ -207,6 +214,9 @@ from .region_search import RegionSearch
 from .requirement_allowance import RequirementAllowance
 from .requirements_allowance import RequirementsAllowance
 from .retry_properties import RetryProperties
+from .role import Role
+from .role_search import RoleSearch
+from .role_summary import RoleSummary
 from .run_specification import RunSpecification
 from .s3_namespace_storage_configuration import S3NamespaceStorageConfiguration
 from .services_schema import ServicesSchema
@@ -243,6 +253,7 @@ from .task_summary import TaskSummary
 from .transfer_status_response import TransferStatusResponse
 from .transfer_summary_response import TransferSummaryResponse
 from .update_application_request import UpdateApplicationRequest
+from .update_group_request import UpdateGroupRequest
 from .update_keyring_request import UpdateKeyringRequest
 from .update_user_request import UpdateUserRequest
 from .usage_type import UsageType
@@ -272,6 +283,7 @@ __all__ = [
     "AddApplicationResponse",
     "AddConfiguredWorkerPoolRequest",
     "AddConfiguredWorkerPoolResponse",
+    "AddGroupRequest",
     "AddNodeActionsRequest",
     "AddUserRequest",
     "AddUserResponse",
@@ -384,6 +396,10 @@ __all__ = [
     "GoogleCloudCredential",
     "GrantApplicationAccessRequest",
     "GrantUserAccessRequest",
+    "Group",
+    "GroupRole",
+    "GroupSearch",
+    "GroupSummary",
     "Identified",
     "ImageAccess",
     "ImageOsType",
@@ -462,6 +478,8 @@ __all__ = [
     "OciNamespaceStorageConfiguration",
     "OperatingSystemLicence",
     "PasswordState",
+    "Permission",
+    "PermissionDetail",
     "Price",
     "ProcessorArchitecture",
     "ProvisionTemplateWorkerPoolRequest",
@@ -473,6 +491,9 @@ __all__ = [
     "RequirementAllowance",
     "RequirementsAllowance",
     "RetryProperties",
+    "Role",
+    "RoleSearch",
+    "RoleSummary",
     "RunSpecification",
     "S3NamespaceStorageConfiguration",
     "ServicesSchema",
@@ -509,6 +530,7 @@ __all__ = [
     "TransferStatusResponse",
     "TransferSummaryResponse",
     "UpdateApplicationRequest",
+    "UpdateGroupRequest",
     "UpdateKeyringRequest",
     "UpdateUserRequest",
     "UsageType",
