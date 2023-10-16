@@ -4,7 +4,7 @@ The YellowDog SDK allows you to integrate the YellowDog Platform into your Pytho
 
 ## Usage
 
-Please refer to [the full documentation](https://docs.yellowdog.co/api/python/index.html).
+Please refer to [the full documentation](https://docs.yellowdog.co/#/sdk/python-sdk).
 
 ## Advanced
 
