@@ -1,11 +1,16 @@
-from typing import Callable
-# noinspection PyCompatibility
-from concurrent.futures import Future
+from __future__ import annotations
 
-from .predicated_work_subscription_event_listener import PredicatedWorkSubscriptionEventListener
-from yellowdog_client.scheduler import work_client as wc
+import typing
+from concurrent.futures import Future
+from typing import Callable
+
 from yellowdog_client.model import WorkRequirement
 from yellowdog_client.model import WorkRequirementStatus
+
+if typing.TYPE_CHECKING:
+    from yellowdog_client.scheduler.work_client import WorkClient
+
+from .predicated_work_subscription_event_listener import PredicatedWorkSubscriptionEventListener
 
 
 class WorkRequirementHelper:
@@ -33,16 +38,11 @@ class WorkRequirementHelper:
     .. versionadded:: 0.4.0
     """
 
-    _work_requirement = None  # type: WorkRequirement
-    _work_service_client_impl = None  # type: wc.WorkClient
+    def __init__(self, work_requirement: WorkRequirement, work_service_client_impl: WorkClient) -> None:
+        self._work_requirement: WorkRequirement = work_requirement
+        self._work_service_client_impl: WorkClient = work_service_client_impl
 
-    def __init__(self, work_requirement, work_service_client_impl):
-        # type: (WorkRequirement, wc.WorkClient) -> None
-        self._work_requirement = work_requirement
-        self._work_service_client_impl = work_service_client_impl
-
-    def when_requirement_matches(self, predicate):
-        # type: (Callable[[WorkRequirement], bool]) -> Future
+    def when_requirement_matches(self, predicate: Callable[[WorkRequirement], bool]) -> Future:
         """
         Returns a :class:`concurrent.futures.Future` that is completed when the specified predicate evaluates to true.
 
@@ -81,8 +81,7 @@ class WorkRequirementHelper:
         )
         return future
 
-    def when_requirement_status_is(self, status):
-        # type: (WorkRequirementStatus) -> Future
+    def when_requirement_status_is(self, status: WorkRequirementStatus) -> Future:
         """
         Returns a task that is completed when the work requirement status matches the specified status.
 

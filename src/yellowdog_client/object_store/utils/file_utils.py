@@ -9,11 +9,10 @@ class TimeoutException(Exception):
 
 
 class FileUtils(object):
-    DEFAULT_FILE_WAIT_TIMEOUT_MS = 5000                 # type: int
+    DEFAULT_FILE_WAIT_TIMEOUT_MS: int = 5000
 
     @staticmethod
-    def with_retry(action, timeout_ms=None):
-        # type: (Callable, Optional[int]) -> None
+    def with_retry(action: Callable, timeout_ms: Optional[int] = None) -> None:
         if timeout_ms is None:
             timeout_ms = FileUtils.DEFAULT_FILE_WAIT_TIMEOUT_MS
         start_time_ms = time.time() * 1000
@@ -28,8 +27,7 @@ class FileUtils(object):
         raise TimeoutException("Failed to perform action within allotted time.")
 
     @staticmethod
-    def rename_replace(source_file_path, destination_file_path):
-        # type: (str, str) -> None
+    def rename_replace(source_file_path: str, destination_file_path: str) -> None:
         if os.path.isfile(destination_file_path):
             os.remove(destination_file_path)
         FileUtils.with_retry(action=lambda: shutil.move(source_file_path, destination_file_path))

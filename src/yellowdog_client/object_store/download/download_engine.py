@@ -21,9 +21,15 @@ from yellowdog_client.object_store.abstracts import AbstractNotificationDispatch
 
 
 class DownloadEngine(AbstractDownloadEngine):
-    def __init__(self, service_proxy, thread_factory, file_writer_factory, notification_dispatcher,
-                 chunk_transfer_throttle, download_thread_count):
-        # type: (Proxy, ThreadFactory, WriterFactory, NotificationDispatcher, ChunkThrottle, int) -> None
+    def __init__(
+            self,
+            service_proxy: Proxy,
+            thread_factory: ThreadFactory,
+            file_writer_factory: WriterFactory,
+            notification_dispatcher: NotificationDispatcher,
+            chunk_transfer_throttle: ChunkThrottle,
+            download_thread_count: int
+    ) -> None:
         super(DownloadEngine, self).__init__(
             service_proxy=service_proxy,
             thread_factory=thread_factory,
@@ -31,10 +37,9 @@ class DownloadEngine(AbstractDownloadEngine):
             chunk_transfer_throttle=chunk_transfer_throttle,
             transfer_thread_count=download_thread_count
         )
-        self._file_writer_factory = file_writer_factory         # type: WriterFactory
+        self._file_writer_factory: WriterFactory = file_writer_factory
 
-    def _transfer_chunk(self, chunk_transfer_task, chunk_hash):
-        # type: (ChunkDownloadTask, str) -> str
+    def _transfer_chunk(self, chunk_transfer_task: ChunkDownloadTask, chunk_hash: str) -> str:
         chunk_data, chunk_hash = self._service_proxy.download_chunk(
             session_id=chunk_transfer_task.session_id,
             chunk_number=chunk_transfer_task.chunk_number,
@@ -61,9 +66,9 @@ class DownloadEngine(AbstractDownloadEngine):
     def build_download_batch(self) -> AbstractDownloadBatchBuilder:
         return DownloadBatchBuilder(download_engine=self, service_proxy=self._service_proxy)
 
-    def create_download_session(self, file_namespace, file_name, destination_folder_path, destination_file_name=None,
-                                transfer_properties=None):
-        # type: (str, str, str, Optional[str], Optional[TransferProperties]) -> AbstractSession
+    def create_download_session(self, file_namespace: str, file_name: str, destination_folder_path: str,
+                                destination_file_name: Optional[str] = None,
+                                transfer_properties: Optional[TransferProperties] = None) -> AbstractSession:
         if destination_file_name is None:
             destination_file_name = file_name
         if transfer_properties is None:

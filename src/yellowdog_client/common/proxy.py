@@ -5,11 +5,11 @@ from typing import TypeVar, Type, Dict, Optional
 from requests import Request, Session, Response, HTTPError
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-
 from yellowdog_client.model.exceptions import BaseCustomException
+
 from .credentials import ApiKeyAuthenticationHeadersProvider
 from .json import Json
-from .server_sent_events.sse4python import EventSource, WebRequestFactory
+from .server_sent_events.sse4python import EventSource
 
 T = TypeVar('T')
 
@@ -73,7 +73,7 @@ class Proxy:
     def stream(self, url: str = "") -> EventSource:
         return EventSource(
             url=self._base_url + url,
-            factory=WebRequestFactory(self._authentication_headers_provider)
+            auth=self._authentication_headers_provider
         )
 
     def execute_with_timeout(self, method: str, timeout: int, url: str = "", data: object = None,

@@ -2,12 +2,11 @@ from typing import Tuple
 
 
 class ServiceClientException(Exception):
-    __http_status_code = None       # type: int
-    __message = None                # type: str
-    __details = None                # type: Tuple[str]
+    __http_status_code: int = None
+    __message: str = None
+    __details: Tuple[str] = None
 
-    def __init__(self, http_status_code, message, details=()):
-        # type: (int, str, Tuple[str]) -> None
+    def __init__(self, http_status_code: int, message: str, details: Tuple[str] = ()) -> None:
         super(ServiceClientException, self).__init__()
         self.__http_status_code = http_status_code
         self.__message = message

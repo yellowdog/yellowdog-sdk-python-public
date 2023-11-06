@@ -1,9 +1,15 @@
-from concurrent.futures import Future
+from __future__ import annotations
 
+import typing
+from concurrent.futures import Future
 from typing import Callable
 
 from yellowdog_client.model import ComputeRequirement
 from yellowdog_client.model import ComputeRequirementStatus
+
+if typing.TYPE_CHECKING:
+    from yellowdog_client.compute import ComputeClient
+
 from .predicated_compute_subscription_event_listener import PredicatedComputeSubscriptionEventListener \
     as ComputeSubscriptionListener
 
@@ -19,24 +25,22 @@ class ComputeRequirementHelper:
     :param compute_service_client_impl: The compute service client.
     """
 
-    __compute_requirement = None  # type: ComputeRequirement
-    __compute_service_client_impl = None  # type: 'ComputeClient'
+    __compute_requirement: ComputeRequirement = None
+    __compute_service_client_impl: ComputeClient = None
 
-    def __init__(self, compute_requirement, compute_service_client_impl):
-        # type: (ComputeRequirement, 'ComputeClient') -> None
+    def __init__(self, compute_requirement: ComputeRequirement, compute_service_client_impl: ComputeClient) -> None:
         self.__compute_requirement = compute_requirement
         self.__compute_service_client_impl = compute_service_client_impl
 
-    def _build_requirement_listener(self, future, predicate):
-        # type: (Future, Callable[[ComputeRequirement], bool]) -> ComputeSubscriptionListener
+    def _build_requirement_listener(self, future: Future,
+                                    predicate: Callable[[ComputeRequirement], bool]) -> ComputeSubscriptionListener:
         return ComputeSubscriptionListener(
             future=future,
             predicate=predicate,
             compute_client=self.__compute_service_client_impl
         )
 
-    def when_requirement_matches(self, predicate):
-        # type: (Callable[[ComputeRequirement], bool]) -> Future
+    def when_requirement_matches(self, predicate: Callable[[ComputeRequirement], bool]) -> Future:
         """
         Returns a :class:`concurrent.futures.Future` that is completed when the specified predicate evaluates to true.
 
@@ -72,12 +76,10 @@ class ComputeRequirementHelper:
         return future
 
     @staticmethod
-    def _requirement_status_predicate(status, requirement):
-        # type: (ComputeRequirementStatus, ComputeRequirement) -> bool
+    def _requirement_status_predicate(status: ComputeRequirementStatus, requirement: ComputeRequirement) -> bool:
         return requirement.status == status
 
-    def when_requirement_status_is(self, status):
-        # type: (ComputeRequirementStatus) -> Future
+    def when_requirement_status_is(self, status: ComputeRequirementStatus) -> Future:
         """
         Returns a task that is completed when the compute requirement status matches the specified status.
 

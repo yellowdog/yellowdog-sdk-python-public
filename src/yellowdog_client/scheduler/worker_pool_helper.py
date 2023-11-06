@@ -1,15 +1,19 @@
+from __future__ import annotations
+
+import typing
 from concurrent.futures import Future
 from typing import Callable
 
-from yellowdog_client.scheduler import worker_pool_client as wpc
 from yellowdog_client.model import WorkerPool, WorkerPoolStatus
 from yellowdog_client.scheduler import predicated_worker_pool_subscription_event_listener as pwpsel
 
+if typing.TYPE_CHECKING:
+    from yellowdog_client.scheduler.worker_pool_client import WorkerPoolClient
 
 class WorkerPoolHelper:
-    def __init__(self, worker_pool: WorkerPool, worker_pool_client: 'wpc.WorkerPoolClient'):
+    def __init__(self, worker_pool: WorkerPool, worker_pool_client: WorkerPoolClient):
         self._worker_pool: WorkerPool = worker_pool
-        self._worker_pool_client: 'wpc.WorkerPoolClient' = worker_pool_client
+        self._worker_pool_client: WorkerPoolClient = worker_pool_client
 
     def when_worker_pool_matches(self, predicate: Callable[[WorkerPool], bool]) -> Future:
         future = Future()

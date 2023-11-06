@@ -8,15 +8,13 @@ from yellowdog_client.object_store.abstracts import AbstractNotificationDispatch
 
 
 class InternalNotificationDispatcher(AbstractNotificationDispatcher):
-    def __init__(self, thread_factory):
-        # type: (BackgroundThreadFactory) -> None
-        self._action_queue = Queue()                            # type: Queue
-        self.cancellation_token = CancellationToken()           # type: CancellationToken
+    def __init__(self, thread_factory: BackgroundThreadFactory) -> None:
+        self._action_queue: Queue = Queue()
+        self.cancellation_token: CancellationToken = CancellationToken()
         self.background_thread = thread_factory.new_thread(target=self.dispatch_notifications)
         self.background_thread.start()
 
-    def dispatch_notifications(self):
-        # type: () -> None
+    def dispatch_notifications(self) -> None:
         while not self.cancellation_token.cancelled:
             try:
                 action = self._action_queue.get()
@@ -24,7 +22,6 @@ class InternalNotificationDispatcher(AbstractNotificationDispatcher):
             except Exception as ex:
                 print("Failed to dispatch message. %s" % str(ex))
 
-    def dispatch(self, event_handler, event_args):
-        # type: (Callable, Any) -> None
+    def dispatch(self, event_handler: Callable, event_args: Any) -> None:
         if event_handler:
             self._action_queue.put(item=lambda: event_handler(event_args))

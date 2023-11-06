@@ -8,14 +8,14 @@ class FileTransferException(Exception):
     Custom exception type for errors, related to object store. Inherits :class:`Exception`
     """
 
-    error_type = None               # type: ErrorType
+    error_type: ErrorType = None
     """
     Type of exception
     
     :type: :class:`yellowdog_client.model.ErrorType`
     """
 
-    detail = None  # type: Set[str]
+    detail: Set[str] = None
     """
     Details of exception
     

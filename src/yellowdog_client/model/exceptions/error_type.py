@@ -29,8 +29,7 @@ class ErrorType(Enum):
     Unknown = "Unknown"
     """"""
 
-    def is_fatal_session_error(self):
-        # type: () -> bool
+    def is_fatal_session_error(self) -> bool:
         """
         Method, which returns True, if error type is fatal for session to continue or complete. The fatal statuses are
         the following:

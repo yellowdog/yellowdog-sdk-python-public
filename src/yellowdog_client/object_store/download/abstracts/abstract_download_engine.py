@@ -10,7 +10,12 @@ class AbstractDownloadEngine(AbstractTransferEngine):
     def build_download_batch(self) -> AbstractDownloadBatchBuilder:
         raise NotImplementedError("Needs implementation")
 
-    def create_download_session(self, file_namespace, file_name, destination_folder_path, destination_file_name=None,
-                                transfer_properties=None):
-        # type: (str, str, str, Optional[str], Optional[TransferProperties]) -> AbstractSession
+    def create_download_session(
+            self,
+            file_namespace: str,
+            file_name: str,
+            destination_folder_path: str,
+            destination_file_name: Optional[str] = None,
+            transfer_properties: Optional[TransferProperties] = None
+    ) -> AbstractSession:
         raise NotImplementedError("Needs implementation")

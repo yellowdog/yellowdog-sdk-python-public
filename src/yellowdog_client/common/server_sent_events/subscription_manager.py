@@ -31,8 +31,7 @@ class SubscriptionManager(Closeable):
         return subscription
 
     @staticmethod
-    def add_to_subscription(subscription, listener):
-        # type: (Subscription, SubscriptionEventListener) -> Subscription
+    def add_to_subscription(subscription: Subscription, listener: SubscriptionEventListener) -> Subscription:
         if listener is not None:
             subscription.add_subscription_listener(listener=listener)
         return subscription
@@ -45,8 +44,7 @@ class SubscriptionManager(Closeable):
             else:
                 self.create_subscription(id, listener)
 
-    def remove_listener(self, listener):
-        # type: (SubscriptionEventListener) -> None
+    def remove_listener(self, listener: SubscriptionEventListener) -> None:
         with self._sync_lock:
             for subscription_key in self._subscriptions:
                 subscription = self._subscriptions[subscription_key]
@@ -55,8 +53,7 @@ class SubscriptionManager(Closeable):
                 if subscription.is_closed():
                     break
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         for object_id in self._subscriptions:
             self._subscriptions[object_id].close()
         self._subscriptions.clear()

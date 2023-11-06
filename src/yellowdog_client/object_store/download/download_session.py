@@ -20,13 +20,20 @@ class DownloadSession(AbstractSession):
         Inherits from :class:`yellowdog_client.object_store.abstracts.AbstractSession`
     """
 
-    _chunk_task_type = ChunkDownloadTask                        # type: type
-    _file_io = None                                             # type: MemoryMappedFileWriter
-    ON_PROGRESS_EXTENSION = ".inprogress"                       # type: str
+    _chunk_task_type: type = ChunkDownloadTask
+    _file_io: MemoryMappedFileWriter = None
+    ON_PROGRESS_EXTENSION: str = ".inprogress"
 
-    def __init__(self, file_reader_factory, service_session_facade, file_path, file_size,       # NOSONAR
-                 chunk_size, chunk_count, file_retry_count):
-        # type: (MemoryMappedFileWriterFactory, ServiceSessionFacade, str, int, int, int, int) -> None
+    def __init__(
+            self,
+            file_reader_factory: MemoryMappedFileWriterFactory,
+            service_session_facade: ServiceSessionFacade,
+            file_path: str,
+            file_size: int,
+            chunk_size: int,
+            chunk_count: int,
+            file_retry_count: int
+    ) -> None:
         super(DownloadSession, self).__init__(
             direction=FileTransferDirection.Download,
             service_session_facade=service_session_facade,
@@ -36,26 +43,22 @@ class DownloadSession(AbstractSession):
             chunk_count=chunk_count,
             file_retry_count=file_retry_count
         )
-        self._file_writer_factory = file_reader_factory         # type: MemoryMappedFileWriterFactory
-        self._file_path_in_progress = "%s%s" % (file_path, self.ON_PROGRESS_EXTENSION)      # type: str
+        self._file_writer_factory: MemoryMappedFileWriterFactory = file_reader_factory
+        self._file_path_in_progress: str = "%s%s" % (file_path, self.ON_PROGRESS_EXTENSION)
 
-    def _on_build_chunk_transfer_task(self, task):
-        # type: (ChunkDownloadTask) -> None
+    def _on_build_chunk_transfer_task(self, task: ChunkDownloadTask) -> None:
         task.write_chunk_data = lambda chunk_data: self._file_io.write_bytes(
             offset=self._calculate_chunk_offset(chunk_number=task.chunk_number),
             str_bytes=chunk_data
         )
 
-    def _on_complete(self):
-        # type: () -> None
+    def _on_complete(self) -> None:
         FileUtils.rename_replace(self._file_path_in_progress, self.file_path)
 
-    def _on_abort(self):
-        # type: () -> None
+    def _on_abort(self) -> None:
         FileUtils.with_retry(action=lambda: os.remove(self._file_path_in_progress))
 
-    def _start_transfer(self):
-        # type: () -> None
+    def _start_transfer(self) -> None:
         if self.file_size != 0:
             file_writer = self._file_writer_factory.new_writer(
                 file_path=self._file_path_in_progress,

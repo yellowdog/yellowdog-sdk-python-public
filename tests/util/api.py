@@ -1,12 +1,17 @@
 from http import HTTPStatus
 
 from enum import Enum
+from io import BufferedIOBase, BytesIO
+
 from pytest_httpserver import HTTPServer
-from typing import Type, TypeVar, Optional, Dict, Union, List
+from typing import Type, TypeVar, Optional, Dict, Union, List, BinaryIO, Iterator
 from werkzeug.wrappers import Response
 
 from util.data import make
 from yellowdog_client.common.json import Json
+
+from util.sse.event_broadcaster import EventBroadcaster
+from util.sse.sse_server import SseServer
 
 
 class HttpMethod(Enum):
@@ -84,6 +89,21 @@ class MockApi:
             request_handler.respond_with_data(Json.dumps(response), content_type="application/json",
                                               headers=response_headers)
             return response
+
+    def mock_stream(self, uri: str, sse_server: SseServer) -> None:
+        request_handler = self.httpserver.expect_oneshot_request(
+            uri=uri,
+            method=str(HttpMethod.GET)
+        )
+        print(f"Expecting stream: GET {uri}")
+        request_handler.respond_with_response(Response(
+            status=HTTPStatus.FOUND,
+            headers={"Location": sse_server.get_sse_url()}
+        ))
+
+    def _generate_stream(self, output_stream: BinaryIO) -> Iterator[bytes]:
+        while not output_stream.closed:
+            yield output_stream.read(1)
 
     def verify_all_requests_called(self):
         uncalled_handlers = len(self.httpserver.oneshot_handlers)

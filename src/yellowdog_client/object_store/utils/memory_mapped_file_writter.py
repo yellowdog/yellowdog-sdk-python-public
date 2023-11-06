@@ -6,8 +6,7 @@ from yellowdog_client.common import Closeable
 
 
 class MemoryMappedFileWriter(Closeable):
-    def __init__(self, file_path, file_size):
-        # type: (str, int) -> None
+    def __init__(self, file_path: str, file_size: int) -> None:
         directory_path = os.path.dirname(file_path)
         if not os.path.isdir(directory_path):
             os.makedirs(directory_path)
@@ -26,8 +25,7 @@ class MemoryMappedFileWriter(Closeable):
         )
         self._write_lock = Lock()
 
-    def write_bytes(self, offset, str_bytes):
-        # type: (int, str) -> None
+    def write_bytes(self, offset: int, str_bytes: str) -> None:
         """this method must be thread safe"""
         if not isinstance(str_bytes, bytes):
             str_bytes = str_bytes.encode('utf-8')
@@ -36,7 +34,6 @@ class MemoryMappedFileWriter(Closeable):
             self._memory_file.write(str_bytes)
             self._memory_file.flush(offset, len(str_bytes))
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._memory_file.close()
         self._created_file.close()

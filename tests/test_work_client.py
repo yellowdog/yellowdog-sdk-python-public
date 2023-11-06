@@ -1,13 +1,15 @@
 import datetime
 
 import pytest
+from yellowdog_client import PlatformClient
+from yellowdog_client.common.json import Json
+from yellowdog_client.model import ServicesSchema, ApiKey, WorkRequirement, Slice, Task, TaskSearch, InstantRange, \
+    TaskStatus, SortDirection, WorkRequirementStatus
+from yellowdog_client.scheduler import WorkClient
 
 from util.api import MockApi, HttpMethod
 from util.data import make, make_string
-from yellowdog_client import PlatformClient
-from yellowdog_client.model import ServicesSchema, ApiKey, WorkRequirement, Slice, Task, TaskSearch, InstantRange, \
-    TaskStatus, SortDirection
-from yellowdog_client.scheduler import WorkClient
+from util.sse.sse_server import SseServer
 
 
 @pytest.fixture
@@ -83,3 +85,31 @@ def test_can_find_tasks(mock_api: MockApi, work_client: WorkClient):
 
     assert actual == expected
     mock_api.verify_all_requests_called()
+
+
+def test_can_wait_for_work_requirement_status(mock_api: MockApi):
+    work_requirement = WorkRequirement(
+        namespace="test",
+        name="test",
+        taskGroups=[]
+    )
+    work_requirement.id = "ydid:workreq:000000:6c9343f5-ddd7-4903-bcbf-12c7a6bf1e1a"
+    work_requirement.status = WorkRequirementStatus.PENDING
+
+    with SseServer(f"/work/requirements/{work_requirement.id}/updates") as sse_server:
+        platform_client = PlatformClient.create(
+            ServicesSchema(defaultUrl=sse_server.get_root_url()),
+            make(ApiKey)
+        )
+        work_client = platform_client.work_client
+
+        sse_server.forward(f"/work/requirements/{work_requirement.id}", mock_api.url())
+        mock_api.mock(f"/work/requirements/{work_requirement.id}", HttpMethod.GET, response=work_requirement)
+
+        work_requirement_helper = work_client.get_work_requirement_helper(work_requirement)
+
+        future = work_requirement_helper.when_requirement_status_is(WorkRequirementStatus.COMPLETED)
+        work_requirement.status = WorkRequirementStatus.COMPLETED
+        sse_server.broadcast(type="entity_updated", data=Json.dumps(work_requirement), id=work_requirement.id)
+        work_requirement = future.result(2)
+        assert work_requirement.status == WorkRequirementStatus.COMPLETED

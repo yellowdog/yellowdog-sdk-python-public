@@ -16,8 +16,7 @@ class DownloadBatch(AbstractTransferBatch):
         Inherits from :class:`yellowdog_client.object_store.abstracts.AbstractTransferBatch`
     """
 
-    def __init__(self, sessions):
-        # type: (List[AbstractSession]) -> None
+    def __init__(self, sessions: List[AbstractSession]) -> None:
         super(DownloadBatch, self).__init__(
             transfer_direction=FileTransferDirection.Download,
             sessions=sessions

@@ -1,9 +1,7 @@
 from typing import List, Callable, Dict
 from threading import Lock
-# noinspection PyCompatibility
 from concurrent.futures import Future
 
-# noinspection PyPackageRequirements
 from pydispatch import Dispatcher
 
 from .abstract_self_binding_status_predicate import SelfBindingStatusMatchPredicate
@@ -36,43 +34,39 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
     """
     ON_STATUS_CHANGED = "on_status_changed"
     _events_ = [ON_STATUS_CHANGED]
-    direction = None            # type: FileTransferDirection
+    direction: FileTransferDirection = None
     """
     Batch transfer direction
     
     :type: :class:`yellowdog_client.object_store.model.FileTransferDirection`
     """
 
-    status = None               # type: FileTransferStatus
+    status: FileTransferStatus = None
     """
     Status of batch transfer
     
     :rtype: :class:`yellowdog_client.object_store.model.FileTransferStatus`
     """
 
-    def __init__(self, transfer_direction, sessions):
-        # type: (FileTransferDirection, List[AbstractSession]) -> None
+    def __init__(self, transfer_direction: FileTransferDirection, sessions: List[AbstractSession]) -> None:
         super(AbstractTransferBatch, self).__init__()
         self.direction = transfer_direction
-        self._transfer_sessions = sessions                  # type: List[AbstractSession]
+        self._transfer_sessions: List[AbstractSession] = sessions
         self.status = FileTransferStatus.Ready
-        self._when_status_matches_lock = Lock()             # type: Lock
-        self._when_status_matches_predicates = {}           # type: Dict[Future, Callable[[FileTransferStatus], bool]]
+        self._when_status_matches_lock: Lock = Lock()
+        self._when_status_matches_predicates: Dict[Future, Callable[[FileTransferStatus], bool]] = {}
 
         self.add_session_status_listener(listener=self._notify_session_status)
 
-    def _set_status(self, status):
-        # type: (FileTransferStatus) -> None
+    def _set_status(self, status: FileTransferStatus) -> None:
         if self.status != status:
             self.status = status
             self._on_status_changed(event_args=BatchTransferEventArgs(status=self.status))
 
-    def _on_status_changed(self, event_args):
-        # type: (BatchTransferEventArgs) -> None
+    def _on_status_changed(self, event_args: BatchTransferEventArgs) -> None:
         self.emit(self.ON_STATUS_CHANGED, event_args=event_args)
 
-    def _notify_session_status(self, event_args):
-        # type: (FileTransferEventArgs) -> None
+    def _notify_session_status(self, event_args: FileTransferEventArgs) -> None:
         session_status = event_args.transfer_status
         if session_status in (FileTransferStatus.Uploading, FileTransferStatus.Downloading):
             if self.status == FileTransferStatus.Ready:
@@ -88,8 +82,7 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
             self._set_status(status=FileTransferStatus.Aborted)
             self.abort()
 
-    def start(self):
-        # type: () -> None
+    def start(self) -> None:
         """
         Starts batch transfer for uploads or downloads
         """
@@ -100,8 +93,7 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
             self.abort()
             raise Exception("Unable to start all transfer sessions in batch")
 
-    def abort(self):
-        # type: () -> None
+    def abort(self) -> None:
         """
         Aborts all transfer sessions, stopping any further chunk uploads or downloads
         """
@@ -111,16 +103,14 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
         except Exception:
             raise Exception("Unable to abort all transfer sessions in batch")
 
-    def get_transfer_sessions(self):
-        # type: () -> List[AbstractSession]
+    def get_transfer_sessions(self) -> List[AbstractSession]:
         """
         :return: A collection of all transfer sessions within the batch
         :rtype: List[:class:`yellowdog_client.object_store.abstracts.AbstractSession`]
         """
         return [x for x in self._transfer_sessions]
 
-    def add_session_status_listener(self, listener):
-        # type: (Callable[[FileTransferEventArgs], None]) -> None
+    def add_session_status_listener(self, listener: Callable[[FileTransferEventArgs], None]) -> None:
         """
         Binds event callback to all sessions within batch for status changes
 
@@ -133,8 +123,7 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
         """
         [session.bind(on_status_changed=listener) for session in self._transfer_sessions]
 
-    def add_session_progress_listener(self, listener):
-        # type: (Callable[[FileTransferProgressEventArgs], None]) -> None
+    def add_session_progress_listener(self, listener: Callable[[FileTransferProgressEventArgs], None]) -> None:
         """
         Binds event callback to all sessions within batch for progress changes
 
@@ -147,8 +136,7 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
         """
         [session.bind(on_progress=listener) for session in self._transfer_sessions]
 
-    def add_session_error_listener(self, listener):
-        # type: (Callable[[FileTransferErrorEventArgs], None]) -> None
+    def add_session_error_listener(self, listener: Callable[[FileTransferErrorEventArgs], None]) -> None:
         """
         Binds event callback to all sessions within batch for errors
 
@@ -161,8 +149,7 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
         """
         [session.bind(on_error=listener) for session in self._transfer_sessions]
 
-    def when_status_matches(self, status_predicate):
-        # type: (Callable[[FileTransferStatus], bool]) -> Future
+    def when_status_matches(self, status_predicate: Callable[[FileTransferStatus], bool]) -> Future:
         """
         Assigns a transfer batch status predicate, which, when evaluates to True, sets a value for
         :class:`concurrent.futures.Future`::
@@ -189,8 +176,7 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
             self.bind(on_status_changed=self._when_status_matches_callback)
         return future
 
-    def _when_status_matches_callback(self, event_args):
-        # type: (BatchTransferEventArgs) -> None
+    def _when_status_matches_callback(self, event_args: BatchTransferEventArgs) -> None:
         with self._when_status_matches_lock:
             futures_and_predicates_dict = self._get_when_status_matches_futures()
             for future in futures_and_predicates_dict:
@@ -199,8 +185,7 @@ class AbstractTransferBatch(Dispatcher, SelfBindingStatusMatchPredicate):
                     future.set_result(result=self)
                     self._remove_when_status_matches_future(future=future)
 
-    def get_statistics(self):
-        # type: () -> TransferStatistics
+    def get_statistics(self) -> TransferStatistics:
         """
         Calculates transfer statistics for batch transfer
 

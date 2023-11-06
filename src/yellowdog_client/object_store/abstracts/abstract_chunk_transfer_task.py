@@ -7,11 +7,11 @@ from yellowdog_client.common import CountdownEvent
 
 
 class AbstractChunkTransferTask(object):
-    session_id = None  # type: str
-    chunk_number = None  # type: int
-    chunk_size = None  # type: int
-    abort_token = None  # type: CancellationToken
-    abort_lock = None  # type: Lock
-    transfer_countdown = None           # type: CountdownEvent
-    notify_chunk_transferred = None     # type: Callable[[str], None]
-    notify_exception = None             # type: Callable[[Exception], None]
+    session_id: str = None
+    chunk_number: int = None
+    chunk_size: int = None
+    abort_token: CancellationToken = None
+    abort_lock: Lock = None
+    transfer_countdown: CountdownEvent = None
+    notify_chunk_transferred: Callable[[str], None] = None
+    notify_exception: Callable[[Exception], None] = None

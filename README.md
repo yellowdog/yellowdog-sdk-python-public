@@ -22,6 +22,18 @@ tox -e dev                         # Create a development environment
 
 Pycharm may then be configured by adding .tox/dev/bin/python as the interpreter.
 
+### Debugging
+
+When debugging the SDK via Pycharm, Pycharm will offer to install the CPython extensions to speed up debugging.
+
+In order for this to work on Ubuntu, you need to first have the dev package for the version of Python you are debugging against.
+
+For example:
+
+```shell
+sudo apt-get install python3.8-dev
+```
+
 ### Testing Against Multiple Python Versions
 
 ```shell
@@ -30,9 +42,15 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 # Update package indexes
 sudo apt-get update
 # Install all supported versions of Python                                              
-sudo apt-get install python3.7 python3.7-distutils python3.8 python3.8-distutils python3.9 python3.9-distutils python3.10 python3.10-distutils python3.11 python3.11-distutils 
+sudo apt-get install python3.8 python3.8-distutils python3.9 python3.9-distutils python3.10 python3.10-distutils python3.11 python3.11-distutils python3.12 python3.12-distutils  
 # Install tox
 python3 -m pip install tox  
 # Run tests for each Python version                                             
 python3 -m tox                                                           
 ```
+
+### Debugging
+
+When debugging the SDK via Pycharm, Pycharm will offer to install the CPython extensions to speed up debugging.
+
+In order for this to work on ubuntu, you need to have the dev package for the version of Python

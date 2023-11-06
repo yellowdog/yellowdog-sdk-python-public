@@ -1,5 +1,7 @@
-from typing import Optional
+from __future__ import annotations
+
 import math
+from typing import Optional
 
 
 class TransferStatistics(object):
@@ -7,43 +9,42 @@ class TransferStatistics(object):
     Calculated file transfer statistics
     """
 
-    bytes_transferred = None                    # type: int
+    bytes_transferred: int = None
     """
     A number of bytes transferred
     
     :type: int
     """
 
-    total_bytes = None                          # type: int
+    total_bytes: int = None
     """
     A total number of bytes
     
     :type: int
     """
 
-    percentage_transferred = None               # type: float
+    percentage_transferred: float = None
     """
     Percentage of batch transferred
     
     :type: float
     """
 
-    transfer_speed_bits_per_second = None       # type: int
+    transfer_speed_bits_per_second: int = None
     """
     Total transfer speed in bits per second
     
     :type: int
     """
 
-    estimated_seconds_remaining = None          # type: int
+    estimated_seconds_remaining: int = None
     """
     Estimated time remaining for transfer to finish
     
     :type: int
     """
 
-    def __init__(self, bytes_transferred=None, total_bytes=None, elapsed_millis=None):
-        # type: (Optional[int], Optional[int], Optional[int]) -> None
+    def __init__(self, bytes_transferred: Optional[int] = None, total_bytes: Optional[int] = None, elapsed_millis: Optional[int] = None) -> None:
         self.bytes_transferred = bytes_transferred
         self.total_bytes = total_bytes
         if bytes_transferred is not None and total_bytes is not None and elapsed_millis is not None:
@@ -59,8 +60,7 @@ class TransferStatistics(object):
             )
 
     @staticmethod
-    def _calculate_percentage_transferred(bytes_transferred, total_bytes):
-        # type: (int, int) -> float
+    def _calculate_percentage_transferred(bytes_transferred: int, total_bytes: int) -> float:
         if bytes_transferred == 0:
             return 0
         elif bytes_transferred == total_bytes:
@@ -69,28 +69,24 @@ class TransferStatistics(object):
             return (100.0 * bytes_transferred) / total_bytes
 
     @staticmethod
-    def _calculate_transfer_speed_bits_per_second(bytes_transferred, elapsed_millis):
-        # type: (int, int) -> int
+    def _calculate_transfer_speed_bits_per_second(bytes_transferred: int, elapsed_millis: int) -> int:
         if elapsed_millis == 0 or bytes_transferred == 0:
             return 0
         else:
             return (bytes_transferred * 8000) / elapsed_millis
 
     @staticmethod
-    def _estimate_seconds_remaining(bytes_transferred, total_bytes, transfer_speed_bits_per_second):
-        # type: (int, int, int) -> int
+    def _estimate_seconds_remaining(bytes_transferred: int, total_bytes: int, transfer_speed_bits_per_second: int) -> int:
         if transfer_speed_bits_per_second == 0 or bytes_transferred == total_bytes:
             return 0
         else:
             return math.ceil((total_bytes - bytes_transferred) * 8 / transfer_speed_bits_per_second)
 
     @staticmethod
-    def build_new_empty():
-        # type: () -> TransferStatistics
+    def build_new_empty() -> TransferStatistics:
         return TransferStatistics(bytes_transferred=0, total_bytes=0, elapsed_millis=0)
 
-    def __add__(self, other):
-        # type: (TransferStatistics) -> TransferStatistics
+    def __add__(self, other: TransferStatistics) -> TransferStatistics:
         res = TransferStatistics()
         res.bytes_transferred = self.bytes_transferred + other.bytes_transferred
         res.total_bytes = self.total_bytes + other.total_bytes

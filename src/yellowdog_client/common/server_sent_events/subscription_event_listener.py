@@ -4,8 +4,7 @@ T = TypeVar('T')
 
 
 class SubscriptionEventListener(Generic[T]):
-    def updated(self, obj):
-        # type: (TypeVar) -> None
+    def updated(self, obj: TypeVar) -> None:
         """
         Invoked when an updated instance of the object is received from ``YellowDog Platform``.
 
@@ -13,8 +12,7 @@ class SubscriptionEventListener(Generic[T]):
         """
         raise NotImplementedError("updated Needs implementation")
 
-    def subscription_error(self, error):
-        # type: (Exception) -> None
+    def subscription_error(self, error: Exception) -> None:
         """
         Invoked if an error occurs on the subscription associated with this listener.
 
@@ -22,8 +20,7 @@ class SubscriptionEventListener(Generic[T]):
         """
         raise NotImplementedError("subscription_error Needs implementation")
 
-    def subscription_cancelled(self):
-        # type: () -> None
+    def subscription_cancelled(self) -> None:
         """
         Invoked if the server cancels the subscription associated with this listener
         """

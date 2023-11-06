@@ -1,7 +1,6 @@
 from typing import List, Tuple, Optional
 from urllib.parse import quote
 
-# noinspection PyPackageRequirements
 from pydispatch import Dispatcher
 
 from yellowdog_client.common.json import Json

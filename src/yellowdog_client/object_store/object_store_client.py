@@ -1,7 +1,6 @@
 import os
 from typing import List, Optional, Union
 
-# noinspection PyPackageRequirements
 from pydispatch import Dispatcher
 
 from yellowdog_client.model import Slice
@@ -68,8 +67,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
         self._disposed_value = False
 
     @property
-    def active_sessions(self):
-        # type: () -> List[AbstractSession]
+    def active_sessions(self) -> List[AbstractSession]:
         """
         :getter: List of active sessions for both upload and download
         :rtype: List of :class:`yellowdog_client.object_store.abstracts.AbstractSession`
@@ -77,8 +75,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._upload_engine.active_sessions + self._download_engine.active_sessions
 
     @property
-    def all_sessions(self):
-        # type: () -> List[AbstractSession]
+    def all_sessions(self) -> List[AbstractSession]:
         """
         :getter: List of all sessions (active and inactive) for both upload and download
         :rtype: List of :class:`yellowdog_client.object_store.abstracts.AbstractSession`
@@ -86,8 +83,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._upload_engine.all_sessions + self._download_engine.all_sessions
 
     @property
-    def uploads_active(self):
-        # type: () -> bool
+    def uploads_active(self) -> bool:
         """
         :getter: True, if any of upload threads are actively transferring chunks
         :rtype: bool
@@ -95,8 +91,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._upload_engine.transfer_threads_alive
 
     @property
-    def downloads_active(self):
-        # type: () -> bool
+    def downloads_active(self) -> bool:
         """
         :getter: True, if any of download threads are actively transferring chunks
         :rtype: bool
@@ -104,8 +99,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._download_engine.transfer_threads_alive
 
     @property
-    def upload_chunk_size(self):
-        # type: () -> int
+    def upload_chunk_size(self) -> int:
         """
         :getter: chunk size in bytes, used for uploads
         :setter: chunk size in bytes for upload to use
@@ -114,13 +108,11 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._upload_engine.chunk_size
 
     @upload_chunk_size.setter
-    def upload_chunk_size(self, value):
-        # type: (int) -> None
+    def upload_chunk_size(self, value: int) -> None:
         self._upload_engine.chunk_size = value
 
     @property
-    def download_chunk_size(self):
-        # type: () -> int
+    def download_chunk_size(self) -> int:
         """
         :getter: chunk size in bytes, used for downloads
         :setter: chunk size in bytes for download to use
@@ -129,13 +121,11 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._download_engine.chunk_size
 
     @download_chunk_size.setter
-    def download_chunk_size(self, value):
-        # type: (int) -> None
+    def download_chunk_size(self, value: int) -> None:
         self._download_engine.chunk_size = value
 
     @property
-    def upload_file_retry_count(self):
-        # type: () -> int
+    def upload_file_retry_count(self) -> int:
         """
         :getter: number of retries, which will be attempted in case of upload failure
         :setter: number of retries for uploads to use
@@ -144,13 +134,11 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._upload_engine.file_retry_count
 
     @upload_file_retry_count.setter
-    def upload_file_retry_count(self, value):
-        # type: (int) -> None
+    def upload_file_retry_count(self, value: int) -> None:
         self._upload_engine.file_retry_count = value
 
     @property
-    def download_file_retry_count(self):
-        # type: () -> int
+    def download_file_retry_count(self) -> int:
         """
         :getter: number of retries, which will be attempted in case of download failure
         :setter: number of retries for downloads to use
@@ -159,13 +147,11 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._download_engine.file_retry_count
 
     @download_file_retry_count.setter
-    def download_file_retry_count(self, value):
-        # type: (int) -> None
+    def download_file_retry_count(self, value: int) -> None:
         self._download_engine.file_retry_count = value
 
     @property
-    def upload_max_bytes_per_second(self):
-        # type: () -> int
+    def upload_max_bytes_per_second(self) -> int:
         """
         :getter: limit of bytes per second allowed for upload. If equal to 0, no throttle is applied
         :setter: sets a number of max bytes per second for upload engine to allow transferring
@@ -174,13 +160,11 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._upload_engine.max_bytes_per_second
 
     @upload_max_bytes_per_second.setter
-    def upload_max_bytes_per_second(self, value):
-        # type: (int) -> None
+    def upload_max_bytes_per_second(self, value: int) -> None:
         self._upload_engine.max_bytes_per_second = value
 
     @property
-    def download_max_bytes_per_second(self):
-        # type: () -> int
+    def download_max_bytes_per_second(self) -> int:
         """
         :getter: limit of bytes per second allowed for download. If equal to 0, no throttle is applied
         :setter: sets a number of max bytes per second for download engine to allow transferring
@@ -189,8 +173,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
         return self._download_engine.max_bytes_per_second
 
     @download_max_bytes_per_second.setter
-    def download_max_bytes_per_second(self, value):
-        # type: (int) -> None
+    def download_max_bytes_per_second(self, value: int) -> None:
         self._download_engine.max_bytes_per_second = value
 
     def build_upload_batch(self) -> AbstractUploadBatchBuilder:
@@ -211,9 +194,8 @@ class ObjectStoreClient(Closeable, Dispatcher):
         """
         return self._download_engine.build_download_batch()
 
-    def create_upload_session(self, file_namespace, source_file_path, destination_file_name=None,
-                              transfer_properties=None):
-        # type: (str, str, Optional[str], Optional[TransferProperties]) -> AbstractSession
+    def create_upload_session(self, file_namespace: str, source_file_path: str, destination_file_name: Optional[str] = None,
+                              transfer_properties: Optional[TransferProperties] = None) -> AbstractSession:
         """
         Creates a new upload session for the file
 
@@ -238,9 +220,8 @@ class ObjectStoreClient(Closeable, Dispatcher):
             transfer_properties=transfer_properties
         )
 
-    def create_download_session(self, file_namespace, file_name, destination_folder_path, destination_file_name=None,
-                                transfer_properties=None):
-        # type: (str, str, str, Optional[str], Optional[TransferProperties]) -> AbstractSession
+    def create_download_session(self, file_namespace: str, file_name: str, destination_folder_path: str, destination_file_name: Optional[str] = None,
+                                transfer_properties: Optional[TransferProperties] = None) -> AbstractSession:
         """
         Creates a new upload session for the file
 
@@ -265,8 +246,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
             transfer_properties=transfer_properties
         )
 
-    def start_transfers(self):
-        # type: () -> None
+    def start_transfers(self) -> None:
         """
         Enables both uploads and downloads for yellowdog object store. Required to make any transfers using the client
         """
@@ -347,8 +327,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
 
         self._service_proxy.delete_objects(namespace=namespace, object_paths=object_paths)
 
-    def put_namespace_storage_configuration(self, namespace_storage_configuration):
-        # type: (NamespaceStorageConfiguration) -> NamespaceStorageConfiguration
+    def put_namespace_storage_configuration(self, namespace_storage_configuration: NamespaceStorageConfiguration) -> NamespaceStorageConfiguration:
         """
         Stores cloud provider storage configuration within ``YellowDog object store``
 
@@ -357,8 +336,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
         """
         return self._service_proxy.put_namespace_storage_configuration(namespace_storage_configuration)
 
-    def delete_namespace_storage_configuration(self, namespace):
-        # type: (str) -> None
+    def delete_namespace_storage_configuration(self, namespace: str) -> None:
         """
         Removes all cloud provider storage configurations within namespace in ``YellowDog object store``
 
@@ -367,8 +345,7 @@ class ObjectStoreClient(Closeable, Dispatcher):
         """
         self._service_proxy.delete_namespace_storage_configuration(namespace=namespace)
 
-    def get_namespace_storage_configurations(self):
-        # type: () -> List[NamespaceStorageConfiguration]
+    def get_namespace_storage_configurations(self) -> List[NamespaceStorageConfiguration]:
         """
         Returns all available storage configurations found within ``YellowDog object store``
 
@@ -377,24 +354,20 @@ class ObjectStoreClient(Closeable, Dispatcher):
         """
         return self._service_proxy.get_namespace_storage_configurations()
 
-    def _dispatch_error_notification(self, event_args):
-        # type: (ClientErrorEventArgs) -> None
+    def _dispatch_error_notification(self, event_args: ClientErrorEventArgs) -> None:
         self._notification_dispatcher.dispatch(event_handler=self._on_error, event_args=event_args)
 
     @dispatch_async
-    def _on_error(self, event_args):
-        # type: (ClientErrorEventArgs) -> None
+    def _on_error(self, event_args: ClientErrorEventArgs) -> None:
         return self.emit(name=self.ON_ERROR, event_args=event_args)
 
-    def _close(self, disposing):
-        # type: (bool) -> None
+    def _close(self, disposing: bool) -> None:
         if not self._disposed_value:
             if disposing:
                 self.abort_all_transfers()
             self._disposed_value = True
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """
         Aborts all transfers for upload and download. When executing :meth:`__exit__`, method :meth:`close` is invoked
         """

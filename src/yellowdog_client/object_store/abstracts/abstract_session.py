@@ -1,5 +1,4 @@
 import os
-# noinspection PyCompatibility
 from concurrent.futures import Future
 from datetime import timedelta
 from threading import Lock
@@ -7,7 +6,6 @@ from typing import Optional, Dict, List, Callable, Set, cast
 
 import time
 from cancel_token import CancellationToken
-# noinspection PyPackageRequirements
 from pydispatch import Dispatcher
 
 from yellowdog_client.common import CountdownEvent, Closeable
@@ -66,70 +64,76 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
     ON_PROGRESS = "on_progress"
     ON_STATUS_CHANGED = "on_status_changed"
     _events_ = [ON_ERROR, ON_PROGRESS, ON_STATUS_CHANGED]
-    _chunk_task_type = None  # type: type
-    _file_io = None  # type: Optional[Closeable]
+    _chunk_task_type: type = None
+    _file_io: Optional[Closeable] = None
 
-    file_path = None  # type: str
+    file_path: str = None
     """
     File path of object being transferred
     
     :type: str
     """
 
-    file_name = None  # type: str
+    file_name: str = None
     """
     File name of object being transferred
     
     :type: str
     """
 
-    file_size = None            # type: int
+    file_size: int = None
     """
     File size in bytes of object being transferred
     
     :type: int
     """
 
-    direction = None            # type: FileTransferDirection
+    direction: FileTransferDirection = None
     """
     File transfer direction
     
     :type: :class:`yellowdog_client.object_store.model.FileTransferDirection`
     """
 
-    def __init__(self, direction, service_session_facade, file_path, file_size, chunk_size, chunk_count,    # NOSONAR
-                 file_retry_count):
-        # type: (FileTransferDirection, SessionFacade, str, int, int, int, int) -> None
+    def __init__(
+            self,
+            direction: FileTransferDirection,
+            service_session_facade: SessionFacade,
+            file_path: str,
+            file_size: int,
+            chunk_size: int,
+            chunk_count: int,
+            file_retry_count: int
+    ) -> None:
         super(AbstractSession, self).__init__()
-        self._service_session_facade = service_session_facade                       # type: SessionFacade
+        self._service_session_facade: SessionFacade = service_session_facade
         self.file_path = file_path
         self.file_name = os.path.basename(self.file_path)
         self.file_size = file_size
         self.direction = direction
-        self._chunk_size = chunk_size  # type: int
-        self._chunk_count = chunk_count  # type: int
-        self._last_chunk_size = self.calculate_last_chunk_size(
+        self._chunk_size: int = chunk_size
+        self._chunk_count: int = chunk_count
+        self._last_chunk_size: int = self.calculate_last_chunk_size(
             chunk_size=chunk_size, chunk_count=chunk_count, file_size=file_size
-        )  # type: int
-        self._file_retry_count = file_retry_count  # type: int
+        )
+        self._file_retry_count: int = file_retry_count
 
-        self._abort_token_source = CancellationToken()  # type: CancellationToken
-        self._abort_lock = Lock()  # type: Lock
-        self._file_io = None  # type: Optional[Closeable]
-        self._when_status_matches_lock = Lock()  # type: Lock
-        self._when_status_matches_predicates = {}  # type: Dict[Future, Callable[[FileTransferStatus], bool]]
-        self._chunk_hashes = {}  # type: Dict[int, str]
-        self._bytes_transferred_lock = Lock()  # type: Lock
-        self._bytes_transferred = 0  # type: int
-        self._session_start = None  # type: Optional[float]
-        self._session_stop = None  # type: Optional[float]
-        self._status = FileTransferStatus.Ready  # type: FileTransferStatus
+        self._abort_token_source: CancellationToken = CancellationToken()
+        self._abort_lock: Lock = Lock()
+        self._file_io: Optional[Closeable] = None
+        self._when_status_matches_lock: Lock = Lock()
+        self._when_status_matches_predicates: Dict[Future, Callable[[FileTransferStatus], bool]] = {}
+        self._chunk_hashes: Dict[int, str] = {}
+        self._bytes_transferred_lock: Lock = Lock()
+        self._bytes_transferred: int = 0
+        self._session_start: Optional[float] = None
+        self._session_stop: Optional[float] = None
+        self._status: FileTransferStatus = FileTransferStatus.Ready
         # To detect redundant calls
-        self._disposed_value = False  # type: bool
+        self._disposed_value: bool = False
 
     @property
-    def elapsed(self):
-        # type: () -> timedelta
+    def elapsed(self) -> timedelta:
         """
         :return: Time duration, since the session was started
         :rtype: :class:`datetime.timedelta`
@@ -146,8 +150,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
             return timedelta()
 
     @property
-    def bytes_transferred(self):
-        # type: () -> int
+    def bytes_transferred(self) -> int:
         """
         :return: A number of bytes transferred during the session
         :rtype: int
@@ -156,14 +159,12 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
             return self._bytes_transferred
 
     @bytes_transferred.setter
-    def bytes_transferred(self, value):
-        # type: (int) -> None
+    def bytes_transferred(self, value: int) -> None:
         with self._bytes_transferred_lock:
             self._bytes_transferred = value
 
     @property
-    def status(self):
-        # type: () -> FileTransferStatus
+    def status(self) -> FileTransferStatus:
         """
         :return: Latest status of transfer session
         :rtype: :class:`yellowdog_client.object_store.model.FileTransferStatus`
@@ -171,8 +172,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
         return self._status
 
     @status.setter
-    def status(self, value):
-        # type: (FileTransferStatus) -> None
+    def status(self, value: FileTransferStatus) -> None:
         if self._status is not None:
             self._status = value
             self._notify_on_status_changed(status=self._status)
@@ -182,8 +182,8 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
             self._file_io.close()
             self._file_io = None
 
-    def _build_chunk_task(self, chunk_number, chunk_size, transfer_countdown):
-        # type: (int, int, CountdownEvent) -> AbstractChunkTransferTask
+    def _build_chunk_task(self, chunk_number: int, chunk_size: int,
+                          transfer_countdown: CountdownEvent) -> AbstractChunkTransferTask:
         task = self._chunk_task_type()
         task.session_id = self._service_session_facade.session_id
         task.chunk_number = chunk_number
@@ -200,8 +200,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
 
         return task
 
-    def _reset_bytes_transferred(self, transferred_chunks):
-        # type: (List[int]) -> None
+    def _reset_bytes_transferred(self, transferred_chunks: List[int]) -> None:
         if len(transferred_chunks) > 0:
             if self._chunk_count in transferred_chunks:
                 self.bytes_transferred = ((len(transferred_chunks) - 1) * self._chunk_size) + self._last_chunk_size
@@ -210,8 +209,8 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
         else:
             self._bytes_transferred = 0
 
-    def _transfer_chunks(self, chunk_numbers, abort_token, enqueue_chunk_task_method):
-        # type: (List[int], CancellationToken, Callable[[AbstractChunkTransferTask], None]) -> List[int]
+    def _transfer_chunks(self, chunk_numbers: List[int], abort_token: CancellationToken,
+                         enqueue_chunk_task_method: Callable[[AbstractChunkTransferTask], None]) -> List[int]:
         # init the countdown event to the number of chunks still to transfer
         chunk_countdown = CountdownEvent(count=len(chunk_numbers))
 
@@ -244,8 +243,8 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
             print("Chunk transfer failed. %s" % str(ex))
         return chunk_numbers
 
-    def transfer_chunks_with_retries(self, enqueue_chunk_task_method):
-        # type: (Callable[[AbstractChunkTransferTask], None]) -> None
+    def transfer_chunks_with_retries(self,
+                                     enqueue_chunk_task_method: Callable[[AbstractChunkTransferTask], None]) -> None:
         try:
             abort_token = self._abort_token_source
             chunk_numbers = [x for x in range(1, self._chunk_count + 1)]
@@ -298,8 +297,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
             self._notify_on_exception(exception=ex)
             self._fail()
 
-    def _notify_on_chunk_error(self, exception):
-        # type: (Exception) -> None
+    def _notify_on_chunk_error(self, exception: Exception) -> None:
         self._notify_on_exception(exception=exception)
 
         # noinspection PyUnresolvedReferences
@@ -320,8 +318,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
                 message=str(exception)
             )
 
-    def _notify_on_error(self, error_type, message, detail=None):
-        # type: (ErrorType, str, Optional[Set[str]]) -> None
+    def _notify_on_error(self, error_type: ErrorType, message: str, detail: Optional[Set[str]] = None) -> None:
         if not detail:
             detail = set()
 
@@ -336,12 +333,10 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
 
         self._service_session_facade.dispatch_notification(event_handler=self._on_error, event_args=event_args)
 
-    def _on_error(self, event_args):
-        # type: (FileTransferErrorEventArgs) -> None
+    def _on_error(self, event_args: FileTransferErrorEventArgs) -> None:
         return self.emit(name=self.ON_ERROR, event_args=event_args)
 
-    def _notify_on_progress(self, bytes_transferred):
-        # type: (int) -> None
+    def _notify_on_progress(self, bytes_transferred: int) -> None:
         self._bytes_transferred += bytes_transferred
 
         event_args = FileTransferProgressEventArgs(
@@ -355,12 +350,10 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
 
         self._service_session_facade.dispatch_notification(event_handler=self._on_progress, event_args=event_args)
 
-    def _on_progress(self, event_args):
-        # type: (FileTransferProgressEventArgs) -> None
+    def _on_progress(self, event_args: FileTransferProgressEventArgs) -> None:
         return self.emit(name=self.ON_PROGRESS, event_args=event_args)
 
-    def _notify_on_status_changed(self, status):
-        # type: (FileTransferStatus) -> None
+    def _notify_on_status_changed(self, status: FileTransferStatus) -> None:
         event_args = FileTransferEventArgs(
             full_path=self.file_path,
             file_name=self.file_name,
@@ -369,12 +362,10 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
 
         self._service_session_facade.dispatch_notification(event_handler=self._on_status_changed, event_args=event_args)
 
-    def _on_status_changed(self, event_args):
-        # type: (FileTransferEventArgs) -> None
+    def _on_status_changed(self, event_args: FileTransferEventArgs) -> None:
         return self.emit(name=self.ON_STATUS_CHANGED, event_args=event_args)
 
-    def _fail(self):
-        # type: () -> None
+    def _fail(self) -> None:
         try:
             self._release_file()
             self.status = FileTransferStatus.Failed
@@ -382,21 +373,18 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
         except Exception as ex_any:
             self._notify_on_exception(exception=ex_any)
 
-    def _on_chunk_transferred(self, chunk_number, chunk_size, chunk_hash):
-        # type: (int, int, str) -> None
+    def _on_chunk_transferred(self, chunk_number: int, chunk_size: int, chunk_hash: str) -> None:
         self._notify_on_progress(bytes_transferred=chunk_size)
         self._chunk_hashes[chunk_number] = chunk_hash
 
-    def _on_build_chunk_transfer_task(self, task):
-        # type: (AbstractChunkTransferTask) -> None
+    def _on_build_chunk_transfer_task(self, task: AbstractChunkTransferTask) -> None:
         raise NotImplementedError("_on_build_chunk_transfer_task Needs implementation by subclass")
 
-    def _calculate_chunk_offset(self, chunk_number):
-        # type: (int) -> int
+    def _calculate_chunk_offset(self, chunk_number: int) -> int:
         return self.calculate_chunk_offset(chunk_number=chunk_number, chunk_size=self._chunk_size)
 
-    def _start_transfer_session(self, file_io, enqueue_chunk_task_method):
-        # type: (Closeable, Callable[[AbstractChunkTransferTask], None]) -> None
+    def _start_transfer_session(self, file_io: Closeable,
+                                enqueue_chunk_task_method: Callable[[AbstractChunkTransferTask], None]) -> None:
         self._file_io = file_io
         self._session_end = None
         self._session_start = time.time()
@@ -408,12 +396,10 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
         elif self.direction == FileTransferDirection.Upload:
             self.status = FileTransferStatus.Uploading
 
-    def _start_transfer(self):
-        # type: () -> None
+    def _start_transfer(self) -> None:
         raise NotImplementedError("_start_transfer Needs implementation by subclass")
 
-    def start(self):
-        # type: () -> None
+    def start(self) -> None:
         """
         Starts transfer session, allowing transfer engine to proceed with chunk upload or download
         """
@@ -425,8 +411,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
         except Exception as ex:
             self._notify_on_exception(exception=ex)
 
-    def _complete(self):
-        # type: () -> None
+    def _complete(self) -> None:
         self._release_file()
         self.status = FileTransferStatus.Validating
         chunk_hashes_keys = [x for x in self._chunk_hashes]
@@ -438,12 +423,10 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
         self._on_complete()
         self.status = FileTransferStatus.Completed
 
-    def _on_complete(self):
-        # type: () -> None
-        pass    # Can be overwritten by Subclass
+    def _on_complete(self) -> None:
+        pass  # Can be overwritten by Subclass
 
-    def _abort_transfer(self, final_status, abort_server):
-        # type: (FileTransferStatus, bool) -> None
+    def _abort_transfer(self, final_status: FileTransferStatus, abort_server: bool) -> None:
         self._abort_token_source.cancel()
 
         with self._abort_lock:
@@ -460,8 +443,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
 
         self.status = new_status
 
-    def when_status_matches(self, status_predicate):
-        # type: (Callable[[FileTransferStatus], bool]) -> Future
+    def when_status_matches(self, status_predicate: Callable[[FileTransferStatus], bool]) -> Future:
         """
         Assigns a session status predicate, which, when evaluates to True, sets a value for
         :class:`concurrent.futures.Future`::
@@ -491,8 +473,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
             self.bind(on_status_changed=self._when_status_matches_callback)
         return future
 
-    def _when_status_matches_callback(self, event_args):
-        # type: (FileTransferEventArgs) -> None
+    def _when_status_matches_callback(self, event_args: FileTransferEventArgs) -> None:
         with self._when_status_matches_lock:
             futures_and_predicates_dict = self._get_when_status_matches_futures()
             for future in futures_and_predicates_dict:
@@ -501,8 +482,7 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
                     future.set_result(result=self)
                     self._remove_when_status_matches_future(future=future)
 
-    def get_statistics(self):
-        # type: () -> TransferStatistics
+    def get_statistics(self) -> TransferStatistics:
         """
         Calculates transfer statistics for transfer session
 
@@ -514,35 +494,30 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
             elapsed_millis=self.elapsed.microseconds / 1000
         )
 
-    def abort(self):
-        # type: () -> None
+    def abort(self) -> None:
         """
         Aborts any ongoing chunk transfers and prevents from continuing with new chunk transfers
         """
         self._abort_transfer(final_status=FileTransferStatus.Aborted, abort_server=True)
 
-    def _on_abort(self):
-        # type: () -> None
+    def _on_abort(self) -> None:
         # Needs implementation by Subclass
         pass
 
-    def _close(self, disposing):
-        # type: (bool) -> None
+    def _close(self, disposing: bool) -> None:
         if not self._disposed_value:
             if disposing:
                 self._release_file()
             self._disposed_value = True
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """
         Closes the session and releases any resources related to file transfer
         """
         self._close(disposing=True)
 
     @staticmethod
-    def calculate_last_chunk_size(chunk_size, chunk_count, file_size):
-        # type: (int, int, int) -> int
+    def calculate_last_chunk_size(chunk_size: int, chunk_count: int, file_size: int) -> int:
         return file_size - (chunk_size * (chunk_count - 1))
 
     @staticmethod

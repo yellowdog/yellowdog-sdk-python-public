@@ -4,8 +4,7 @@ import sys
 
 class ActionUtils(object):
     @staticmethod
-    def always_execute_both(action1, action2):
-        # type: (Callable, Callable) -> None
+    def always_execute_both(action1: Callable, action2: Callable) -> None:
         exceptions = []
 
         # noinspection PyBroadException

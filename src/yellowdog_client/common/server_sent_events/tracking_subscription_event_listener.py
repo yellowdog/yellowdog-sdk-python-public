@@ -1,17 +1,18 @@
 from copy import deepcopy
-from typing import TypeVar
+from typing import TypeVar, Optional
 
 from .subscription_event_listener import SubscriptionEventListener
 
+T = TypeVar('T')
+
 
 class TrackingSubscriptionEventListener(SubscriptionEventListener):
-    __previous = None  # type: TypeVar
+    __previous: Optional[T] = None
 
     def __init__(self):
         self.__previous = None
 
-    def _tracking_initialised(self, obj):
-        # type: (TypeVar) -> None
+    def _tracking_initialised(self, obj: T) -> None:
         """
         Invoked when this listener receives the first compute requirement event.
 
@@ -20,8 +21,7 @@ class TrackingSubscriptionEventListener(SubscriptionEventListener):
 
         raise NotImplementedError("_tracking_initialised Needs implementation")
 
-    def _changed(self, previous, latest):
-        # type: (TypeVar, TypeVar) -> None
+    def _changed(self, previous: T, latest: T) -> None:
         """
         Invoked on each object event received following the first one
 
@@ -30,8 +30,7 @@ class TrackingSubscriptionEventListener(SubscriptionEventListener):
         """
         raise NotImplementedError("_changed Needs implementation")
 
-    def updated(self, obj):
-        # type: (TypeVar) -> None
+    def updated(self, obj: T) -> None:
         if obj is None:
             return
 
@@ -44,11 +43,9 @@ class TrackingSubscriptionEventListener(SubscriptionEventListener):
         finally:
             self.__previous = copy
 
-    def subscription_error(self, error):
-        # type: (Exception) -> None
+    def subscription_error(self, error: Exception) -> None:
         raise NotImplementedError("subscription_error Needs implementation")
 
-    def subscription_cancelled(self):
-        # type: () -> None
+    def subscription_cancelled(self) -> None:
         raise NotImplementedError("subscription_cancelled Needs implementation")
 

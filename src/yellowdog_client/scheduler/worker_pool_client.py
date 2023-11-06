@@ -1,11 +1,17 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from datetime import timedelta
 from typing import List, Optional, TypeVar
 
-from .worker_pool_helper import WorkerPoolHelper
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
-from yellowdog_client.model import AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, ComputeRequirementTemplateUsage, ConfiguredWorkerPool, Node, NodeAction, NodeActionGroup, NodeActionQueueSnapshot, NodeSearch, ProvisionedWorkerPool, ProvisionedWorkerPoolProperties, Slice, SliceReference, WorkerPool, WorkerPoolSummary, WorkerPoolToken
+from yellowdog_client.model import AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, \
+    ComputeRequirementTemplateUsage, ConfiguredWorkerPool, Node, NodeAction, NodeActionGroup, NodeActionQueueSnapshot, \
+    NodeSearch, ProvisionedWorkerPool, ProvisionedWorkerPoolProperties, Slice, SliceReference, WorkerPool, \
+    WorkerPoolSummary, WorkerPoolToken
+
+from .worker_pool_helper import WorkerPoolHelper
 
 T = TypeVar('T', bound=WorkerPool)
 

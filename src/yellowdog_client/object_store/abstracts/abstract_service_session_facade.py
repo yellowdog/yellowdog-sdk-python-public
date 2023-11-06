@@ -9,36 +9,29 @@ from yellowdog_client.object_store.model import FileTransferEventArgs
 
 
 class AbstractServiceSessionFacade(object):
-    session_id = None                               # type: str
-    object_store_service_proxy = None               # type: AbstractObjectStoreServiceProxy
-    thread_factory = None                           # type: BackgroundThreadFactory
-    notification_dispatcher = None                  # type: AbstractNotificationDispatcher
+    session_id: str = None
+    object_store_service_proxy: AbstractObjectStoreServiceProxy = None
+    thread_factory: BackgroundThreadFactory = None
+    notification_dispatcher: AbstractNotificationDispatcher = None
 
-    def enqueue_chunk_upload(self, chunk_upload_task):
-        # type: (AbstractChunkTransferTask) -> None
+    def enqueue_chunk_upload(self, chunk_upload_task: AbstractChunkTransferTask) -> None:
         raise NotImplementedError("enqueue_chunk_upload Needs implementation")
 
-    def enqueue_chunk_download(self, chunk_download_task):
-        # type: (AbstractChunkTransferTask) -> None
+    def enqueue_chunk_download(self, chunk_download_task: AbstractChunkTransferTask) -> None:
         raise NotImplementedError("enqueue_chunk_download Needs implementation")
 
-    def abort(self):
-        # type: () -> None
+    def abort(self) -> None:
         raise NotImplementedError("abort Needs implementation")
 
-    def complete(self, summary_hash):
-        # type: (str) -> None
+    def complete(self, summary_hash: str) -> None:
         raise NotImplementedError("complete Needs implementation")
 
     @property
-    def server_chunks_transferred(self):
-        # type: () -> List[int]
+    def server_chunks_transferred(self) -> List[int]:
         raise NotImplementedError("server_chunks_transferred Needs implementation")
 
-    def create_thread(self, target):
-        # type: (Callable) -> BackgroundThread
+    def create_thread(self, target: Callable) -> BackgroundThread:
         raise NotImplementedError("create_thread Needs implementation")
 
-    def dispatch_notification(self, event_handler, event_args):
-        # type: (Callable, FileTransferEventArgs) -> None
+    def dispatch_notification(self, event_handler: Callable, event_args: FileTransferEventArgs) -> None:
         raise NotImplementedError("dispatch_notification Needs implementation")

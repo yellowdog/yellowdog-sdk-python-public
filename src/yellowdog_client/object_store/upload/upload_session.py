@@ -17,12 +17,19 @@ class UploadSession(AbstractSession):
         Inherits from :class:`yellowdog_client.object_store.abstracts.AbstractSession`
     """
 
-    _chunk_task_type = ChunkUploadTask                          # type: type
-    _file_io = None                                             # type: MemoryMappedFileReader
+    _chunk_task_type: type = ChunkUploadTask
+    _file_io: MemoryMappedFileReader = None
 
-    def __init__(self, file_reader_factory, service_session_facade, file_path, file_size,       # NOSONAR
-                 chunk_size, chunk_count, file_retry_count):
-        # type: (MemoryMappedFileReaderFactory, ServiceSessionFacade, str, int, int, int, int) -> None
+    def __init__(
+            self,
+            file_reader_factory: MemoryMappedFileReaderFactory,
+            service_session_facade: ServiceSessionFacade,
+            file_path: str,
+            file_size: int,
+            chunk_size: int,
+            chunk_count: int,
+            file_retry_count: int
+    ) -> None:
         super(UploadSession, self).__init__(
             direction=FileTransferDirection.Upload,
             service_session_facade=service_session_facade,
@@ -32,17 +39,15 @@ class UploadSession(AbstractSession):
             chunk_count=chunk_count,
             file_retry_count=file_retry_count
         )
-        self._file_reader_factory = file_reader_factory         # type: MemoryMappedFileReaderFactory
+        self._file_reader_factory: MemoryMappedFileReaderFactory = file_reader_factory
 
-    def _on_build_chunk_transfer_task(self, task):
-        # type: (ChunkUploadTask) -> None
+    def _on_build_chunk_transfer_task(self, task: ChunkUploadTask) -> None:
         task.read_chunk_data = lambda: self._file_io.read_bytes(
             offset=self._calculate_chunk_offset(chunk_number=task.chunk_number),
             size=task.chunk_size
         )
 
-    def _start_transfer(self):
-        # type: () -> None
+    def _start_transfer(self) -> None:
         file_reader = self._file_reader_factory.new_reader(file_path=self.file_path)
         self._start_transfer_session(
             file_io=file_reader,

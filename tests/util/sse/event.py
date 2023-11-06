@@ -3,9 +3,8 @@ from typing import Optional
 
 
 @dataclass
-class ServerSentEvent:
-    id: Optional[str] = None
-    # SSE Spec: 'The default event type is "message".'
-    type: str = "message"
+class Event:
+    type: Optional[str] = None
     data: Optional[str] = None
+    id: Optional[str] = None
     retry: Optional[int] = None

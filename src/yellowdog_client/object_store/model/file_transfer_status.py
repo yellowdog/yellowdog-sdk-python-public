@@ -21,8 +21,7 @@ class FileTransferStatus(Enum):
     Failed = "Failed"
     """"""
 
-    def is_active(self):
-        # type: () -> bool
+    def is_active(self) -> bool:
         """
         Method, which returns True, if status is considered active. The statuses are
         the following:
@@ -39,8 +38,7 @@ class FileTransferStatus(Enum):
         else:
             return False
 
-    def is_finished(self):
-        # type: () -> bool
+    def is_finished(self) -> bool:
         """
         Method, which returns True, if status is considered finished. The statuses are
         the following:

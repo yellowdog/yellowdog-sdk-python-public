@@ -1,22 +1,24 @@
 from threading import Lock
-from typing import Set
+from typing import Set, TypeVar, Type
 from copy import deepcopy
 
 from yellowdog_client.common import Closeable
+from yellowdog_client.common.json import Json
 from yellowdog_client.model.exceptions import InvalidOperationException
 from .subscription_event_listener import SubscriptionEventListener
 from .sse4python import EventSource
 from .sse4python import ServerSentEvent
 
+T = TypeVar('T')
+
 
 class Subscription(Closeable):
-    _sync_lock = None  # type: Lock
-    _id = None  # type: str
-    _listeners = set()  # type: Set[SubscriptionEventListener]
-    _event_source = None  # type: EventSource
+    _sync_lock: Lock = None
+    _id: str = None
+    _listeners: Set[SubscriptionEventListener] = set()
+    _event_source: EventSource = None
 
-    def __init__(self, sse, listener, class_type):
-        # type: (EventSource, SubscriptionEventListener, type) -> None
+    def __init__(self, sse: EventSource, listener: SubscriptionEventListener, class_type: Type[T]) -> None:
         self._sync_lock = Lock()
         self._id = hex(hash(self))
         self._listeners = set()
@@ -28,15 +30,13 @@ class Subscription(Closeable):
         self._event_source.bind(event_source_completed=self._notify_server_cancelled)
         self._event_source.start()
 
-    def __copy_listeners(self):
-        # type: () -> Set[SubscriptionEventListener]
+    def __copy_listeners(self) -> Set[SubscriptionEventListener]:
         with self._sync_lock:
             return set(x for x in self._listeners)
 
-    def _receive_event(self, message):
-        # type: (ServerSentEvent) -> None
-        if message.raw_data:
-            data = message.deserialize_data(class_type=self._class_type)
+    def _receive_event(self, message: ServerSentEvent) -> None:
+        if message.data:
+            data = Json.loads(message.data, self._class_type)
             for subscription_event_listener in self.__copy_listeners():
                 try:
                     object_copy = deepcopy(data)
@@ -44,40 +44,33 @@ class Subscription(Closeable):
                 except Exception as ex:
                     print(str(ex))    # ignored. Failed to notify listeners for some reason
 
-    def _notify_error(self, error):
-        # type: (Exception) -> None
+    def _notify_error(self, error: Exception) -> None:
         for subscription_event_listener in self.__copy_listeners():
             subscription_event_listener.subscription_error(error=error)
 
-    def _notify_server_cancelled(self):
-        # type: () -> None
+    def _notify_server_cancelled(self) -> None:
         for subscription_event_listener in self.__copy_listeners():
             subscription_event_listener.subscription_cancelled()
 
-    def add_subscription_listener(self, listener):
-        # type: (SubscriptionEventListener) -> None
+    def add_subscription_listener(self, listener: SubscriptionEventListener) -> None:
         if self._event_source.is_closed:
             raise InvalidOperationException("Subscription is not active")
         with self._sync_lock:
             self._listeners.add(listener)
 
-    def remove_listener(self, listener):
-        # type: (SubscriptionEventListener) -> None
+    def remove_listener(self, listener: SubscriptionEventListener) -> None:
         with self._sync_lock:
             self._listeners.remove(listener)
             if len(self._listeners) < 1:
                 self.close()
 
-    def has_listener(self, listener):
-        # type: (SubscriptionEventListener) -> bool
+    def has_listener(self, listener: SubscriptionEventListener) -> bool:
         with self._sync_lock:
             return listener in self._listeners
 
-    def is_closed(self):
-        # type: () -> bool
+    def is_closed(self) -> bool:
         return self._event_source.is_closed
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._event_source.stop()
 
