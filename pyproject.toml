@@ -27,6 +27,7 @@ classifiers = [
 dependencies = [
     'jsons==1.4.0',
     'requests==2.31.0',
+    "urllib3>=1.26,<3",
     "python-dispatch==0.2.2",
     "cancel-token==0.1.6",
     "isodate==0.6.0"

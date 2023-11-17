@@ -6,6 +6,9 @@ from cancel_token import CancellationToken
 
 class CountdownEvent(object):
     def __init__(self, count: int) -> None:
+        if count <= 0:
+            raise ValueError(f"count must be greater than zero but was {count}")
+
         self._counter_lock = Lock()
         self.initial_count: int = count
         self._counter: int = count

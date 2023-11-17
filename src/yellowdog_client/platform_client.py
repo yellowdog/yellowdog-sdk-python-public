@@ -63,7 +63,7 @@ class PlatformClient(Closeable):
         proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
             retry_count=services_schema.retry.maxAttempts,
-            initial_retry_interval=services_schema.retry.initialInterval
+            max_retry_interval_seconds=int(services_schema.retry.maxInterval.total_seconds())
         )
 
         compute_url = services_schema.defaultUrl if services_schema.computeServiceUrl is None else services_schema.computeServiceUrl

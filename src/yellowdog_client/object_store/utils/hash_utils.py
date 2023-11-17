@@ -21,7 +21,7 @@ class HashUtils(object):
         return res
 
     @staticmethod
-    def calculate_md5_in_base_64(input_value: str) -> str:
+    def calculate_md5_in_base_64(input_value: Union[str, bytes]) -> str:
         if not isinstance(input_value, bytes):
             input_value = input_value.encode('utf-8')
         md5 = hashlib.md5()

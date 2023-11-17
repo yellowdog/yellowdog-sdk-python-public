@@ -1,17 +1,12 @@
-from http import HTTPStatus
-
 from enum import Enum
-from io import BufferedIOBase, BytesIO
+from http import HTTPStatus
+from typing import Type, TypeVar, Optional, Dict, Union, List
 
 from pytest_httpserver import HTTPServer
-from typing import Type, TypeVar, Optional, Dict, Union, List, BinaryIO, Iterator
 from werkzeug.wrappers import Response
-
-from util.data import make
 from yellowdog_client.common.json import Json
 
-from util.sse.event_broadcaster import EventBroadcaster
-from util.sse.sse_server import SseServer
+from util.data import make
 
 
 class HttpMethod(Enum):
@@ -34,6 +29,13 @@ class MockApi:
 
     def url(self) -> str:
         return f"http://localhost:{self.httpserver.port}"
+
+    def mock_error(self, uri: str, method: HttpMethod, status: HTTPStatus) -> None:
+        request_handler = self.httpserver.expect_oneshot_request(
+            uri=uri,
+            method=str(method)
+        )
+        request_handler.respond_with_data(status=status)
 
     def mock(
             self,
@@ -71,7 +73,6 @@ class MockApi:
             query_string=query_string,
             data=data
         )
-        print(f"Expecting: {method} {uri}{'?' if query_string else ''}{query_string}. Body = {data}")
 
         if response_type is not None:
             response = make(response_type)
@@ -89,21 +90,6 @@ class MockApi:
             request_handler.respond_with_data(Json.dumps(response), content_type="application/json",
                                               headers=response_headers)
             return response
-
-    def mock_stream(self, uri: str, sse_server: SseServer) -> None:
-        request_handler = self.httpserver.expect_oneshot_request(
-            uri=uri,
-            method=str(HttpMethod.GET)
-        )
-        print(f"Expecting stream: GET {uri}")
-        request_handler.respond_with_response(Response(
-            status=HTTPStatus.FOUND,
-            headers={"Location": sse_server.get_sse_url()}
-        ))
-
-    def _generate_stream(self, output_stream: BinaryIO) -> Iterator[bytes]:
-        while not output_stream.closed:
-            yield output_stream.read(1)
 
     def verify_all_requests_called(self):
         uncalled_handlers = len(self.httpserver.oneshot_handlers)

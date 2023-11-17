@@ -211,24 +211,32 @@ class AbstractSession(Closeable, Dispatcher, SelfBindingStatusMatchPredicate):
 
     def _transfer_chunks(self, chunk_numbers: List[int], abort_token: CancellationToken,
                          enqueue_chunk_task_method: Callable[[AbstractChunkTransferTask], None]) -> List[int]:
-        # init the countdown event to the number of chunks still to transfer
-        chunk_countdown = CountdownEvent(count=len(chunk_numbers))
 
-        # enqueue the tasks to transfer the chunks, they will then be handled asynchronously by the transfer engine
-        for chunk_number in chunk_numbers:
-            chunk_size = self._chunk_size if chunk_number < self._chunk_count else self._last_chunk_size
-            enqueue_chunk_task_method(
-                self._build_chunk_task(
-                    chunk_number=chunk_number,
-                    chunk_size=chunk_size,
-                    transfer_countdown=chunk_countdown
+        chunk_count = len(chunk_numbers)
+
+        if chunk_count > 0:
+            # init the countdown event to the number of chunks still to transfer
+            chunk_countdown = CountdownEvent(count=len(chunk_numbers))
+
+            # enqueue the tasks to transfer the chunks, they will then be handled asynchronously by the transfer engine
+            for chunk_number in chunk_numbers:
+                chunk_size = self._chunk_size if chunk_number < self._chunk_count else self._last_chunk_size
+                enqueue_chunk_task_method(
+                    self._build_chunk_task(
+                        chunk_number=chunk_number,
+                        chunk_size=chunk_size,
+                        transfer_countdown=chunk_countdown
+                    )
                 )
-            )
+
+            # now this thread waits on the countdown event for the transfer engine to have attempted all chunk transfers
+            try:
+                chunk_countdown.wait(cancellation_token=abort_token)
+            except Exception as ex:
+                print("Chunk transfer failed. %s" % str(ex))
 
         # now this thread waits on the countdown event for the transfer engine to have attempted all chunk transfers
         try:
-            chunk_countdown.wait(cancellation_token=abort_token)
-
             if abort_token.cancelled:
                 return chunk_numbers
 

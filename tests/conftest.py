@@ -1,4 +1,5 @@
 from http.server import HTTPServer
+from textwrap import dedent
 
 import pytest
 
@@ -22,5 +23,18 @@ def mock_api(httpserver: HTTPServer, request) -> MockApi:
     mock = MockApi(httpserver)
     yield mock
     if request.node.rep_call.failed:
+        print()
+        print("### Logged Requests ###")
         for request, response in mock.httpserver.log:
-            print(f"Request: {request.method} {request.url}. Response: {response.status}")
+            query_string = None if request.query_string == b'' else request.query_string
+            data = None if request.data == b'' else request.data
+
+            response_data = None if response.data == b'' else response.data
+
+            print(dedent(f"""\
+                      Request: uri='{request.path}' method='{request.method}' query_string={query_string}, data={data}
+                      Response: status='{response.status}' body={response_data}
+                      """))
+        print("### Unhandled Requests ###")
+        print(mock.httpserver.format_matchers())
+

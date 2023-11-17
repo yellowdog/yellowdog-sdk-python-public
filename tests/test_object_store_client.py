@@ -1,3 +1,4 @@
+from math import ceil
 from pathlib import Path
 
 import pytest
@@ -7,7 +8,7 @@ from util.data import make, make_string, make_bytes, make_int, make_datetime
 from yellowdog_client import PlatformClient
 from yellowdog_client.model import ServicesSchema, ApiKey, ObjectUploadRequest, TransferStatusResponse, \
     ObjectDownloadResponse, ObjectDownloadRequest, Slice, ObjectPath, ObjectDetail, S3NamespaceStorageConfiguration, \
-    AzureNamespaceStorageConfiguration
+    AzureNamespaceStorageConfiguration, RetryProperties
 from yellowdog_client.object_store import ObjectStoreClient
 from yellowdog_client.object_store.model import FileTransferStatus
 from yellowdog_client.object_store.utils import HashUtils
@@ -16,7 +17,7 @@ from yellowdog_client.object_store.utils import HashUtils
 @pytest.fixture
 def object_store_client(mock_api: MockApi) -> ObjectStoreClient:
     platform_client = PlatformClient.create(
-        ServicesSchema(defaultUrl=mock_api.url()),
+        ServicesSchema(defaultUrl=mock_api.url(), retry=RetryProperties(maxAttempts=0)),
         make(ApiKey)
     )
     object_store_client = platform_client.object_store_client
@@ -38,11 +39,13 @@ def mock_file_upload(
         test_file_size: int,
         chunk_size: int
 ):
+    chunk_count = ceil(test_file_size / chunk_size)
+
     request = ObjectUploadRequest(
         objectName=str(test_file.name),
         objectSize=test_file_size,
         chunkSize=chunk_size,
-        chunkCount=1
+        chunkCount=chunk_count
     )
     response = TransferStatusResponse(
         namespace=namespace,
@@ -54,7 +57,9 @@ def mock_file_upload(
     )
     session_id = mock_api.mock(f"/objectstore/objects/{namespace}/startUpload", HttpMethod.POST, request=request,
                                response_type=str)
-    mock_api.mock(f"/objectstore/transfers/{session_id}/chunks/1", HttpMethod.PUT)
+
+    for chunk_number in range(1, chunk_count + 1):
+        mock_api.mock(f"/objectstore/transfers/{session_id}/chunks/{chunk_number}", HttpMethod.PUT)
     mock_api.mock(f"/objectstore/transfers/{session_id}", HttpMethod.GET, response=response)
     mock_api.mock(f"/objectstore/transfers/{session_id}/complete", HttpMethod.POST)
 
@@ -105,6 +110,24 @@ def mock_file_download(
 
 def test_can_upload_objects(tmp_path: Path, mock_api: MockApi, object_store_client: ObjectStoreClient):
     test_file_size = 1024
+    test_file = create_file(tmp_path, test_file_size)
+    namespace = make_string()
+    mock_file_upload(mock_api, namespace, test_file, test_file_size, object_store_client.upload_chunk_size)
+
+    session = object_store_client.create_upload_session(
+        file_namespace=namespace,
+        source_file_path=str(test_file)
+    )
+    session.bind(on_error=lambda event_args: print(event_args.message))
+    session.start()
+
+    session = session.when_status_matches(lambda status: status.is_finished()).result()
+    assert session.status == FileTransferStatus.Completed
+    mock_api.verify_all_requests_called()
+
+
+def test_can_upload_zero_length_objects(tmp_path: Path, mock_api: MockApi, object_store_client: ObjectStoreClient):
+    test_file_size = 0
     test_file = create_file(tmp_path, test_file_size)
     namespace = make_string()
     mock_file_upload(mock_api, namespace, test_file, test_file_size, object_store_client.upload_chunk_size)

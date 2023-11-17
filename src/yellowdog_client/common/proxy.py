@@ -1,5 +1,4 @@
 from dataclasses import dataclass, asdict
-from datetime import timedelta
 from typing import TypeVar, Type, Dict, Optional
 
 from requests import Request, Session, Response, HTTPError
@@ -19,13 +18,13 @@ class Proxy:
             self,
             authentication_headers_provider: ApiKeyAuthenticationHeadersProvider,
             retry_count: int,
-            initial_retry_interval: timedelta,
+            max_retry_interval_seconds: int,
             base_url: str = ""
     ) -> None:
         self._authentication_headers_provider: ApiKeyAuthenticationHeadersProvider = authentication_headers_provider
         self._base_url: str = base_url
         self._retry_count: int = retry_count
-        self._initial_retry_interval: timedelta = initial_retry_interval
+        self._max_retry_interval_seconds: int = max_retry_interval_seconds
 
     def append_base_url(self, base_url: str):
         if not base_url:
@@ -34,7 +33,7 @@ class Proxy:
         return Proxy(
             self._authentication_headers_provider,
             self._retry_count,
-            self._initial_retry_interval,
+            self._max_retry_interval_seconds,
             self._base_url + base_url
         )
 
@@ -67,7 +66,7 @@ class Proxy:
             ),
             prefix_url=self._base_url,
             retry_count=self._retry_count,
-            backoff_factor_sec=self._initial_retry_interval.seconds
+            max_retry_interval_seconds=self._max_retry_interval_seconds
         )
 
     def stream(self, url: str = "") -> EventSource:
@@ -93,7 +92,13 @@ class Proxy:
         return self._handle_response(response)
 
     @classmethod
-    def execute_session_with_retries(cls, request: Request, prefix_url: str, retry_count: int, backoff_factor_sec: int) -> Response:
+    def execute_session_with_retries(
+            cls,
+            request: Request,
+            prefix_url: str,
+            retry_count: int,
+            max_retry_interval_seconds: int
+    ) -> Response:
         session = Session()
         prepared_request = session.prepare_request(request)
         settings = session.merge_environment_settings(prepared_request.url, {}, None, None, None)
@@ -101,9 +106,21 @@ class Proxy:
             prefix=prefix_url,
             adapter=HTTPAdapter(max_retries=Retry(
                 total=retry_count,
-                backoff_factor=backoff_factor_sec
+                backoff_factor=2,
+                # Not available until urllib3 2.0.0
+                # backoff_jitter=0.5,
+                # Not available until urllib3 2.0.0
+                # backoff_max=max_retry_interval_seconds,
+                # Override the default to include POST
+                allowed_methods=frozenset(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']),
+                # Explicitly list all the status codes that we want to retry on because the default list is both not
+                # want we want and only applies if the server responds with a Retry-After header
+                status_forcelist=[500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],
+                # Don't raise an error as this is already handled below
+                raise_on_status=False
             ))
         )
+
         response = session.send(request=prepared_request, **settings)
         return cls._handle_response(response)
 
