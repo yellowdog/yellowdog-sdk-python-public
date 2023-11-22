@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
 from .flatten_path import FlattenPath
@@ -48,3 +48,5 @@ class Task(Identified, Named, Tagged):
     """Indicates if the input objects' paths should be flattened when they are downloaded."""
     outputs: Optional[List[TaskOutput]] = None
     """Output object specifications that determine objects to be uploaded after running the task."""
+    timeout: Optional[timedelta] = None
+    """The maximum time that a worker should attempt to execute the task for before failing it."""

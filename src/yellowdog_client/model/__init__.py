@@ -99,6 +99,7 @@ from .create_keyring_response import CreateKeyringResponse
 from .credential import Credential
 from .currency import Currency
 from .double_range import DoubleRange
+from .email_change_request import EmailChangeRequest
 from .error_response import ErrorResponse
 from .existing_password_request import ExistingPasswordRequest
 from .external_attribute_definition import ExternalAttributeDefinition
@@ -376,6 +377,7 @@ __all__ = [
     "Credential",
     "Currency",
     "DoubleRange",
+    "EmailChangeRequest",
     "ErrorResponse",
     "ExistingPasswordRequest",
     "ExternalAttributeDefinition",

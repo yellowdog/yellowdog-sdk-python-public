@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import List, Optional
 
 from .cloud_provider import CloudProvider
@@ -26,6 +27,12 @@ class RunSpecification:
     """If true, then do not allow claimed Workers to be shared with other task groups; otherwise, Workers can be shared."""
     maximumTaskRetries: int = 0
     """The maximum number of times a task can be retried after it has failed."""
+    taskTimeout: Optional[timedelta] = None
+    """
+    The maximum time that a worker should attempt to execute a task for before failing it.
+    NB: This value can be overridden on individual tasks when they are added.
+    """
+
     providers: Optional[List[CloudProvider]] = None
     """Constrains the YellowDog Scheduler to only execute tasks from the associated TaskGroup on the specified providers."""
     regions: Optional[List[str]] = None

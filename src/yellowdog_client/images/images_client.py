@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.model import MachineImage, MachineImageFamily, MachineImageFamilySearch, MachineImageFamilySummary, MachineImageGroup
 
