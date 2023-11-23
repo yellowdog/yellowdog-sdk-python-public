@@ -18,7 +18,7 @@ from .abstract_session import AbstractSession
 class AbstractTransferEngine(object):
     THREAD_TASK_MULTIPLIER: int = 5
     TRANSFER_THREAD_STOP_WAIT_S: float = 0.1
-    DEFAULT_CHUNK_SIZE: int = 1024 * 512  # transfer in 512KB chunks
+    DEFAULT_CHUNK_SIZE: int = 5242880  # 5MB
     DEFAULT_FILE_RETRY_COUNT: int = 3  # retry file transfer 3 times (4 attempts in total)
 
     @property

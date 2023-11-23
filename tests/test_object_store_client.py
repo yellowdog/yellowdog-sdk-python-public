@@ -1,17 +1,175 @@
+from __future__ import annotations
+
+from dataclasses import dataclass, field
 from math import ceil
 from pathlib import Path
+from typing import Optional
 
 import pytest
-
-from util.api import MockApi, HttpMethod
-from util.data import make, make_string, make_bytes, make_int, make_datetime
 from yellowdog_client import PlatformClient
 from yellowdog_client.model import ServicesSchema, ApiKey, ObjectUploadRequest, TransferStatusResponse, \
     ObjectDownloadResponse, ObjectDownloadRequest, Slice, ObjectPath, ObjectDetail, S3NamespaceStorageConfiguration, \
     AzureNamespaceStorageConfiguration, RetryProperties
 from yellowdog_client.object_store import ObjectStoreClient
+from yellowdog_client.object_store.abstracts import AbstractTransferEngine, AbstractTransferBatch
 from yellowdog_client.object_store.model import FileTransferStatus
 from yellowdog_client.object_store.utils import HashUtils
+
+from util.api import MockApi, HttpMethod
+from util.data import make, make_string, make_bytes, make_int, make_datetime
+
+
+@dataclass
+class TempFile:
+    path: Path
+    size: int
+
+    def name(self):
+        return self.path.name
+
+    def as_posix(self):
+        return self.path.as_posix()
+
+
+@dataclass
+class TempDir:
+    def __init__(self, path: Path):
+        self.path = path
+
+    def create_file(self, size: int) -> TempFile:
+        temp_ = self.path / make_string()
+        with temp_.open("wb") as out:
+            out.truncate(size)
+        return TempFile(temp_, size)
+
+    def as_posix(self):
+        return self.path.as_posix()
+
+
+@dataclass
+class MockRemoteObject:
+    name: str = field(default_factory=make_string)
+    content: bytes = field(default_factory=make_bytes)
+
+    @staticmethod
+    def with_prefix(prefix: str) -> MockRemoteObject:
+        return MockRemoteObject(name=f"{prefix}/{make_string()}")
+
+
+class MockObjectStoreApi:
+    def __init__(self, mock_api: MockApi):
+        self._mock_api: MockApi = mock_api
+
+    def verify_all_requests_called(self):
+        self._mock_api.verify_all_requests_called()
+
+    def mock_file_upload(
+            self,
+            namespace: str,
+            temp_: TempFile
+    ):
+        chunk_size = AbstractTransferEngine.DEFAULT_CHUNK_SIZE
+        chunk_count = ceil(temp_.size / chunk_size)
+
+        request = ObjectUploadRequest(
+            objectName=temp_.name(),
+            objectSize=temp_.size,
+            chunkSize=chunk_size,
+            chunkCount=chunk_count
+        )
+        response = TransferStatusResponse(
+            namespace=namespace,
+            objectName=temp_.name(),
+            objectSize=temp_.size,
+            chunkSize=chunk_size,
+            chunkCount=1,
+            chunksReceived=[1]
+        )
+        session_id = self._mock_api.mock(
+            f"/objectstore/objects/{namespace}/startUpload",
+            HttpMethod.POST,
+            request=request,
+            response_type=str
+        )
+
+        for chunk_number in range(1, chunk_count + 1):
+            self._mock_api.mock(f"/objectstore/transfers/{session_id}/chunks/{chunk_number}", HttpMethod.PUT)
+        self._mock_api.mock(f"/objectstore/transfers/{session_id}", HttpMethod.GET, response=response)
+        self._mock_api.mock(f"/objectstore/transfers/{session_id}/complete", HttpMethod.POST)
+
+    def mock_object_download(
+            self,
+            namespace: str,
+            mock_remote_object: MockRemoteObject,
+    ):
+        chunk_size = AbstractTransferEngine.DEFAULT_CHUNK_SIZE
+        content_hash = HashUtils.calculate_md5_in_base_64(input_value=mock_remote_object.content)
+        response = TransferStatusResponse(
+            namespace=namespace,
+            objectName=mock_remote_object.name,
+            objectSize=len(mock_remote_object.content),
+            chunkSize=chunk_size,
+            chunkCount=1,
+            chunksReceived=[1]
+        )
+        start_response = self._mock_api.mock(
+            f"/objectstore/objects/{namespace}/startDownload",
+            HttpMethod.POST,
+            request=ObjectDownloadRequest(
+                objectName=mock_remote_object.name,
+                chunkSize=chunk_size
+            ),
+            response=ObjectDownloadResponse(
+                sessionId=make_string(),
+                namespace=namespace,
+                objectName=mock_remote_object.name,
+                objectSize=len(mock_remote_object.content),
+                chunkSize=chunk_size,
+                chunkCount=1
+            )
+        )
+        session_id = start_response.sessionId
+
+        self._mock_api.mock(
+            f"/objectstore/transfers/{session_id}/chunks/1",
+            HttpMethod.GET,
+            response=mock_remote_object.content,
+            response_headers={"Content-MD5": content_hash}
+        )
+        self._mock_api.mock(f"/objectstore/transfers/{session_id}", HttpMethod.GET, response=response)
+        self._mock_api.mock(f"/objectstore/transfers/{session_id}/complete", HttpMethod.POST)
+
+    def mock_search_objects(self, namespace: str, *objects: MockRemoteObject, prefix: Optional[str] = None):
+        self._mock_api.mock(
+            f"/objectstore/objects/{namespace}",
+            HttpMethod.GET,
+            params={"prefix": prefix, "flat": True} if prefix else None,
+            response=Slice([ObjectPath(object.name) for object in objects])
+        )
+
+    def mock_object_exists(self, namespace: str, object: MockRemoteObject):
+        self._mock_api.mock(
+            f"/objectstore/objects/{namespace}/object/exists",
+            HttpMethod.GET,
+            params={"name": object.name},
+            response=True
+        )
+
+
+def wait_until_batch_completed(batch: AbstractTransferBatch):
+    batch = batch.when_status_matches(lambda status: status.is_finished()).result(timeout=2)
+    assert batch.status == FileTransferStatus.Completed
+
+
+def wait_until_session_completed(session):
+    session = session.when_status_matches(lambda status: status.is_finished()).result(timeout=2)
+    assert session.status == FileTransferStatus.Completed
+
+
+def assert_object_downloaded(parent_directory: Path, expected_object: MockRemoteObject):
+    file = parent_directory / expected_object.name
+    assert file.exists()
+    assert file.read_bytes() == expected_object.content
 
 
 @pytest.fixture
@@ -25,208 +183,205 @@ def object_store_client(mock_api: MockApi) -> ObjectStoreClient:
     return object_store_client
 
 
-def create_file(tmp_path: Path, test_file_size: int):
-    test_file = tmp_path / make_string()
-    with test_file.open("wb") as out:
-        out.truncate(test_file_size)
-    return test_file
+@pytest.fixture
+def mock_object_store_api(mock_api: MockApi) -> MockObjectStoreApi:
+    return MockObjectStoreApi(mock_api)
 
 
-def mock_file_upload(
-        mock_api: MockApi,
-        namespace: str,
-        test_file: Path,
-        test_file_size: int,
-        chunk_size: int
+@pytest.fixture
+def temp_dir(tmp_path: Path) -> TempDir:
+    return TempDir(tmp_path)
+
+
+def test_can_upload_objects(
+        temp_dir: TempDir,
+        mock_object_store_api: MockObjectStoreApi,
+        object_store_client: ObjectStoreClient
 ):
-    chunk_count = ceil(test_file_size / chunk_size)
-
-    request = ObjectUploadRequest(
-        objectName=str(test_file.name),
-        objectSize=test_file_size,
-        chunkSize=chunk_size,
-        chunkCount=chunk_count
-    )
-    response = TransferStatusResponse(
-        namespace=namespace,
-        objectName=str(test_file.name),
-        objectSize=test_file_size,
-        chunkSize=chunk_size,
-        chunkCount=1,
-        chunksReceived=[1]
-    )
-    session_id = mock_api.mock(f"/objectstore/objects/{namespace}/startUpload", HttpMethod.POST, request=request,
-                               response_type=str)
-
-    for chunk_number in range(1, chunk_count + 1):
-        mock_api.mock(f"/objectstore/transfers/{session_id}/chunks/{chunk_number}", HttpMethod.PUT)
-    mock_api.mock(f"/objectstore/transfers/{session_id}", HttpMethod.GET, response=response)
-    mock_api.mock(f"/objectstore/transfers/{session_id}/complete", HttpMethod.POST)
-
-
-def mock_file_download(
-        mock_api: MockApi,
-        namespace: str,
-        file_name: str,
-        file_content: bytes,
-        chunk_size: int
-):
-    content_hash = HashUtils.calculate_md5_in_base_64(input_value=file_content)
-    response = TransferStatusResponse(
-        namespace=namespace,
-        objectName=file_name,
-        objectSize=len(file_content),
-        chunkSize=chunk_size,
-        chunkCount=1,
-        chunksReceived=[1]
-    )
-    start_response = mock_api.mock(
-        f"/objectstore/objects/{namespace}/startDownload",
-        HttpMethod.POST,
-        request=ObjectDownloadRequest(
-            objectName=file_name,
-            chunkSize=chunk_size
-        ),
-        response=ObjectDownloadResponse(
-            sessionId=make_string(),
-            namespace=namespace,
-            objectName=file_name,
-            objectSize=len(file_content),
-            chunkSize=chunk_size,
-            chunkCount=1
-        )
-    )
-    session_id = start_response.sessionId
-
-    mock_api.mock(
-        f"/objectstore/transfers/{session_id}/chunks/1",
-        HttpMethod.GET,
-        response=file_content,
-        response_headers={"Content-MD5": content_hash}
-    )
-    mock_api.mock(f"/objectstore/transfers/{session_id}", HttpMethod.GET, response=response)
-    mock_api.mock(f"/objectstore/transfers/{session_id}/complete", HttpMethod.POST)
-
-
-def test_can_upload_objects(tmp_path: Path, mock_api: MockApi, object_store_client: ObjectStoreClient):
-    test_file_size = 1024
-    test_file = create_file(tmp_path, test_file_size)
+    temp_ = temp_dir.create_file(size=1024)
     namespace = make_string()
-    mock_file_upload(mock_api, namespace, test_file, test_file_size, object_store_client.upload_chunk_size)
+    mock_object_store_api.mock_file_upload(namespace, temp_)
 
     session = object_store_client.create_upload_session(
         file_namespace=namespace,
-        source_file_path=str(test_file)
+        source_file_path=temp_.as_posix()
     )
     session.bind(on_error=lambda event_args: print(event_args.message))
     session.start()
 
-    session = session.when_status_matches(lambda status: status.is_finished()).result()
-    assert session.status == FileTransferStatus.Completed
-    mock_api.verify_all_requests_called()
+    wait_until_session_completed(session)
+    mock_object_store_api.verify_all_requests_called()
 
 
-def test_can_upload_zero_length_objects(tmp_path: Path, mock_api: MockApi, object_store_client: ObjectStoreClient):
-    test_file_size = 0
-    test_file = create_file(tmp_path, test_file_size)
+def test_can_upload_zero_length_objects(
+        temp_dir: TempDir,
+        mock_object_store_api: MockObjectStoreApi,
+        object_store_client: ObjectStoreClient
+):
+    temp_ = temp_dir.create_file(size=0)
     namespace = make_string()
-    mock_file_upload(mock_api, namespace, test_file, test_file_size, object_store_client.upload_chunk_size)
+    mock_object_store_api.mock_file_upload(namespace, temp_)
 
     session = object_store_client.create_upload_session(
         file_namespace=namespace,
-        source_file_path=str(test_file)
+        source_file_path=temp_.path.as_posix()
     )
     session.bind(on_error=lambda event_args: print(event_args.message))
     session.start()
 
-    session = session.when_status_matches(lambda status: status.is_finished()).result()
-    assert session.status == FileTransferStatus.Completed
-    mock_api.verify_all_requests_called()
+    wait_until_session_completed(session)
+    mock_object_store_api.verify_all_requests_called()
 
 
-def test_can_batch_upload_objects(tmp_path: Path, mock_api: MockApi, object_store_client: ObjectStoreClient):
+def test_can_batch_upload_objects(
+        temp_dir: TempDir,
+        mock_object_store_api: MockObjectStoreApi,
+        object_store_client: ObjectStoreClient
+):
     namespace = make_string()
-    test_file_size = 1024
-    first_test_file = create_file(tmp_path, test_file_size)
-    second_test_file = create_file(tmp_path, test_file_size)
+    first_temp_ = temp_dir.create_file(size=1024)
+    second_temp_ = temp_dir.create_file(size=1024)
 
-    mock_file_upload(mock_api, namespace, first_test_file, test_file_size, object_store_client.upload_chunk_size)
-    mock_file_upload(mock_api, namespace, second_test_file, test_file_size, object_store_client.upload_chunk_size)
+    mock_object_store_api.mock_file_upload(namespace, first_temp_)
+    mock_object_store_api.mock_file_upload(namespace, second_temp_)
 
     builder = object_store_client.build_upload_batch()
-    builder.find_source_objects(source_directory_path=str(tmp_path), source_file_pattern="*")
+    builder.find_source_objects(source_directory_path=temp_dir.as_posix(), source_file_pattern="*")
     builder.namespace = namespace
-
     batch = builder.get_batch_if_objects_found()
     batch.add_session_error_listener(lambda event_args: print(event_args.message))
     batch.start()
-    batch = batch.when_status_matches(lambda status: status.is_finished()).result()
-    assert batch.status == FileTransferStatus.Completed
-    mock_api.verify_all_requests_called()
+
+    wait_until_batch_completed(batch)
+    mock_object_store_api.verify_all_requests_called()
 
 
-def test_can_download_objects(tmp_path: Path, mock_api: MockApi, object_store_client: ObjectStoreClient):
+def test_can_download_objects(
+        temp_dir: TempDir,
+        mock_object_store_api: MockObjectStoreApi,
+        object_store_client: ObjectStoreClient
+):
     namespace = make_string()
-    file_name = make_string()
-    file_content = make_bytes()
-    mock_file_download(mock_api, namespace, file_name, file_content, object_store_client.download_chunk_size)
+    expected_object = MockRemoteObject()
+    mock_object_store_api.mock_object_download(namespace, expected_object)
 
     session = object_store_client.create_download_session(
         file_namespace=namespace,
-        file_name=file_name,
-        destination_folder_path=str(tmp_path)
+        file_name=expected_object.name,
+        destination_folder_path=temp_dir.as_posix()
     )
     session.bind(on_error=lambda event_args: print(event_args.message))
     session.start()
 
     session = session.when_status_matches(lambda status: status.is_finished()).result()
-
-    downloaded_file = tmp_path / file_name
-
     assert session.status == FileTransferStatus.Completed
-    assert downloaded_file.exists()
-    assert downloaded_file.read_bytes() == file_content
-    mock_api.verify_all_requests_called()
+
+    assert_object_downloaded(temp_dir.path, expected_object)
+    mock_object_store_api.verify_all_requests_called()
 
 
-def test_can_batch_download_objects(tmp_path: Path, mock_api: MockApi, object_store_client: ObjectStoreClient):
+def test_can_batch_download_objects(
+        temp_dir: TempDir,
+        mock_object_store_api: MockObjectStoreApi,
+        object_store_client: ObjectStoreClient
+):
     namespace = make_string()
 
-    first_file_name = make_string()
-    first_file_content = make_bytes()
+    first_object = MockRemoteObject()
+    second_object = MockRemoteObject()
 
-    second_file_name = make_string()
-    second_file_content = make_bytes()
-
-    mock_file_download(mock_api, namespace, first_file_name, first_file_content,
-                       object_store_client.download_chunk_size)
-    mock_file_download(mock_api, namespace, second_file_name, second_file_content,
-                       object_store_client.download_chunk_size)
-    mock_api.mock(f"/objectstore/objects/{namespace}", HttpMethod.GET, response=Slice([
-        ObjectPath(name=first_file_name),
-        ObjectPath(name=second_file_name)
-    ]))
+    mock_object_store_api.mock_object_download(namespace, first_object)
+    mock_object_store_api.mock_object_download(namespace, second_object)
+    mock_object_store_api.mock_search_objects(namespace, first_object, second_object)
 
     builder = object_store_client.build_download_batch()
     builder.find_source_objects(namespace=namespace, object_name_pattern="*")
-    builder.destination_folder = str(tmp_path)
+    builder.destination_folder = temp_dir.as_posix()
+    batch = builder.get_batch_if_objects_found()
+    batch.add_session_error_listener(lambda event_args: print(event_args.message))
+    batch.start()
+
+    wait_until_batch_completed(batch)
+
+    assert_object_downloaded(temp_dir.path, first_object)
+    assert_object_downloaded(temp_dir.path, second_object)
+    mock_object_store_api.verify_all_requests_called()
+
+
+def test_batch_downloading_with_fixed_pattern_checks_objects_existence_instead_of_searching(
+        temp_dir: TempDir,
+        mock_object_store_api: MockObjectStoreApi,
+        object_store_client: ObjectStoreClient
+):
+    namespace = make_string()
+
+    first_object = MockRemoteObject()
+
+    mock_object_store_api.mock_object_download(namespace, first_object)
+    mock_object_store_api.mock_object_exists(namespace, first_object)
+
+    builder = object_store_client.build_download_batch()
+    builder.find_source_objects(namespace=namespace, object_name_pattern=first_object.name)
+    builder.destination_folder = temp_dir.as_posix()
 
     batch = builder.get_batch_if_objects_found()
     batch.add_session_error_listener(lambda event_args: print(event_args.message))
     batch.start()
-    batch = batch.when_status_matches(lambda status: status.is_finished()).result()
 
-    assert batch.status == FileTransferStatus.Completed
+    wait_until_batch_completed(batch)
+    mock_object_store_api.verify_all_requests_called()
 
-    first_downloaded_file = tmp_path / first_file_name
-    assert first_downloaded_file.exists()
-    assert first_downloaded_file.read_bytes() == first_file_content
 
-    second_downloaded_file = tmp_path / second_file_name
-    assert second_downloaded_file.exists()
-    assert second_downloaded_file.read_bytes() == second_file_content
+def test_batch_uploading_with_fixed_pattern_checks_objects_existence_instead_of_searching(
+        temp_dir: TempDir,
+        mock_object_store_api: MockObjectStoreApi,
+        object_store_client: ObjectStoreClient
+):
+    namespace = make_string()
+    first_temp_ = temp_dir.create_file(size=1024)
+    temp_dir.create_file(size=1024)
 
-    mock_api.verify_all_requests_called()
+    mock_object_store_api.mock_file_upload(namespace, first_temp_)
+
+    builder = object_store_client.build_upload_batch()
+    builder.find_source_objects(
+        source_directory_path=temp_dir.as_posix(),
+        source_file_pattern=first_temp_.name()
+    )
+    builder.namespace = namespace
+    batch = builder.get_batch_if_objects_found()
+    batch.add_session_error_listener(lambda event_args: print(event_args.message))
+    batch.start()
+
+    wait_until_batch_completed(batch)
+    mock_object_store_api.verify_all_requests_called()
+
+
+def test_batch_downloading_with_pattern_search_from_within_fixed_prefix(
+        temp_dir: TempDir,
+        mock_object_store_api: MockObjectStoreApi,
+        object_store_client: ObjectStoreClient
+):
+    namespace = make_string()
+    prefix = "foo"
+
+    first_object = MockRemoteObject.with_prefix(prefix)
+    second_object = MockRemoteObject.with_prefix(prefix)
+
+    mock_object_store_api.mock_object_download(namespace, first_object)
+    mock_object_store_api.mock_object_download(namespace, second_object)
+    mock_object_store_api.mock_search_objects(namespace, first_object, second_object, prefix=f"{prefix}%2F")
+
+    builder = object_store_client.build_download_batch()
+    builder.find_source_objects(namespace=namespace, object_name_pattern=f"{prefix}/*")
+    builder.destination_folder = temp_dir.as_posix()
+
+    batch = builder.get_batch_if_objects_found()
+    batch.add_session_error_listener(lambda event_args: print(event_args.message))
+    batch.start()
+
+    wait_until_batch_completed(batch)
+    mock_object_store_api.verify_all_requests_called()
 
 
 def test_can_get_object_detail(mock_api: MockApi, object_store_client: ObjectStoreClient):

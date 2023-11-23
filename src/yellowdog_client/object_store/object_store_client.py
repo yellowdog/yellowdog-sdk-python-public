@@ -289,6 +289,9 @@ class ObjectStoreClient(Closeable, Dispatcher):
         """
         return self._service_proxy.get_object_detail(namespace=namespace, object_name=name)
 
+    def check_object_exists(self, namespace: str, name: str) -> bool:
+        return self._service_proxy.check_object_exists(namespace=namespace, object_name=name)
+
     def get_namespaces(self) -> List[str]:
         """
         Returns a list of all namespaces in ``object store``

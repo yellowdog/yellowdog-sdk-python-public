@@ -1,14 +1,17 @@
-from typing import List, Optional
-import os
 import fnmatch
+import os
+from pathlib import Path
+from typing import List, Optional
 
-from .upload_batch import UploadBatch
+from yellowdog_client.model.exceptions import ErrorType
+from yellowdog_client.object_store.abstracts import AbstractSession
+from yellowdog_client.object_store.abstracts import AbstractTransferBatch
+from yellowdog_client.object_store.model import FileTransferException
+from yellowdog_client.object_store.utils import FnmatchUtils
+
 from .abstracts import AbstractUploadBatchBuilder
 from .abstracts import AbstractUploadEngine
-from yellowdog_client.model.exceptions import ErrorType
-from yellowdog_client.object_store.abstracts import AbstractTransferBatch
-from yellowdog_client.object_store.abstracts import AbstractSession
-from yellowdog_client.object_store.model import FileTransferException
+from .upload_batch import UploadBatch
 
 
 class UploadBatchBuilder(AbstractUploadBatchBuilder):
@@ -38,21 +41,36 @@ class UploadBatchBuilder(AbstractUploadBatchBuilder):
         :param source_file_pattern: String, containing unix shell-style wildcards. See more at :mod:`fnmatch`
         :type source_file_pattern: str
         """
+
+        if FnmatchUtils.uses_path_pattern(source_file_pattern):
+            self._find_source_objects_with_pattern(source_directory_path, source_file_pattern)
+        else:
+            self._find_source_object(source_directory_path, source_file_pattern)
+
+    def _find_source_objects_with_pattern(self, source_directory_path: str, source_file_pattern: str):
         for root, directories, file_names in os.walk(top=source_directory_path):
             relative_directory_path = os.path.relpath(root, source_directory_path)
             for file_name in file_names:
                 file_path = os.path.join(root, file_name)
                 if fnmatch.fnmatch(file_path, source_file_pattern):
+                    self._source_file_entries.append(FileEntry(
+                        source_file_path=file_path,
+                        default_object_name=self._build_object_name(Path(relative_directory_path), Path(file_name))
+                    ))
 
-                    source_file_path = file_path
-                    if relative_directory_path == ".":
-                        default_object_name = file_name
-                    else:
-                        default_object_name = os.path.join(relative_directory_path, file_name)
-                    default_object_name = default_object_name.replace("\\", "/")
-                    self._source_file_entries.append(
-                        FileEntry(source_file_path=source_file_path, default_object_name=default_object_name)
+    def _find_source_object(self, source_directory_path: str, source_file_name: str) -> None:
+        resolved_source_directory_path = Path(source_directory_path).resolve()
+        source_file_path = Path(source_file_name)
+        if not source_file_path.is_absolute():
+            resolved_source_file_path = resolved_source_directory_path.joinpath(source_file_path).resolve()
+            if resolved_source_file_path.exists():
+                self._source_file_entries.append(
+                    FileEntry(
+                        source_file_path=str(resolved_source_file_path),
+                        default_object_name=self._build_object_name(resolved_source_directory_path,
+                                                                    resolved_source_file_path)
                     )
+                )
 
     def _create_upload_session(self, file_entry: 'FileEntry', object_names: List[str]) -> AbstractSession:
         object_name = self.object_name_mapper(file_entry.default_object_name) \
@@ -113,6 +131,10 @@ class UploadBatchBuilder(AbstractUploadBatchBuilder):
             raise
 
         return UploadBatch(sessions=upload_sessions)
+
+    @staticmethod
+    def _build_object_name(source_directory_path: Path, source_file_path: Path):
+        return source_file_path.relative_to(source_directory_path).as_posix()
 
 
 class FileEntry(object):

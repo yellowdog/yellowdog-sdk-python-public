@@ -8,6 +8,7 @@ from yellowdog_client.object_store.abstracts import AbstractObjectStoreServicePr
 from yellowdog_client.object_store.abstracts import AbstractSession
 from yellowdog_client.object_store.abstracts import AbstractTransferBatch
 from yellowdog_client.object_store.model import FileTransferException
+from yellowdog_client.object_store.utils import FnmatchUtils
 from .abstracts import AbstractDownloadBatchBuilder
 from .abstracts import AbstractDownloadEngine
 from .download_batch import DownloadBatch
@@ -67,7 +68,8 @@ class DownloadBatchBuilder(AbstractDownloadBatchBuilder):
     def _map_replace_path_separator(object_name: str) -> str:
         return object_name.replace("/", "_")
 
-    def _create_download_session(self, object_entry: ObjectEntry, destination_file_names: List[str]) -> Tuple[AbstractSession, List[str]]:
+    def _create_download_session(self, object_entry: ObjectEntry, destination_file_names: List[str]) -> Tuple[
+        AbstractSession, List[str]]:
         destination_file_name = object_entry.object_name
 
         # apply general file name mapper first
@@ -109,11 +111,27 @@ class DownloadBatchBuilder(AbstractDownloadBatchBuilder):
         if "\\" in object_name_pattern:
             raise ValueError("Only Unix style path separators ('/') should be used")
 
-        object_paths = self._service_proxy.get_namespace_object_paths(ObjectPathsRequest(namespace, flat=True))
+        if FnmatchUtils.uses_path_pattern(object_name_pattern):
+            self._find_source_files_with_pattern(namespace, object_name_pattern)
+        else:
+            self._find_source_file(namespace, object_name_pattern)
+
+    def _find_source_files_with_pattern(self, namespace: str, object_name_pattern: str) -> None:
+        request = ObjectPathsRequest(
+            namespace,
+            prefix=FnmatchUtils.get_prefix_before_path_patterns(object_name_pattern),
+            flat=True
+        )
+
+        object_paths = self._service_proxy.get_namespace_object_paths(request)
         for object_path in object_paths:
             object_name = object_path.name
             if fnmatch.fnmatch(object_name, object_name_pattern):
                 self._source_object_entries.append(ObjectEntry(namespace=namespace, object_name=object_name))
+
+    def _find_source_file(self, namespace: str, object_name: str) -> None:
+        if self._service_proxy.check_object_exists(namespace, object_name):
+            self._source_object_entries.append(ObjectEntry(namespace=namespace, object_name=object_name))
 
     def get_batch_if_objects_found(self) -> Optional[AbstractTransferBatch]:
         """
@@ -138,9 +156,9 @@ class DownloadBatchBuilder(AbstractDownloadBatchBuilder):
             destination_file_names = []
             for source_object_entry in self._source_object_entries:
                 new_session, destination_file_names = self._create_download_session(
-                        object_entry=source_object_entry,
-                        destination_file_names=destination_file_names
-                    )
+                    object_entry=source_object_entry,
+                    destination_file_names=destination_file_names
+                )
                 download_sessions.append(new_session)
         except Exception:
             # abort any sessions that were created if an error has occurred

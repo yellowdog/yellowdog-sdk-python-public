@@ -9,7 +9,7 @@ from .memory_mapped_file_writer_factory import MemoryMappedFileWriterFactory
 from .hash_utils import HashUtils
 from .action_utils import ActionUtils
 from .file_utils import FileUtils
-
+from .fnmatch_utils import FnmatchUtils
 
 __all__ = [
     "BackgroundThread",
@@ -22,5 +22,6 @@ __all__ = [
     "MemoryMappedFileWriterFactory",
     "HashUtils",
     "FileUtils",
-    "ActionUtils"
+    "ActionUtils",
+    "FnmatchUtils"
 ]

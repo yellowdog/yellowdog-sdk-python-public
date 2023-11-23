@@ -1,16 +1,15 @@
 from typing import List, Set, Tuple, Optional
 
 from pydispatch import Dispatcher
-
-from yellowdog_client.model import ObjectPath, ObjectPathsSliceRequest, ObjectPathsRequest
 from yellowdog_client.common.decorators import dispatch_async
-from yellowdog_client.model.exceptions import ErrorType
+from yellowdog_client.model import NamespaceStorageConfiguration
 from yellowdog_client.model import ObjectDetail
 from yellowdog_client.model import ObjectDownloadRequest
 from yellowdog_client.model import ObjectDownloadResponse
+from yellowdog_client.model import ObjectPath, ObjectPathsSliceRequest, ObjectPathsRequest
 from yellowdog_client.model import ObjectUploadRequest
 from yellowdog_client.model import TransferStatusResponse
-from yellowdog_client.model import NamespaceStorageConfiguration
+from yellowdog_client.model.exceptions import ErrorType
 
 
 class AbstractObjectStoreServiceProxy(Dispatcher):
@@ -37,6 +36,9 @@ class AbstractObjectStoreServiceProxy(Dispatcher):
 
     def get_object_detail(self, namespace: str, object_name: str) -> ObjectDetail:
         raise NotImplementedError("get_object_detail Needs implementation")
+
+    def check_object_exists(self, namespace: str, name: str) -> bool:
+        raise NotImplementedError("check_object_exists Needs implementation")
 
     def get_namespace_object_paths(self, request: ObjectPathsRequest) -> List[ObjectPath]:
         raise NotImplementedError("get_namespace_object_paths Needs implementation")

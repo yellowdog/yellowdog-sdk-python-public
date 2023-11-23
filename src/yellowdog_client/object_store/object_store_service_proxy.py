@@ -54,6 +54,9 @@ class ObjectStoreServiceProxy(AbstractObjectStoreServiceProxy, Dispatcher):
     def get_object_detail(self, namespace: str, object_name: str) -> ObjectDetail:
         return self._proxy.get(ObjectDetail, "objects/%s/object" % namespace, params={'name': object_name})
 
+    def check_object_exists(self, namespace: str, object_name: str) -> bool:
+        return self._proxy.get(bool, "objects/%s/object/exists" % namespace, params={'name': object_name})
+
     def get_namespaces(self) -> List[str]:
         return self._proxy.get(List[str], "objects")
 
