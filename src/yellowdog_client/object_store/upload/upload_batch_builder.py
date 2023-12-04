@@ -49,7 +49,7 @@ class UploadBatchBuilder(AbstractUploadBatchBuilder):
 
     def _find_source_objects_with_pattern(self, source_directory_path: str, source_file_pattern: str):
         for root, directories, file_names in os.walk(top=source_directory_path):
-            relative_directory_path = os.path.relpath(root, source_directory_path)
+            relative_directory_path = Path(os.path.relpath(root, source_directory_path))
             for file_name in file_names:
                 file_path = os.path.join(root, file_name)
                 if fnmatch.fnmatch(file_path, source_file_pattern):
@@ -67,8 +67,7 @@ class UploadBatchBuilder(AbstractUploadBatchBuilder):
                 self._source_file_entries.append(
                     FileEntry(
                         source_file_path=str(resolved_source_file_path),
-                        default_object_name=self._build_object_name(resolved_source_directory_path,
-                                                                    resolved_source_file_path)
+                        default_object_name=source_file_path.as_posix()
                     )
                 )
 
@@ -134,7 +133,7 @@ class UploadBatchBuilder(AbstractUploadBatchBuilder):
 
     @staticmethod
     def _build_object_name(source_directory_path: Path, source_file_path: Path):
-        return source_file_path.relative_to(source_directory_path).as_posix()
+        return (source_directory_path / source_file_path).as_posix()
 
 
 class FileEntry(object):
