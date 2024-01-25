@@ -401,6 +401,13 @@ Usage Client
 .. seealso::
 
     :class:`yellowdog_client.usage.AllowancesClient`
+
+Cloud Info Client
+-----------------
+
+.. seealso::
+
+    :class:`yellowdog_client.cloud_info.CloudInfoClient`
 """
 
 from ._version import __version__ as _version

@@ -30,4 +30,5 @@ YellowDog services
    images
    object_store
    usage
+   cloud_info
    model
