@@ -3,7 +3,6 @@ from typing import List, Optional
 
 from .access_delegate import AccessDelegate
 from .authentication_provider import AuthenticationProvider
-from .password_state import PasswordState
 from .user import User
 
 
@@ -14,8 +13,8 @@ class ExternalUser(User):
     externalId: str = field(default=None, init=False)
     authenticationProvider: AuthenticationProvider = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
-    passwordState: Optional[PasswordState] = field(default=None, init=False)
     name: str
     email: Optional[str] = None
     eulaAccepted: bool = False
     accessDelegates: Optional[List[AccessDelegate]] = None
+    passwordSet: bool = False

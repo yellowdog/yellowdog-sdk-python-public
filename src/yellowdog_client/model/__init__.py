@@ -201,7 +201,6 @@ from .oci_instance_pool_compute_source import OciInstancePoolComputeSource
 from .oci_instances_compute_source import OciInstancesComputeSource
 from .oci_namespace_storage_configuration import OciNamespaceStorageConfiguration
 from .operating_system_licence import OperatingSystemLicence
-from .password_state import PasswordState
 from .permission import Permission
 from .permission_detail import PermissionDetail
 from .price import Price
@@ -479,7 +478,6 @@ __all__ = [
     "OciInstancesComputeSource",
     "OciNamespaceStorageConfiguration",
     "OperatingSystemLicence",
-    "PasswordState",
     "Permission",
     "PermissionDetail",
     "Price",

@@ -30,10 +30,8 @@ class WorkRequirement(Identified, Named, Tagged):
     """The user allocated namespace used to group work requirements and other objects together."""
     name: str
     """The user allocated name used to uniquely identify the work requirement within its namespace."""
-    taskGroups: List[TaskGroup]
+    taskGroups: Optional[List[TaskGroup]] = None
     """The task groups containing tasks to be executed."""
     tag: Optional[str] = None
     priority: float = 0
     """The priority of the work requirement."""
-    fulfilOnSubmit: bool = False
-    """Indicates if the work requirement should be fulfilled when it is submitted, rather than being allowed to wait in PENDING status."""

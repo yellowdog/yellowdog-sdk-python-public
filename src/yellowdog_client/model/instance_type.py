@@ -12,5 +12,6 @@ class InstanceType:
     name: Optional[str] = None
     processorArchitecture: Optional[ProcessorArchitecture] = None
     defaultVcpus: Optional[float] = None
+    defaultGpus: Optional[int] = None
     ramInMib: Optional[int] = None
     regions: Optional[List[InstanceTypeRegion]] = None

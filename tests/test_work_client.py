@@ -94,7 +94,7 @@ def test_can_wait_for_work_requirement_status(mock_api: MockApi):
         taskGroups=[]
     )
     work_requirement.id = "ydid:workreq:000000:6c9343f5-ddd7-4903-bcbf-12c7a6bf1e1a"
-    work_requirement.status = WorkRequirementStatus.PENDING
+    work_requirement.status = WorkRequirementStatus.RUNNING
 
     with SseServer(f"/work/requirements/{work_requirement.id}/updates") as sse_server:
         platform_client = PlatformClient.create(

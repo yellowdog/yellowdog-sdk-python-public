@@ -28,6 +28,10 @@ class TaskGroup(Identified, Named, Tagged):
     """The task group priority."""
     dependentOn: Optional[str] = None
     """The name of another task group within the same WorkRequirement that must be successfully completed before the task group is started."""
+    starved: bool = False
+    """Indicates if the task group is unable to claim any workers."""
+    waitingOnDependency: bool = False
+    """Indicates if the task group is waiting for a dependency task group to finish."""
     finishIfAllTasksFinished: bool = True
     """If true, the task group will finish automatically once all contained tasks are finished."""
     finishIfAnyTaskFailed: bool = False
