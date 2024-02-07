@@ -50,6 +50,8 @@ class AwsFleetComputeSource(AwsComputeSource):
     """The name of the EC2 key pair to use when logging into any instances provisioned from this source."""
     enableDetailedMonitoring: Optional[bool] = None
     """Indicates if provisioned instances should have detailed CloudWatch monitoring enabled."""
+    enableInstanceMetadataTags: Optional[bool] = None
+    """Indicates if provisioned instances should expose their tags via instance metadata."""
     assignPublicIp: bool = False
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterPlacementGroup: Optional[bool] = None
