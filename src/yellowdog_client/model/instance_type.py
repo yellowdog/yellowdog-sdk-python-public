@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from .cloud_provider import CloudProvider
 from .instance_type_region import InstanceTypeRegion
@@ -12,6 +12,6 @@ class InstanceType:
     name: Optional[str] = None
     processorArchitecture: Optional[ProcessorArchitecture] = None
     defaultVcpus: Optional[float] = None
-    defaultGpus: Optional[int] = None
+    defaultGpus: Optional[Dict[str, int]] = None
     ramInMib: Optional[int] = None
     regions: Optional[List[InstanceTypeRegion]] = None
