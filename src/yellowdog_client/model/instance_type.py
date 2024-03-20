@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 from .cloud_provider import CloudProvider
 from .instance_type_region import InstanceTypeRegion

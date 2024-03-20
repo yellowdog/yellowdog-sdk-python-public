@@ -20,6 +20,7 @@ class GceInstancesComputeSource(GceComputeSource):
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
+    supportingResourceCreated: Optional[bool] = field(default=None, init=False)
     name: str
     credential: str
     project: str

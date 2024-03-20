@@ -14,6 +14,7 @@ class OciInstancesComputeSource(OciComputeSource):
     type: str = field(default="co.yellowdog.platform.model.OciInstancesComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
     credentials: Optional[Set[str]] = field(default=None, init=False)
+    supportingResourceCreated: Optional[bool] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)
     instanceSummary: Optional[InstanceSummary] = field(default=None, init=False)

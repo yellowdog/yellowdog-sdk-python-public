@@ -19,6 +19,7 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     status: Optional[ComputeSourceStatus] = field(default=None, init=False)
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
+    supportingResourceCreated: Optional[bool] = field(default=None, init=False)
     name: str
     credential: str
     region: str
@@ -45,6 +46,7 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     createProximityPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a proximity placement group."""
     useAcceleratedNetworking: Optional[bool] = None
+    """Indicates if instances should be provisioned with a primary networking interface with accelerated networking."""
     useSpot: Optional[bool] = None
     spotMaxPrice: Optional[float] = None
     limit: int = 0
