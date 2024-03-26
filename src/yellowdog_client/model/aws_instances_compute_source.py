@@ -37,8 +37,8 @@ class AwsInstancesComputeSource(AwsComputeSource):
     """The ID of the subnet to use for the provisioned instances."""
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
-    iamRoleArn: Optional[str] = None
-    """The ARN of the IAM role to use for the provisioned instances."""
+    iamInstanceProfileArn: Optional[str] = None
+    """The ARN of the IAM Instance Profile to use for the provisioned instances."""
     keyName: Optional[str] = None
     """The name of the EC2 key pair to use when logging into any instances provisioned from this source."""
     enableDetailedMonitoring: Optional[bool] = None
