@@ -186,3 +186,9 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 
 # -- Options for sphinx_autodoc_typehints ------------------------------------
 always_document_param_types = True
+
+html_static_path = ['static']
+
+html_css_files = [
+    'css/yellowdog.css',
+]

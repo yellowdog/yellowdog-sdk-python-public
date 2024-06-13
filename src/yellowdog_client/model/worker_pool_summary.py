@@ -13,6 +13,8 @@ class WorkerPoolSummary(Identified, Named):
     id: Optional[str] = None
     name: Optional[str] = None
     """The name used to uniquely identify the worker pool."""
+    namespace: Optional[str] = None
+    """The namespace that the worker pool is associated with"""
     type: Optional[str] = None
     """The type of the worker pool."""
     registeredNodeCount: int = 0

@@ -24,6 +24,7 @@ from .allowance_reset_type import AllowanceResetType
 from .allowance_search import AllowanceSearch
 from .api_key import ApiKey
 from .application import Application
+from .application_search import ApplicationSearch
 from .attribute_constraint import AttributeConstraint
 from .attribute_definition import AttributeDefinition
 from .attribute_preference import AttributePreference
@@ -64,6 +65,7 @@ from .best_compute_source_report_source import BestComputeSourceReportSource
 from .best_compute_source_report_source_attribute import BestComputeSourceReportSourceAttribute
 from .best_compute_source_report_string_constraint import BestComputeSourceReportStringConstraint
 from .change_password_request import ChangePasswordRequest
+from .check_credentials_result import CheckCredentialsResult
 from .cloud_provider import CloudProvider
 from .compute_namespace_filter import ComputeNamespaceFilter
 from .compute_provision_strategy import ComputeProvisionStrategy
@@ -97,6 +99,7 @@ from .constants import Constants
 from .create_keyring_request import CreateKeyringRequest
 from .create_keyring_response import CreateKeyringResponse
 from .credential import Credential
+from .credential_availability import CredentialAvailability
 from .currency import Currency
 from .double_range import DoubleRange
 from .email_change_request import EmailChangeRequest
@@ -110,6 +113,8 @@ from .external_attribute_provider_results import ExternalAttributeProviderResult
 from .external_attribute_provider_results_source import ExternalAttributeProviderResultsSource
 from .external_attribute_source import ExternalAttributeSource
 from .external_user import ExternalUser
+from .feature import Feature
+from .feature_detail import FeatureDetail
 from .filter import Filter
 from .flatten_path import FlattenPath
 from .gce_compute_source import GceComputeSource
@@ -200,6 +205,7 @@ from .oci_instance import OciInstance
 from .oci_instance_pool_compute_source import OciInstancePoolComputeSource
 from .oci_instances_compute_source import OciInstancesComputeSource
 from .oci_namespace_storage_configuration import OciNamespaceStorageConfiguration
+from .okta_account_authentication_properties import OktaAccountAuthenticationProperties
 from .operating_system_licence import OperatingSystemLicence
 from .permission import Permission
 from .permission_detail import PermissionDetail
@@ -259,6 +265,8 @@ from .update_user_request import UpdateUserRequest
 from .usage_type import UsageType
 from .user import User
 from .user_login_request import UserLoginRequest
+from .user_portal_context import UserPortalContext
+from .user_search import UserSearch
 from .waterfall_provision_strategy import WaterfallProvisionStrategy
 from .work_requirement import WorkRequirement
 from .work_requirement_status import WorkRequirementStatus
@@ -301,6 +309,7 @@ __all__ = [
     "AllowanceSearch",
     "ApiKey",
     "Application",
+    "ApplicationSearch",
     "AttributeConstraint",
     "AttributeDefinition",
     "AttributePreference",
@@ -341,6 +350,7 @@ __all__ = [
     "BestComputeSourceReportSourceAttribute",
     "BestComputeSourceReportStringConstraint",
     "ChangePasswordRequest",
+    "CheckCredentialsResult",
     "CloudProvider",
     "ComputeNamespaceFilter",
     "ComputeProvisionStrategy",
@@ -374,6 +384,7 @@ __all__ = [
     "CreateKeyringRequest",
     "CreateKeyringResponse",
     "Credential",
+    "CredentialAvailability",
     "Currency",
     "DoubleRange",
     "EmailChangeRequest",
@@ -387,6 +398,8 @@ __all__ = [
     "ExternalAttributeProviderResultsSource",
     "ExternalAttributeSource",
     "ExternalUser",
+    "Feature",
+    "FeatureDetail",
     "Filter",
     "FlattenPath",
     "GceComputeSource",
@@ -477,6 +490,7 @@ __all__ = [
     "OciInstancePoolComputeSource",
     "OciInstancesComputeSource",
     "OciNamespaceStorageConfiguration",
+    "OktaAccountAuthenticationProperties",
     "OperatingSystemLicence",
     "Permission",
     "PermissionDetail",
@@ -536,6 +550,8 @@ __all__ = [
     "UsageType",
     "User",
     "UserLoginRequest",
+    "UserPortalContext",
+    "UserSearch",
     "WaterfallProvisionStrategy",
     "WorkRequirement",
     "WorkRequirementStatus",

@@ -14,6 +14,7 @@ class ProvisionedWorkerPool(WorkerPool):
     type: str = field(default="co.yellowdog.platform.model.ProvisionedWorkerPool", init=False)
     id: Optional[str] = None
     name: Optional[str] = None
+    namespace: Optional[str] = None
     createdTime: Optional[datetime] = None
     status: Optional[WorkerPoolStatus] = None
     statusChangedTime: Optional[datetime] = None

@@ -41,8 +41,8 @@ class SimulatorComputeSource(ComputeSource):
     """The simulated shutdown time for an instance."""
     instanceShutdownTimeVariance: float = 0
     """A variance multiplier (from 0 to 1) applied randomly to the instance shutdown time."""
-    unexpectedInstanceTerminationProbabilityPerSecond: float = 0
-    """The probability (from 0 to 1) that any instance will be unexpectedly terminated in any given second."""
+    unexpectedInstanceTerminationProbability: float = 0
+    """The probability (from 0 to 1) that any instance will be unexpectedly terminated whenever it is refreshed."""
     failOnRequestAllInstances: bool = False
     failOnProvision: bool = False
     reportSupportingResourcesExist: bool = False

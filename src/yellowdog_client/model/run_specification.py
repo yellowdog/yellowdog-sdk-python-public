@@ -39,3 +39,9 @@ class RunSpecification:
     """Constrains the YellowDog Scheduler to only execute tasks from the associated TaskGroup in the specified regions."""
     workerTags: Optional[List[str]] = None
     """Constrains the YellowDog Scheduler to only execute tasks from the associated TaskGroup on workers with a matching tag value."""
+    namespaces: Optional[List[str]] = None
+    """
+    Constrains the YellowDog Scheduler to only execute tasks from the associated TaskGroup on nodes from worker
+    pools in the specified namespaces.
+    """
+
