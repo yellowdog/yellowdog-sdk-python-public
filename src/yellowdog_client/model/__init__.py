@@ -164,7 +164,10 @@ from .machine_image_group import MachineImageGroup
 from .metadata_filter import MetadataFilter
 from .model_exception import ModelException
 from .named import Named
+from .namespace_autoscaling_capacity_response import NamespaceAutoscalingCapacityResponse
 from .namespace_objects_response import NamespaceObjectsResponse
+from .namespace_policy import NamespacePolicy
+from .namespace_policy_search import NamespacePolicySearch
 from .namespace_storage_configuration import NamespaceStorageConfiguration
 from .new_password_request import NewPasswordRequest
 from .node import Node
@@ -449,7 +452,10 @@ __all__ = [
     "MetadataFilter",
     "ModelException",
     "Named",
+    "NamespaceAutoscalingCapacityResponse",
     "NamespaceObjectsResponse",
+    "NamespacePolicy",
+    "NamespacePolicySearch",
     "NamespaceStorageConfiguration",
     "NewPasswordRequest",
     "Node",

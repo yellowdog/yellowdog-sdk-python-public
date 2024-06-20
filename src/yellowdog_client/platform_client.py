@@ -5,6 +5,7 @@ from .common import Proxy, Closeable
 from .common.credentials import ApiKeyAuthenticationHeadersProvider
 from .compute import ComputeClient, ComputeClientImpl, ComputeServiceProxy
 from .images import ImagesClient, ImagesClientImpl, ImagesServiceProxy
+from .namespaces import NamespacesClient, NamespacesClientImpl, NamespacesServiceProxy
 from .model import ServicesSchema, ApiKey
 from .object_store import ObjectStoreClient, ObjectStoreServiceProxy
 from .scheduler import WorkClient, WorkClientImpl, WorkServiceProxy, WorkerPoolClient, WorkerPoolClientImpl, \
@@ -25,6 +26,7 @@ class PlatformClient(Closeable):
             keyring_client: KeyringClient,
             compute_client: ComputeClient,
             images_client: ImagesClient,
+            namespaces_client: NamespacesClient,
             work_client: WorkClient,
             worker_pool_client: WorkerPoolClient,
             object_store_client: ObjectStoreClient,
@@ -38,6 +40,8 @@ class PlatformClient(Closeable):
         """Account/Keyring client. Used for controlling users keyrings"""
         self.images_client: ImagesClient = self.__clients.add(images_client)
         """Images client. Used for controlling machine images"""
+        self.namespaces_client: NamespacesClient = self.__clients.add(namespaces_client)
+        """Namespaces client. Used for controlling namespaces"""
         self.work_client: WorkClient = self.__clients.add(work_client)
         """Work client. Used for controlling work requirements"""
         self.worker_pool_client: WorkerPoolClient = self.__clients.add(worker_pool_client)
@@ -45,9 +49,9 @@ class PlatformClient(Closeable):
         self.object_store_client: ObjectStoreClient = self.__clients.add(object_store_client)
         """Object store client. Used for file upload and download"""
         self.allowances_client: AllowancesClient = self.__clients.add(allowances_client)
-        """Allowances client. User to constrain how much compute can be used"""
+        """Allowances client. Used to constrain how much compute can be used"""
         self.cloud_info_client: CloudInfoClient = self.__clients.add(cloud_info_client)
-        """Allowances client. User to constrain how much compute can be used"""
+        """Cloud Info client. Used to query Cloud Info data """
 
     @staticmethod
     def create(services_schema: ServicesSchema, api_key: ApiKey) -> "PlatformClient":
@@ -77,6 +81,7 @@ class PlatformClient(Closeable):
         compute_client = ComputeClientImpl(ComputeServiceProxy(proxy.append_base_url(compute_url)))
         keyring_client = KeyringClientImpl(KeyringServiceProxy(proxy.append_base_url(account_url)))
         images_client = ImagesClientImpl(ImagesServiceProxy(proxy.append_base_url(images_url)))
+        namespaces_client = NamespacesClientImpl(NamespacesServiceProxy(proxy.append_base_url(scheduler_url)))
         work_client = WorkClientImpl(WorkServiceProxy(proxy.append_base_url(scheduler_url)))
         worker_pool_client = WorkerPoolClientImpl(WorkerPoolServiceProxy(proxy.append_base_url(scheduler_url)))
         object_store_client = ObjectStoreClient(ObjectStoreServiceProxy(proxy.append_base_url(object_store_url)))
@@ -87,6 +92,7 @@ class PlatformClient(Closeable):
             keyring_client=keyring_client,
             compute_client=compute_client,
             images_client=images_client,
+            namespaces_client=namespaces_client,
             work_client=work_client,
             worker_pool_client=worker_pool_client,
             object_store_client=object_store_client,
