@@ -10,14 +10,10 @@ Please refer to [the full documentation](https://docs.yellowdog.co/#/sdk/python-
 
 ### Building From Source
 
-If you wish to modify the SDK, you can build it from source. You must have Python 3.7 installed:
+If you wish to modify the SDK, you can build it from source. You must have Python 3.8 installed:
 
 ```shell
-python3 -m venv venv               # Create a new virtual environment
-. venv/bin/activate                # Activate the virtual environment
-pip install pip -U                 # Upgrade pip
-pip install tox                    # Install tox
-tox -e dev                         # Create a development environment
+./scripts/setup
 ```
 
 Pycharm may then be configured by adding .tox/dev/bin/python as the interpreter.
@@ -48,9 +44,3 @@ python3 -m pip install tox
 # Run tests for each Python version                                             
 python3 -m tox                                                           
 ```
-
-### Debugging
-
-When debugging the SDK via Pycharm, Pycharm will offer to install the CPython extensions to speed up debugging.
-
-In order for this to work on ubuntu, you need to have the dev package for the version of Python
