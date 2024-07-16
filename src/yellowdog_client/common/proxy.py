@@ -9,6 +9,7 @@ from yellowdog_client.model.exceptions import BaseCustomException
 from .credentials import ApiKeyAuthenticationHeadersProvider
 from .json import Json
 from .server_sent_events.sse4python import EventSource
+from .user_agent import UserAgent
 
 T = TypeVar('T')
 
@@ -19,9 +20,11 @@ class Proxy:
             authentication_headers_provider: ApiKeyAuthenticationHeadersProvider,
             retry_count: int,
             max_retry_interval_seconds: int,
+            user_agent: UserAgent,
             base_url: str = ""
     ) -> None:
         self._authentication_headers_provider: ApiKeyAuthenticationHeadersProvider = authentication_headers_provider
+        self._user_agent: UserAgent = user_agent
         self._base_url: str = base_url
         self._retry_count: int = retry_count
         self._max_retry_interval_seconds: int = max_retry_interval_seconds
@@ -34,6 +37,7 @@ class Proxy:
             self._authentication_headers_provider,
             self._retry_count,
             self._max_retry_interval_seconds,
+            self._user_agent,
             self._base_url + base_url
         )
 
@@ -62,7 +66,8 @@ class Proxy:
                 url=self._base_url + url,
                 auth=self._authentication_headers_provider,
                 json=json,
-                params=params
+                params=params,
+                headers=self._get_user_agent_headers()
             ),
             prefix_url=self._base_url,
             retry_count=self._retry_count,
@@ -72,11 +77,17 @@ class Proxy:
     def stream(self, url: str = "") -> EventSource:
         return EventSource(
             url=self._base_url + url,
-            auth=self._authentication_headers_provider
+            auth=self._authentication_headers_provider,
+            headers=self._get_user_agent_headers()
         )
 
     def execute_with_timeout(self, method: str, timeout: int, url: str = "", data: object = None,
-                             headers: Dict[str, str] = None) -> Response:
+                             additional_headers: Dict[str, str] = None) -> Response:
+
+        headers = self._get_user_agent_headers()
+        if additional_headers:
+            headers.update(additional_headers)
+
         request = Request(
             method=method,
             auth=self._authentication_headers_provider,
@@ -191,3 +202,10 @@ class Proxy:
         if http_error_msg:
             http_error_msg += u' Response Body: %s' % response.text[:max_text_length]
         raise HTTPError(http_error_msg, response=response)
+
+    def _get_user_agent_headers(self) -> Dict[str, str]:
+        return {
+            "User-Agent": f"yd/1.0.0"
+                          f" {self._user_agent.application_id}/{self._user_agent.application_version}"
+                          f" python/{self._user_agent.python_version}"
+        }

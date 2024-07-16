@@ -4,6 +4,7 @@ from .search_client import SearchClient
 from .countdown_event import CountdownEvent
 from .closeable import Closeable
 from .proxy import Proxy
+from .user_agent import UserAgent
 
 __all__ = [
     "SynchronizedPredicatedRunner",
@@ -11,5 +12,6 @@ __all__ = [
     "SearchClient",
     "CountdownEvent",
     "Proxy",
-    "Closeable"
+    "Closeable",
+    "UserAgent"
 ]

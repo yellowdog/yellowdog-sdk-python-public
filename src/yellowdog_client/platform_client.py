@@ -1,12 +1,15 @@
+import sys
+
+from ._version import __version__
 from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy
 from .client_collection import ClientCollection
 from .cloud_info import CloudInfoClient, CloudInfoClientImpl, CloudInfoProxy
-from .common import Proxy, Closeable
+from .common import Proxy, Closeable, UserAgent
 from .common.credentials import ApiKeyAuthenticationHeadersProvider
 from .compute import ComputeClient, ComputeClientImpl, ComputeServiceProxy
 from .images import ImagesClient, ImagesClientImpl, ImagesServiceProxy
-from .namespaces import NamespacesClient, NamespacesClientImpl, NamespacesServiceProxy
 from .model import ServicesSchema, ApiKey
+from .namespaces import NamespacesClient, NamespacesClientImpl, NamespacesServiceProxy
 from .object_store import ObjectStoreClient, ObjectStoreServiceProxy
 from .scheduler import WorkClient, WorkClientImpl, WorkServiceProxy, WorkerPoolClient, WorkerPoolClientImpl, \
     WorkerPoolServiceProxy
@@ -64,10 +67,19 @@ class PlatformClient(Closeable):
         """
         api_key_authentication_headers_provider = ApiKeyAuthenticationHeadersProvider(api_key)
 
+        python_version = sys.version_info
+
+        user_agent = UserAgent(
+            application_id="yellowdog-sdk-python",
+            application_version=__version__,
+            python_version=f"{python_version.major}.{python_version.minor}"
+        )
+
         proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
             retry_count=services_schema.retry.maxAttempts,
-            max_retry_interval_seconds=int(services_schema.retry.maxInterval.total_seconds())
+            max_retry_interval_seconds=int(services_schema.retry.maxInterval.total_seconds()),
+            user_agent=user_agent
         )
 
         compute_url = services_schema.defaultUrl if services_schema.computeServiceUrl is None else services_schema.computeServiceUrl

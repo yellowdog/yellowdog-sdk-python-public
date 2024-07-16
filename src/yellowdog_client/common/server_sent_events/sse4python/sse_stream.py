@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import timedelta
 from io import BufferedIOBase
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, Dict
 
 import requests
 from requests import HTTPError, Response
@@ -118,10 +118,12 @@ class RequestsSseClient(SseClient):
     def __init__(
             self,
             url: str,
-            auth: Optional[AuthBase] = None
+            auth: Optional[AuthBase] = None,
+            headers: Optional[Dict[str, str]] = None
     ):
         self._url: str = url
         self._auth: Optional[AuthBase] = auth
+        self._headers: Optional[Dict[str, str]] = headers or {}
 
     def _connect(self, retry_interval: timedelta) -> SseConnection:
         response = self._get(retry_interval)
@@ -132,14 +134,19 @@ class RequestsSseClient(SseClient):
         )
 
     def _get(self, retry_interval: timedelta) -> Response:
+        headers = {
+            'Cache-Control': 'no-cache',
+            'Accept': 'text/event-stream'
+        }
+
+        if self._headers:
+            headers.update(self._headers)
+
         while True:
             response = requests.get(
                 self._url,
                 stream=True,
-                headers={
-                    'Cache-Control': 'no-cache',
-                    'Accept': 'text/event-stream'
-                },
+                headers=headers,
                 auth=self._auth
             )
 

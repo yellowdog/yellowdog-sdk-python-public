@@ -5,7 +5,7 @@ from typing import List
 
 import pytest
 from requests import HTTPError
-from yellowdog_client.common import Proxy
+from yellowdog_client.common import Proxy, UserAgent
 from yellowdog_client.common.credentials import ApiKeyAuthenticationHeadersProvider
 from yellowdog_client.common.server_sent_events import SubscriptionManager, SubscriptionEventListener
 from yellowdog_client.model import ApiKey
@@ -23,7 +23,8 @@ def build_proxy(base_url: str, retry_count: int = 0, max_retry_interval_seconds:
         authentication_headers_provider=ApiKeyAuthenticationHeadersProvider(make(ApiKey)),
         retry_count=retry_count,
         max_retry_interval_seconds=max_retry_interval_seconds,
-        base_url=base_url
+        base_url=base_url,
+        user_agent=UserAgent("test", "1.0", "3.8")
     )
 
 
