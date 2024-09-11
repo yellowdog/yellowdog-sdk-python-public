@@ -24,3 +24,6 @@ class NamespacesClientImpl(NamespacesClient):
             lambda slice_reference: self.__service_proxy.get_namespace_policies(search, slice_reference)
 
         return SearchClient(get_next_slice_function)
+
+    def close(self) -> None:
+        pass
