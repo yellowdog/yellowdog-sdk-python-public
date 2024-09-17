@@ -11,3 +11,4 @@ class ConfiguredWorkerPoolProperties(WorkerPoolProperties):
     nodeConfiguration: Optional[WorkerPoolNodeConfiguration] = None
     targetNodeCount: Optional[int] = None
     """The number of nodes that will be configured to register with this worker pool."""
+    workerTag: Optional[str] = None
