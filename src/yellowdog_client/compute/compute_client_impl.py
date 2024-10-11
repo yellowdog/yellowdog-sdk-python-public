@@ -200,6 +200,12 @@ class ComputeClientImpl(ComputeClient):
     def get_compute_requirement_template(self, compute_requirement_template_id: str) -> ComputeRequirementTemplate:
         return self.__service_proxy.get_compute_requirement_template_by_id(compute_requirement_template_id)
 
+    def get_compute_requirement_template_by_id(self, compute_requirement_template_id: str) -> ComputeRequirementTemplate:
+        return self.__service_proxy.get_compute_requirement_template_by_id(compute_requirement_template_id)
+
+    def get_compute_requirement_template_by_name(self, namespace: str, name: str) -> ComputeRequirementTemplate:
+        return self.__service_proxy.get_compute_requirement_template_by_name(namespace, name)
+
     def find_all_compute_requirement_templates(self) -> List[ComputeRequirementTemplateSummary]:
         return self.__service_proxy.find_all_compute_requirement_templates()
 

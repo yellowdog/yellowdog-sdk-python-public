@@ -9,6 +9,7 @@ from .aws_fleet_spot_options import AwsFleetSpotOptions
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_pricing import InstancePricing
 from .instance_summary import InstanceSummary
 
 
@@ -17,6 +18,7 @@ class AwsFleetComputeSource(AwsComputeSource):
     """Defines a source of compute provisioned using an AWS EC2 Fleet request."""
     type: str = field(default="co.yellowdog.platform.model.AwsFleetComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
+    instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)

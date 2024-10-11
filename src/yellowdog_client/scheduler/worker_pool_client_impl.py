@@ -80,6 +80,9 @@ class WorkerPoolClientImpl(WorkerPoolClient):
     def get_worker_pool_by_id(self, worker_pool_id: str) -> WorkerPool:
         return self.__service_proxy.get_worker_pool_by_id(worker_pool_id)
 
+    def get_worker_pool_by_name(self, namespace: str, name: str) -> WorkerPool:
+        return self.__service_proxy.get_worker_pool_by_name(namespace, name)
+
     def add_worker_pool_listener(self, worker_pool: WorkerPool, listener: SubscriptionEventListener[WorkerPool]) -> None:
         self._check_has_id(worker_pool)
         self.add_worker_pool_listener_by_id(worker_pool.id, listener)

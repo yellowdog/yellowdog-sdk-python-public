@@ -5,6 +5,7 @@ from .aws_compute_source import AwsComputeSource
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_pricing import InstancePricing
 from .instance_summary import InstanceSummary
 
 
@@ -13,6 +14,7 @@ class AwsInstancesComputeSource(AwsComputeSource):
     """Defines a source of compute composed of AWS EC2 instances using the RunInstances API."""
     type: str = field(default="co.yellowdog.platform.model.AwsInstancesComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
+    instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
     createdFromId: Optional[str] = field(default=None, init=False)

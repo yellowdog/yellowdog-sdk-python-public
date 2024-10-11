@@ -175,6 +175,18 @@ class WorkerPoolClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def get_worker_pool_by_name(self, namespace: str, name: str) -> WorkerPool:
+        """
+        Gets the latest state of the worker pool with the specified namespace and name.
+
+        :param namespace: the namespace of the worker pool
+        :param name: the name of the worker pool
+        :return: the latest state of the worker pool
+        """
+
+        pass
+
+    @abstractmethod
     def add_worker_pool_listener(self, worker_pool: WorkerPool, listener: SubscriptionEventListener[WorkerPool]) -> None:
         """
         Adds an event listener to receive notifications of changes for the specified worker pool.

@@ -419,7 +419,11 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def get_compute_requirement_template(self, compute_requirement_template_id: str) -> ComputeRequirementTemplate:
+    def get_compute_requirement_template_by_id(self, compute_requirement_template_id: str) -> ComputeRequirementTemplate:
+        pass
+
+    @abstractmethod
+    def get_compute_requirement_template_by_name(self, namespace: str, name: str) -> ComputeRequirementTemplate:
         pass
 
     @abstractmethod
@@ -464,4 +468,10 @@ class ComputeClient(ABC, Closeable):
         :return: the provision report for a compute requirement provisioned from a dynamic template
         """
 
+        pass
+
+    # KEEP
+    # Deprecated
+    @abstractmethod
+    def get_compute_requirement_template(self, compute_requirement_template_id: str) -> ComputeRequirementTemplate:
         pass

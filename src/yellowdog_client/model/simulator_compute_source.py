@@ -6,6 +6,7 @@ from .compute_source import ComputeSource
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_pricing import InstancePricing
 from .instance_summary import InstanceSummary
 
 
@@ -15,6 +16,7 @@ class SimulatorComputeSource(ComputeSource):
     type: str = field(default="co.yellowdog.platform.model.SimulatorComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
     provider: Optional[CloudProvider] = field(default=None, init=False)
+    instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     subregion: Optional[str] = field(default=None, init=False)
     userData: Optional[str] = field(default=None, init=False)
     instanceTags: Optional[Dict[str, str]] = field(default=None, init=False)

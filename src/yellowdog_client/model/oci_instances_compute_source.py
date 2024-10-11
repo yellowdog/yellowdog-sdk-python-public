@@ -4,6 +4,7 @@ from typing import Dict, Optional, Set
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_pricing import InstancePricing
 from .instance_summary import InstanceSummary
 from .oci_compute_source import OciComputeSource
 
@@ -13,6 +14,7 @@ class OciInstancesComputeSource(OciComputeSource):
     """Defines a source of compute composed of OCI instances provisioned individually."""
     type: str = field(default="co.yellowdog.platform.model.OciInstancesComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
+    instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     credentials: Optional[Set[str]] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)

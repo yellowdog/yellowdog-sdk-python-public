@@ -42,6 +42,9 @@ class WorkerPoolServiceProxy:
     def get_worker_pool_by_id(self, worker_pool_id: str) -> WorkerPool:
         return self._proxy.get(WorkerPool, worker_pool_id)
 
+    def get_worker_pool_by_name(self, namespace: str, name: str) -> WorkerPool:
+        return self._proxy.get(WorkerPool, "%s/%s" % (namespace, name))
+
     def stream_worker_pool_updates(self, worker_pool_id: str) -> EventSource:
         return self._proxy.stream("%s/updates" % worker_pool_id)
 

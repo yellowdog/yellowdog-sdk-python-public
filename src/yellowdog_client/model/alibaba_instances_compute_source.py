@@ -7,6 +7,7 @@ from .alibaba_spot_strategy import AlibabaSpotStrategy
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_pricing import InstancePricing
 from .instance_summary import InstanceSummary
 
 
@@ -15,6 +16,7 @@ class AlibabaInstancesComputeSource(AlibabaComputeSource):
     """Defines a source of compute composed of Alibaba Cloud ECS instances."""
     type: str = field(default="co.yellowdog.platform.model.AlibabaInstancesComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
+    instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     credentials: Optional[Set[str]] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)

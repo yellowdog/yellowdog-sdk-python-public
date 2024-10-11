@@ -95,6 +95,9 @@ class ComputeServiceProxy:
     def get_compute_requirement_template_by_id(self, template_id: str) -> ComputeRequirementTemplate:
         return self._proxy.get(ComputeRequirementTemplate, "templates/requirements/%s" % template_id)
 
+    def get_compute_requirement_template_by_name(self, namespace: str, name: str) -> ComputeRequirementTemplate:
+        return self._proxy.get(ComputeRequirementTemplate, "templates/requirements/%s/%s" % (namespace, name))
+
     def find_all_compute_requirement_templates(self) -> List[ComputeRequirementTemplateSummary]:
         return self._proxy.get(List[ComputeRequirementTemplateSummary], "templates/requirements")
 
