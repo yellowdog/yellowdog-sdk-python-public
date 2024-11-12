@@ -4,6 +4,8 @@ from yellowdog_client.common import Proxy
 from yellowdog_client.model import WorkRequirement, WorkRequirementStatus, WorkRequirementSummary, Task, \
     TaskSearch, SliceReference, Slice
 
+from yellowdog_client.model import WorkRequirementSearch
+
 
 class WorkServiceProxy:
     def __init__(self, proxy: Proxy) -> None:
@@ -26,8 +28,8 @@ class WorkServiceProxy:
         url = "requirements/%s/transition/%s" % (requirement_id, str(next_status))
         return self._proxy.put(WorkRequirement, url=url)
 
-    def find_all_work_requirements(self) -> List[WorkRequirementSummary]:
-        return self._proxy.get(List[WorkRequirementSummary], "requirements")
+    def find_work_requirements(self, search: WorkRequirementSearch, slice_reference: SliceReference) -> List[WorkRequirementSummary]:
+        return self._proxy.get(Slice[WorkRequirementSummary], "requirements", self._proxy.to_params(search, slice_reference))
 
     def stream_work_requirement_updates(self, requirement_id: str):
         return self._proxy.stream(f"requirements/{requirement_id}/updates")

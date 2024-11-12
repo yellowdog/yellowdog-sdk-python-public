@@ -6,7 +6,7 @@ from typing import List
 from .work_requirement_helper import WorkRequirementHelper
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
-from yellowdog_client.model import Slice, SliceReference, Task, TaskGroup, TaskSearch, WorkRequirement, WorkRequirementSummary
+from yellowdog_client.model import Slice, SliceReference, Task, TaskGroup, TaskSearch, WorkRequirement, WorkRequirementSearch, WorkRequirementSummary
 
 
 class WorkClient(ABC, Closeable):
@@ -197,6 +197,18 @@ class WorkClient(ABC, Closeable):
         Returns summaries of all existing work requirements within the system for the requesting user.
 
         :return: a list of work requirement summaries
+        @deprecated use {@link #getWorkRequirements(WorkRequirementSearch) instead to search tasks.
+        """
+
+        pass
+
+    @abstractmethod
+    def get_work_requirements(self, search: WorkRequirementSearch) -> SearchClient[WorkRequirementSummary]:
+        """
+        Returns a SearchClient that offers the ability to search work requirements.
+
+        :param search: the search
+        :return: the search client
         """
 
         pass

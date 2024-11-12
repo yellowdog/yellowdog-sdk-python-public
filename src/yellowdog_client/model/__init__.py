@@ -215,6 +215,8 @@ from .permission import Permission
 from .permission_detail import PermissionDetail
 from .price import Price
 from .processor_architecture import ProcessorArchitecture
+from .provider_node_summary import ProviderNodeSummary
+from .provider_region_node_summary import ProviderRegionNodeSummary
 from .provision_template_worker_pool_request import ProvisionTemplateWorkerPoolRequest
 from .provisioned_worker_pool import ProvisionedWorkerPool
 from .provisioned_worker_pool_properties import ProvisionedWorkerPoolProperties
@@ -273,6 +275,7 @@ from .user_portal_context import UserPortalContext
 from .user_search import UserSearch
 from .waterfall_provision_strategy import WaterfallProvisionStrategy
 from .work_requirement import WorkRequirement
+from .work_requirement_search import WorkRequirementSearch
 from .work_requirement_status import WorkRequirementStatus
 from .work_requirement_summary import WorkRequirementSummary
 from .worker import Worker
@@ -504,6 +507,8 @@ __all__ = [
     "PermissionDetail",
     "Price",
     "ProcessorArchitecture",
+    "ProviderNodeSummary",
+    "ProviderRegionNodeSummary",
     "ProvisionTemplateWorkerPoolRequest",
     "ProvisionedWorkerPool",
     "ProvisionedWorkerPoolProperties",
@@ -562,6 +567,7 @@ __all__ = [
     "UserSearch",
     "WaterfallProvisionStrategy",
     "WorkRequirement",
+    "WorkRequirementSearch",
     "WorkRequirementStatus",
     "WorkRequirementSummary",
     "Worker",
