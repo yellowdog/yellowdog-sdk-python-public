@@ -73,16 +73,15 @@ class WorkClientImpl(WorkClient):
         return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.CANCELLING)
 
     def find_all_work_requirements(self) -> List[WorkRequirementSummary]:
-        return paginate(lambda sr: self.get_work_requirements_slice({}, sr))
+        search = WorkRequirementSearch()
+        return paginate(lambda sr: self._get_work_requirements_slice(search, sr))
 
     def get_work_requirements(self, search: WorkRequirementSearch) -> SearchClient[WorkRequirementSummary]:
-        get_next_slice_function: Callable[[SliceReference], Slice[WorkRequirementSummary]] = \
-            lambda slice_reference: self.get_work_requirements_slice(search, slice_reference)
-
+        get_next_slice_function = lambda slice_reference: self._get_work_requirements_slice(search, slice_reference)
         return SearchClient(get_next_slice_function)
 
-    def get_work_requirements_slice(self, search: WorkRequirementSearch, slice_reference: SliceReference):
-        return self.__service_proxy.search_tasks(search, slice_reference)
+    def _get_work_requirements_slice(self, search: WorkRequirementSearch, slice_reference: SliceReference) -> Slice[WorkRequirementSummary]:
+        return self.__service_proxy.find_work_requirements(search, slice_reference)
 
     def add_work_requirement_listener(self, work_requirement: WorkRequirement, listener: SubscriptionEventListener[WorkRequirement]) -> None:
         self._check_has_id(work_requirement)

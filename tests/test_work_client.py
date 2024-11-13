@@ -1,15 +1,15 @@
 import datetime
 
 import pytest
-from yellowdog_client import PlatformClient
-from yellowdog_client.common.json import Json
-from yellowdog_client.model import ServicesSchema, ApiKey, WorkRequirement, Slice, Task, TaskSearch, InstantRange, \
-    TaskStatus, SortDirection, WorkRequirementStatus
-from yellowdog_client.scheduler import WorkClient
 
 from util.api import MockApi, HttpMethod
 from util.data import make, make_string
 from util.sse.sse_server import SseServer
+from yellowdog_client import PlatformClient
+from yellowdog_client.common.json import Json
+from yellowdog_client.model import ServicesSchema, ApiKey, WorkRequirement, Slice, Task, TaskSearch, InstantRange, \
+    TaskStatus, SortDirection, WorkRequirementStatus, WorkRequirementSummary, WorkRequirementSearch
+from yellowdog_client.scheduler import WorkClient
 
 
 @pytest.fixture
@@ -45,6 +45,45 @@ def test_can_get_work_requirement(mock_api: MockApi, work_client: WorkClient):
     expected = mock_api.mock(f"/work/requirements/{expected.id}", HttpMethod.GET, response=expected)
 
     actual = work_client.get_work_requirement(expected)
+
+    assert actual == expected
+    mock_api.verify_all_requests_called()
+
+def test_can_find_all_work_requirements(mock_api: MockApi, work_client: WorkClient):
+    first_slice = Slice(items=[make(WorkRequirementSummary)], nextSliceId=make_string())
+    second_slice = Slice(items=[make(WorkRequirementSummary)])
+    expected = first_slice.items + second_slice.items
+
+    mock_api.mock(f"/work/requirements", HttpMethod.GET, params={
+        "sliced": "true"
+    }, response=first_slice)
+
+    mock_api.mock(f"/work/requirements", HttpMethod.GET, params={
+        "sliceId": first_slice.nextSliceId,
+        "sliced": "true"
+    }, response=second_slice)
+
+    actual = work_client.find_all_work_requirements()
+
+    assert actual == expected
+    mock_api.verify_all_requests_called()
+
+def test_can_get_work_requirements(mock_api: MockApi, work_client: WorkClient):
+    first_slice = Slice(items=[make(WorkRequirementSummary)], nextSliceId=make_string())
+    second_slice = Slice(items=[make(WorkRequirementSummary)])
+    expected = first_slice.items + second_slice.items
+    search = WorkRequirementSearch()
+
+    mock_api.mock(f"/work/requirements", HttpMethod.GET, params={
+        "sliced": "true"
+    }, response=first_slice)
+
+    mock_api.mock(f"/work/requirements", HttpMethod.GET, params={
+        "sliceId": first_slice.nextSliceId,
+        "sliced": "true"
+    }, response=second_slice)
+
+    actual = work_client.get_work_requirements(search).list_all()
 
     assert actual == expected
     mock_api.verify_all_requests_called()

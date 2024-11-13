@@ -28,8 +28,10 @@ class WorkServiceProxy:
         url = "requirements/%s/transition/%s" % (requirement_id, str(next_status))
         return self._proxy.put(WorkRequirement, url=url)
 
-    def find_work_requirements(self, search: WorkRequirementSearch, slice_reference: SliceReference) -> List[WorkRequirementSummary]:
-        return self._proxy.get(Slice[WorkRequirementSummary], "requirements", self._proxy.to_params(search, slice_reference))
+    def find_work_requirements(self, search: WorkRequirementSearch, slice_reference: SliceReference) -> Slice[WorkRequirementSummary]:
+        params = self._proxy.to_params(search, slice_reference)
+        params["sliced"] = "true"
+        return self._proxy.get(Slice[WorkRequirementSummary], "requirements", params)
 
     def stream_work_requirement_updates(self, requirement_id: str):
         return self._proxy.stream(f"requirements/{requirement_id}/updates")
