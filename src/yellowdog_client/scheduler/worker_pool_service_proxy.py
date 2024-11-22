@@ -6,7 +6,7 @@ from yellowdog_client.common import Proxy
 from yellowdog_client.model import ProvisionedWorkerPool, ComputeRequirementTemplateUsage, \
     ProvisionedWorkerPoolProperties, WorkerPool, NodeSearch, Node, Slice, \
     SliceReference, WorkerPoolSummary, NodeActionGroup, NodeActionQueueSnapshot, AddNodeActionsRequest, \
-    AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, WorkerPoolToken
+    AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, WorkerPoolToken, WorkerPoolSearch
 
 
 class WorkerPoolServiceProxy:
@@ -51,8 +51,10 @@ class WorkerPoolServiceProxy:
     def search_nodes(self, search: NodeSearch, slice_reference: SliceReference) -> Slice[Node]:
         return self._proxy.get(Slice[Node], "nodes", self._proxy.to_params(search, slice_reference))
 
-    def find_all_worker_pools(self):
-        return self._proxy.get(List[WorkerPoolSummary])
+    def find_worker_pools(self, search: WorkerPoolSearch, slice_reference: SliceReference) -> Slice[WorkerPoolSummary]:
+        params = self._proxy.to_params(search, slice_reference)
+        params["sliced"] = "true"
+        return self._proxy.get(Slice[WorkerPoolSummary], params=params)
 
     def shutdown_worker_pool(self, worker_pool_id: str) -> None:
         self._proxy.delete(worker_pool_id)

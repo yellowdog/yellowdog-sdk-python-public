@@ -7,7 +7,10 @@ from typing import List, Optional, TypeVar
 from .worker_pool_helper import WorkerPoolHelper
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
-from yellowdog_client.model import AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, ComputeRequirementTemplateUsage, ConfiguredWorkerPool, Node, NodeAction, NodeActionGroup, NodeActionQueueSnapshot, NodeSearch, ProvisionedWorkerPool, ProvisionedWorkerPoolProperties, Slice, SliceReference, WorkerPool, WorkerPoolSummary, WorkerPoolToken
+from yellowdog_client.model import AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, \
+    ComputeRequirementTemplateUsage, ConfiguredWorkerPool, Node, NodeAction, NodeActionGroup, \
+    NodeActionQueueSnapshot, NodeSearch, ProvisionedWorkerPool, ProvisionedWorkerPoolProperties, Slice, \
+    SliceReference, WorkerPool, WorkerPoolSearch, WorkerPoolSummary, WorkerPoolToken
 
 T = TypeVar('T', bound=WorkerPool)
 
@@ -249,6 +252,18 @@ class WorkerPoolClient(ABC, Closeable):
         Returns summaries of all existing worker pools within the system for the requesting user.
 
         :return: a list of worker pool summaries
+        @deprecated use #getWorkerPools(WorkerPoolSearch) instead to search worker pools.
+        """
+
+        pass
+
+    @abstractmethod
+    def get_worker_pools(self, search: WorkerPoolSearch) -> SearchClient[WorkerPoolSummary]:
+        """
+        Returns a SearchClient that offers the ability to search worker pools.
+
+        :param search: the search
+        :return: the search client
         """
 
         pass

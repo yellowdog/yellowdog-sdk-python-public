@@ -19,7 +19,6 @@ class SimulatorComputeSource(ComputeSource):
     instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     subregion: Optional[str] = field(default=None, init=False)
     userData: Optional[str] = field(default=None, init=False)
-    instanceTags: Optional[Dict[str, str]] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
     credentials: Optional[Set[str]] = field(default=None, init=False)
     id: Optional[str] = field(default=None, init=False)
@@ -33,6 +32,7 @@ class SimulatorComputeSource(ComputeSource):
     region: str = "sim-region"
     instanceType: str = "sim-instance"
     imageId: str = "sim-image"
+    instanceTags: Optional[Dict[str, str]] = None
     implicitCapacity: Optional[int] = None
     """The implicit capacity of this source that is not directly discoverable by the compute service, independent of limit."""
     instanceStartupTimeSeconds: int = 0

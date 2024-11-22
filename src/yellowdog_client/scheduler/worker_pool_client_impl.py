@@ -8,7 +8,8 @@ from yellowdog_client.common.server_sent_events import SubscriptionManager, Subs
 from yellowdog_client.model import Identified, ProvisionedWorkerPool, ProvisionedWorkerPoolProperties, \
     ComputeRequirementTemplateUsage, WorkerPool, WorkerPoolSummary, NodeSearch, Node, \
     SliceReference, Slice, NodeActionQueueSnapshot, NodeActionGroup, NodeAction, NodeIdFilter, \
-    WorkerPoolToken, AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, ConfiguredWorkerPool
+    WorkerPoolToken, AddConfiguredWorkerPoolRequest, AddConfiguredWorkerPoolResponse, \
+    ConfiguredWorkerPool, WorkerPoolSearch
 from yellowdog_client.common import SearchClient
 from ..common.pagination import paginate
 
@@ -101,7 +102,15 @@ class WorkerPoolClientImpl(WorkerPoolClient):
         return self.get_worker_pool_helper(worker_pool)
 
     def find_all_worker_pools(self) -> List[WorkerPoolSummary]:
-        return self.__service_proxy.find_all_worker_pools()
+        search = WorkerPoolSearch()
+        return paginate(lambda sr: self._get_worker_pools_slice(search, sr))
+
+    def get_worker_pools(self, search: WorkerPoolSearch) -> SearchClient[WorkerPoolSummary]:
+        get_next_slice_function = lambda slice_reference: self._get_worker_pools_slice(search, slice_reference)
+        return SearchClient(get_next_slice_function)
+
+    def _get_worker_pools_slice(self, search: WorkerPoolSearch, slice_reference: SliceReference) -> Slice[WorkerPoolSummary]:
+        return self.__service_proxy.find_worker_pools(search, slice_reference)
 
     def find_nodes(self, search: NodeSearch) -> List[Node]:
         return paginate(lambda sr: self.find_nodes_slice(search, sr))
