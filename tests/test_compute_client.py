@@ -44,21 +44,21 @@ def test_can_search_compute_requirements(mock_api, compute_client: ComputeClient
         "/compute/requirements",
         HttpMethod.GET,
         params={
-            "sortField": "name",
-            "sortDirection": SortDirection.ASCENDING,
             "namespace": compute_requirement.namespace,
             "tag": compute_requirement.tag,
-            "statuses": [compute_requirement.status]
+            "statuses": [compute_requirement.status],
+            "sortField": "name",
+            "sortDirection": SortDirection.ASCENDING,
         },
         response=Slice(items=[compute_requirement])
     )
 
     actual = compute_client.get_compute_requirements(ComputeRequirementSearch(
         sortField="name",
-        sortDirection=SortDirection.ASCENDING,
         namespace=compute_requirement.namespace,
         tag=compute_requirement.tag,
-        statuses=[compute_requirement.status]
+        statuses=[compute_requirement.status],
+        sortDirection=SortDirection.ASCENDING
     )).list_all()
 
     assert actual == expected.items
