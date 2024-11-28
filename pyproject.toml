@@ -25,9 +25,13 @@ classifiers = [
     'License :: OSI Approved :: Apache Software License'
 ]
 dependencies = [
-    'jsons==1.4.0',
-    'requests==2.31.0',
-    "urllib3>=1.26,<3",
+    "jsons>=1.4.0,<2",
+    # 2.25.0 is the earliest version of requests that supports urllib3 1.26
+    "requests>=2.25.0,<3",
+    # This issue makes compatibility with urllib3 < 1.26 difficult: https://github.com/urllib3/urllib3/issues/2057
+    "urllib3>=1.26.0,<2; python_version < '3.12'",
+    # urllib3 is not compatible with python 3.12 until version 2.0.0
+    "urllib3>=2.0.0,<3; python_version >= '3.12'",
     "python-dispatch==0.2.2",
     "cancel-token==0.1.6",
     "isodate>=0.6.1,<1"
@@ -35,7 +39,7 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
-    "pytest==7.4.2",
+    "pytest==8.3.3",
     "pytest-httpserver==1.0.8",
     "typing_compat==0.1.0",
     "busypie==0.5.1"
