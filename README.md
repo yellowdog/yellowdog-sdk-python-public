@@ -10,7 +10,7 @@ Please refer to [the full documentation](https://docs.yellowdog.co/#/sdk/python-
 
 ### Building From Source
 
-If you wish to modify the SDK, you can build it from source. You must have Python 3.8 installed:
+If you wish to modify the SDK, you can build it from source. You must have Python 3.9 installed:
 
 ```shell
 ./scripts/setup
@@ -27,7 +27,7 @@ In order for this to work on Ubuntu, you need to first have the dev package for 
 For example:
 
 ```shell
-sudo apt-get install python3.8-dev
+sudo apt-get install python3.9-dev
 ```
 
 ### Testing Against Multiple Python Versions
@@ -38,7 +38,7 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 # Update package indexes
 sudo apt-get update
 # Install all supported versions of Python                                              
-sudo apt-get install python3.8 python3.8-distutils python3.9 python3.9-distutils python3.10 python3.10-distutils python3.11 python3.11-distutils python3.12 python3.12-distutils  
+sudo apt-get install python3.9 python3.9-distutils python3.10 python3.10-distutils python3.11 python3.11-distutils python3.12 python3.12-distutils python3.13
 # Install tox
 python3 -m pip install tox  
 # Run tests for each Python version                                             

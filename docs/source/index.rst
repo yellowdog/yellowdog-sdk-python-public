@@ -11,7 +11,9 @@ The YellowDog SDK allows you to integrate the YellowDog Platform into your Pytho
 Requirements
 ============
 
-Python 3.7+
+Our SDK is tested against all supported versions of Python: https://devguide.python.org/versions/#supported-versions
+
+Versions as early as Python 3.7 should work, but we recommend using a version of Python that is not end-of-life.
 
 Download & Install
 ==================

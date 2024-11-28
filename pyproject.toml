@@ -14,11 +14,13 @@ requires-python = ">=3.7"
 classifiers = [
     'Operating System :: OS Independent',
     'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Topic :: Software Development :: Libraries :: Python Modules',
     'Intended Audience :: Developers',
     'Programming Language :: Python',
@@ -45,7 +47,7 @@ tests = [
     "busypie==0.5.1"
 ]
 docs = [
-    "sphinx==4.3.0",
+    "Sphinx==7.4.7",
     "sphinx-autodoc-typehints==1.12.0",
     "sphinx-automodapi==0.13"
 ]
