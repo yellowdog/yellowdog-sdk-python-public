@@ -46,6 +46,8 @@ from .aws_fleet_spot_allocation_strategy import AwsFleetSpotAllocationStrategy
 from .aws_fleet_spot_options import AwsFleetSpotOptions
 from .aws_instance import AwsInstance
 from .aws_instances_compute_source import AwsInstancesComputeSource
+from .aws_network_interface_type import AwsNetworkInterfaceType
+from .aws_secondary_network_interface import AwsSecondaryNetworkInterface
 from .azure_account_authentication_properties import AzureAccountAuthenticationProperties
 from .azure_client_credential import AzureClientCredential
 from .azure_compute_credential import AzureComputeCredential
@@ -342,6 +344,8 @@ __all__ = [
     "AwsFleetSpotOptions",
     "AwsInstance",
     "AwsInstancesComputeSource",
+    "AwsNetworkInterfaceType",
+    "AwsSecondaryNetworkInterface",
     "AzureAccountAuthenticationProperties",
     "AzureClientCredential",
     "AzureComputeCredential",

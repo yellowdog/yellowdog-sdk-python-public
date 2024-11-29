@@ -6,6 +6,7 @@ from .aws_fleet_instance_override import AwsFleetInstanceOverride
 from .aws_fleet_on_demand_options import AwsFleetOnDemandOptions
 from .aws_fleet_purchase_option import AwsFleetPurchaseOption
 from .aws_fleet_spot_options import AwsFleetSpotOptions
+from .aws_secondary_network_interface import AwsSecondaryNetworkInterface
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
@@ -61,6 +62,8 @@ class AwsFleetComputeSource(AwsComputeSource):
     """Indicates if instances should be provisioned within a cluster placement group."""
     createElasticFabricAdapter: Optional[bool] = None
     """Indicates if instances should be provisioned with an Elastic Fabric Adapter network interface."""
+    secondaryNetworkInterfaces: Optional[List[AwsSecondaryNetworkInterface]] = None
+    """Secondary network interfaces to create on provisioned instances."""
     limit: int = 0
     maintainCapacity: bool = False
     """Indicates if AWS EC2 Fleet should maintain the instance count independently of YellowDog Compute, replacing the reprovision functionality."""

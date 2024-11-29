@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from .aws_compute_source import AwsComputeSource
+from .aws_secondary_network_interface import AwsSecondaryNetworkInterface
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
@@ -53,6 +54,8 @@ class AwsInstancesComputeSource(AwsComputeSource):
     """Indicates if instances should be provisioned within a cluster placement group."""
     createElasticFabricAdapter: Optional[bool] = None
     """Indicates if instances should be provisioned with an Elastic Fabric Adapter network interface."""
+    secondaryNetworkInterfaces: Optional[List[AwsSecondaryNetworkInterface]] = None
+    """Secondary network interfaces to create on provisioned instances."""
     limit: int = 0
     specifyMinimum: bool = False
     """
