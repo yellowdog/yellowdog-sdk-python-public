@@ -5,6 +5,7 @@ from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
 from .gce_compute_source import GceComputeSource
+from .gce_host_maintenance_behaviour import GceHostMaintenanceBehaviour
 from .instance_summary import InstanceSummary
 
 
@@ -42,3 +43,4 @@ class GceInstanceGroupComputeSource(GceComputeSource):
     confidential: bool = False
     acceleratorType: Optional[str] = None
     acceleratorCount: int = 0
+    hostMaintenanceBehaviour: Optional[GceHostMaintenanceBehaviour] = None

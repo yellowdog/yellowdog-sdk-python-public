@@ -121,6 +121,7 @@ from .feature_detail import FeatureDetail
 from .filter import Filter
 from .flatten_path import FlattenPath
 from .gce_compute_source import GceComputeSource
+from .gce_host_maintenance_behaviour import GceHostMaintenanceBehaviour
 from .gce_instance import GceInstance
 from .gce_instance_group_compute_source import GceInstanceGroupComputeSource
 from .gce_instances_compute_source import GceInstancesComputeSource
@@ -419,6 +420,7 @@ __all__ = [
     "Filter",
     "FlattenPath",
     "GceComputeSource",
+    "GceHostMaintenanceBehaviour",
     "GceInstance",
     "GceInstanceGroupComputeSource",
     "GceInstancesComputeSource",
