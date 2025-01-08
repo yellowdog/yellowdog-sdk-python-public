@@ -10,6 +10,8 @@ class AwsFleetPurchaseOption(Enum):
     """AWS EC2 Fleet will only use On-Demand instances."""
     SPOT_ONLY = "SPOT_ONLY"
     """AWS EC2 Fleet will only use Spot instances."""
+    CAPACITY_BLOCK = "CAPACITY_BLOCK"
+    """AWS EC2 Fleet will only use instances within a Capacity Block."""
 
     def __str__(self) -> str:
         return self.name

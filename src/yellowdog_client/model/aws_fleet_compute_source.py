@@ -1,11 +1,13 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set
 
+from .aws_capacity_reservation import AwsCapacityReservation
 from .aws_compute_source import AwsComputeSource
 from .aws_fleet_instance_override import AwsFleetInstanceOverride
 from .aws_fleet_on_demand_options import AwsFleetOnDemandOptions
 from .aws_fleet_purchase_option import AwsFleetPurchaseOption
 from .aws_fleet_spot_options import AwsFleetSpotOptions
+from .aws_placement_group import AwsPlacementGroup
 from .aws_secondary_network_interface import AwsSecondaryNetworkInterface
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
@@ -60,10 +62,14 @@ class AwsFleetComputeSource(AwsComputeSource):
     """Indicates if provisioned instances should be assigned public IP addresses."""
     createClusterPlacementGroup: Optional[bool] = None
     """Indicates if instances should be provisioned within a cluster placement group."""
+    existingPlacementGroup: Optional[AwsPlacementGroup] = None
+    """Indicates an existing placement group within which instances should be provisioned."""
     createElasticFabricAdapter: Optional[bool] = None
     """Indicates if instances should be provisioned with an Elastic Fabric Adapter network interface."""
     secondaryNetworkInterfaces: Optional[List[AwsSecondaryNetworkInterface]] = None
     """Secondary network interfaces to create on provisioned instances."""
+    capacityReservation: Optional[AwsCapacityReservation] = None
+    """Specifies the capacity reservation to target for provisioned instances."""
     limit: int = 0
     maintainCapacity: bool = False
     """Indicates if AWS EC2 Fleet should maintain the instance count independently of YellowDog Compute, replacing the reprovision functionality."""

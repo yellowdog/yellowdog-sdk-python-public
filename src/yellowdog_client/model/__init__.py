@@ -35,6 +35,8 @@ from .attribute_value import AttributeValue
 from .authentication_provider import AuthenticationProvider
 from .auto_shutdown import AutoShutdown
 from .aws_account_role_credential import AwsAccountRoleCredential
+from .aws_capacity_reservation import AwsCapacityReservation
+from .aws_capacity_reservation_preference import AwsCapacityReservationPreference
 from .aws_compute_source import AwsComputeSource
 from .aws_credential import AwsCredential
 from .aws_fleet_compute_source import AwsFleetComputeSource
@@ -47,6 +49,7 @@ from .aws_fleet_spot_options import AwsFleetSpotOptions
 from .aws_instance import AwsInstance
 from .aws_instances_compute_source import AwsInstancesComputeSource
 from .aws_network_interface_type import AwsNetworkInterfaceType
+from .aws_placement_group import AwsPlacementGroup
 from .aws_secondary_network_interface import AwsSecondaryNetworkInterface
 from .azure_account_authentication_properties import AzureAccountAuthenticationProperties
 from .azure_client_credential import AzureClientCredential
@@ -334,6 +337,8 @@ __all__ = [
     "AuthenticationProvider",
     "AutoShutdown",
     "AwsAccountRoleCredential",
+    "AwsCapacityReservation",
+    "AwsCapacityReservationPreference",
     "AwsComputeSource",
     "AwsCredential",
     "AwsFleetComputeSource",
@@ -346,6 +351,7 @@ __all__ = [
     "AwsInstance",
     "AwsInstancesComputeSource",
     "AwsNetworkInterfaceType",
+    "AwsPlacementGroup",
     "AwsSecondaryNetworkInterface",
     "AzureAccountAuthenticationProperties",
     "AzureClientCredential",
