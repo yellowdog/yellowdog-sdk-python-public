@@ -169,6 +169,9 @@ from .machine_image_family import MachineImageFamily
 from .machine_image_family_search import MachineImageFamilySearch
 from .machine_image_family_summary import MachineImageFamilySummary
 from .machine_image_group import MachineImageGroup
+from .measurement_aggregate import MeasurementAggregate
+from .measurement_search import MeasurementSearch
+from .measurement_search_validator import MeasurementSearchValidator
 from .metadata_filter import MetadataFilter
 from .model_exception import ModelException
 from .named import Named
@@ -269,6 +272,8 @@ from .task_output_source import TaskOutputSource
 from .task_search import TaskSearch
 from .task_status import TaskStatus
 from .task_summary import TaskSummary
+from .track import Track
+from .track_search import TrackSearch
 from .transfer_status_response import TransferStatusResponse
 from .transfer_summary_response import TransferSummaryResponse
 from .update_application_request import UpdateApplicationRequest
@@ -471,6 +476,9 @@ __all__ = [
     "MachineImageFamilySearch",
     "MachineImageFamilySummary",
     "MachineImageGroup",
+    "MeasurementAggregate",
+    "MeasurementSearch",
+    "MeasurementSearchValidator",
     "MetadataFilter",
     "ModelException",
     "Named",
@@ -571,6 +579,8 @@ __all__ = [
     "TaskSearch",
     "TaskStatus",
     "TaskSummary",
+    "Track",
+    "TrackSearch",
     "TransferStatusResponse",
     "TransferSummaryResponse",
     "UpdateApplicationRequest",

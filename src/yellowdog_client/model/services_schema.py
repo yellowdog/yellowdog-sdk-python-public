@@ -26,3 +26,5 @@ class ServicesSchema:
     """The base URL where the Usage service is located. This is the YellowDog Cell URL rather than a service specific path."""
     cloudInfoServiceUrl: Optional[str] = None
     """The base URL where the Cloud Info service is located. This is the YellowDog Cell URL rather than a service specific path."""
+    metricsServiceUrl: Optional[str] = None
+    """The base URL where the Metrics service is located. This is the YellowDog Cell URL rather than a service specific path."""

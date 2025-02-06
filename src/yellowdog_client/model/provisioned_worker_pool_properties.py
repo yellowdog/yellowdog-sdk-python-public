@@ -26,3 +26,4 @@ class ProvisionedWorkerPoolProperties(WorkerPoolProperties):
     workerTag: Optional[str] = None
     """An optional tag value that will be attached to all workers in this pool and used to constrain worker allocation."""
     nodeConfiguration: Optional[WorkerPoolNodeConfiguration] = None
+    metricsEnabled: Optional[bool] = None

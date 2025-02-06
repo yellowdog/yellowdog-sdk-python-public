@@ -31,6 +31,8 @@ class Permission(Enum):
     KEYRING_WRITE = "KEYRING_WRITE", "Write Keyrings", KEYRING_READ
     KEYRING_ACCESS_WRITE = "KEYRING_ACCESS_WRITE", "Write Keyring Access", KEYRING_READ
     LOG_READ = "LOG_READ", "Read Logs", None
+    METRICS_READ = "METRICS_READ", "Read Metrics", None
+    METRICS_WRITE = "METRICS_WRITE", "Write Metrics", METRICS_READ
     NAMESPACE_READ = "NAMESPACE_READ", "Read Namespaces", None
     NAMESPACE_WRITE = "NAMESPACE_WRITE", "Write Namespaces", NAMESPACE_READ
     OBJECT_STORAGE_CONFIGURATION_READ = "OBJECT_STORAGE_CONFIGURATION_READ", "Read Object Storage Configurations", None
