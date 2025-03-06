@@ -6,7 +6,7 @@ from typing import List, Optional
 from .compute_requirement_helper import ComputeRequirementHelper
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
-from yellowdog_client.model import BestComputeSourceReport, ComputeRequirement, ComputeRequirementSearch, ComputeRequirementTemplate, ComputeRequirementTemplateSummary, ComputeRequirementTemplateTestResult, ComputeRequirementTemplateUsage, ComputeSourceTemplate, ComputeSourceTemplateSummary, Instance, InstanceId, InstanceSearch
+from yellowdog_client.model import BestComputeSourceReport, ComputeRequirement, ComputeRequirementSearch, ComputeRequirementSummary, ComputeRequirementSummarySearch, ComputeRequirementTemplate, ComputeRequirementTemplateSummary, ComputeRequirementTemplateTestResult, ComputeRequirementTemplateUsage, ComputeSourceTemplate, ComputeSourceTemplateSummary, Instance, InstanceId, InstanceSearch
 
 
 class ComputeClient(ABC, Closeable):
@@ -374,8 +374,13 @@ class ComputeClient(ABC, Closeable):
 
         :param compute_requirement_search: the search criteria
         :return: a search client for searching compute requirements
+        @deprecated use #getComputeRequirementSummaries(ComputeRequirementSummarySearch) instead.
         """
 
+        pass
+
+    @abstractmethod
+    def get_compute_requirement_summaries(self, compute_requirement_summary_search: ComputeRequirementSummarySearch) -> SearchClient[ComputeRequirementSummary]:
         pass
 
     @abstractmethod

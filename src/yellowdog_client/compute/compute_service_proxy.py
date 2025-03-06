@@ -6,7 +6,8 @@ from yellowdog_client.model import ComputeRequirementTemplate, ComputeRequiremen
     SliceReference, Slice, InstanceSearch, Instance, InstanceId
 from yellowdog_client.model import InstanceStatus, \
     ComputeRequirement, ComputeRequirementTemplateSummary, ComputeSourceTemplate, ComputeRequirementTemplateUsage, \
-    ComputeSourceTemplateSummary, ComputeRequirementTemplateTestResult, BestComputeSourceReport
+    ComputeSourceTemplateSummary, ComputeRequirementTemplateTestResult, BestComputeSourceReport, \
+    ComputeRequirementSummarySearch, ComputeRequirementSummary
 
 
 class ComputeServiceProxy:
@@ -61,6 +62,15 @@ class ComputeServiceProxy:
     ) -> Slice[ComputeRequirement]:
         return self._proxy.get(Slice[ComputeRequirement], "requirements",
                                self._proxy.to_params(search, slice_reference))
+
+    def search_compute_requirement_summaries(
+            self,
+            search: ComputeRequirementSummarySearch,
+            slice_reference: SliceReference
+    ) -> Slice[ComputeRequirementSummary]:
+        params = self._proxy.to_params(search, slice_reference)
+        params["summaries"] = "true"
+        return self._proxy.get(Slice[ComputeRequirementSummary], "requirements", params)
 
     def add_compute_source_template(self, compute_source_template: ComputeSourceTemplate) -> ComputeSourceTemplate:
         return self._proxy.post(ComputeSourceTemplate, compute_source_template, "templates/sources")

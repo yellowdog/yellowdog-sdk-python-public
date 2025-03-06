@@ -13,6 +13,8 @@ from yellowdog_client.model import ComputeSourceTemplate
 from yellowdog_client.model import ComputeSourceTemplateSummary
 from yellowdog_client.model import Instance, ComputeRequirementTemplate
 from yellowdog_client.model import InstanceStatus
+from yellowdog_client.model import ComputeRequirementSummarySearch
+from yellowdog_client.model import ComputeRequirementSummary
 from .compute_client import ComputeClient
 from .compute_requirement_helper import ComputeRequirementHelper
 from .compute_service_proxy import ComputeServiceProxy
@@ -159,6 +161,18 @@ class ComputeClientImpl(ComputeClient):
         def get_next_slice_function(slice_reference: SliceReference) -> Slice[ComputeRequirement]:
             return self.__service_proxy.search_compute_requirements(
                 compute_requirement_search,
+                slice_reference
+            )
+
+        return SearchClient(get_next_slice_function)
+
+    def get_compute_requirement_summaries(
+            self,
+            compute_requirement_summary_search: ComputeRequirementSummarySearch
+    ) -> SearchClient[ComputeRequirementSummary]:
+        def get_next_slice_function(slice_reference: SliceReference) -> Slice[ComputeRequirementSummary]:
+            return self.__service_proxy.search_compute_requirement_summaries(
+                compute_requirement_summary_search,
                 slice_reference
             )
 

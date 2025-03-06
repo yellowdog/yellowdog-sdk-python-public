@@ -82,6 +82,8 @@ from .compute_requirement_search import ComputeRequirementSearch
 from .compute_requirement_static_template import ComputeRequirementStaticTemplate
 from .compute_requirement_static_template_test_result import ComputeRequirementStaticTemplateTestResult
 from .compute_requirement_status import ComputeRequirementStatus
+from .compute_requirement_summary import ComputeRequirementSummary
+from .compute_requirement_summary_search import ComputeRequirementSummarySearch
 from .compute_requirement_supported_operations import ComputeRequirementSupportedOperations
 from .compute_requirement_template import ComputeRequirementTemplate
 from .compute_requirement_template_summary import ComputeRequirementTemplateSummary
@@ -389,6 +391,8 @@ __all__ = [
     "ComputeRequirementStaticTemplate",
     "ComputeRequirementStaticTemplateTestResult",
     "ComputeRequirementStatus",
+    "ComputeRequirementSummary",
+    "ComputeRequirementSummarySearch",
     "ComputeRequirementSupportedOperations",
     "ComputeRequirementTemplate",
     "ComputeRequirementTemplateSummary",
