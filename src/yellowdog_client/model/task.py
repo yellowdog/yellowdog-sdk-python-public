@@ -6,6 +6,7 @@ from .flatten_path import FlattenPath
 from .identified import Identified
 from .named import Named
 from .tagged import Tagged
+from .task_data import TaskData
 from .task_error import TaskError
 from .task_input import TaskInput
 from .task_output import TaskOutput
@@ -48,5 +49,7 @@ class Task(Identified, Named, Tagged):
     """Indicates if the input objects' paths should be flattened when they are downloaded."""
     outputs: Optional[List[TaskOutput]] = None
     """Output object specifications that determine objects to be uploaded after running the task."""
+    data: Optional[TaskData] = None
+    """Task data requirement specifications."""
     timeout: Optional[timedelta] = None
     """The maximum time that a worker should attempt to execute the task for before failing it."""

@@ -262,6 +262,9 @@ from .sub_region import SubRegion
 from .sub_region_search import SubRegionSearch
 from .tagged import Tagged
 from .task import Task
+from .task_data import TaskData
+from .task_data_input import TaskDataInput
+from .task_data_output import TaskDataOutput
 from .task_error import TaskError
 from .task_group import TaskGroup
 from .task_group_status import TaskGroupStatus
@@ -571,6 +574,9 @@ __all__ = [
     "SubRegionSearch",
     "Tagged",
     "Task",
+    "TaskData",
+    "TaskDataInput",
+    "TaskDataOutput",
     "TaskError",
     "TaskGroup",
     "TaskGroupStatus",
