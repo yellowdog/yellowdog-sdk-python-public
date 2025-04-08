@@ -7,6 +7,10 @@ class WorkerStatus(Enum):
     """The Worker has been instructed to execute a task."""
     SLEEPING = "SLEEPING", True, True
     """The Worker has been instructed to sleep for a specified period of time."""
+    STOPPED = "STOPPED", True, True
+    """The Worker has been instructed to stop."""
+    STARTING = "STARTING", True, True
+    """The Agent has been instructed to start the Worker."""
     LATE = "LATE", True, False
     """The Worker's heartbeat is late."""
     LOST = "LOST", False, False
@@ -16,10 +20,10 @@ class WorkerStatus(Enum):
     SHUTDOWN = "SHUTDOWN", False, False
     """The Worker has been instructed to shut down."""
 
-    def __new__(cls, value, active: bool, healthy: bool):
+    def __new__(cls, value, available: bool, healthy: bool):
         obj = object.__new__(cls)
         obj._value_ = value
-        obj.active = active
+        obj.available = available
         obj.healthy = healthy
         return obj
 

@@ -7,6 +7,8 @@ class WorkerAction(Enum):
     """The worker has been instructed to execute a Task"""
     SLEEP = "SLEEP"
     """The worker has been instructed to sleep for a specified period of time"""
+    STOP = "STOP"
+    """The worker has been instructed to stop"""
     SHUTDOWN = "SHUTDOWN"
     """The worker has been instructed to shutdown"""
 
