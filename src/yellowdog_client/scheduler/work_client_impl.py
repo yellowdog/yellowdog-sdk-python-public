@@ -58,19 +58,19 @@ class WorkClientImpl(WorkClient):
         return self.hold_work_requirement_by_id(work_requirement.id)
 
     def hold_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
-        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.HELD)
+        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.HELD, False)
 
     def start_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
         return self.start_work_requirement_by_id(work_requirement.id)
 
     def start_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
-        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.RUNNING)
+        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.RUNNING, False)
 
-    def cancel_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
-        return self.cancel_work_requirement_by_id(work_requirement.id)
+    def cancel_work_requirement(self, work_requirement: WorkRequirement, abort: bool = False) -> WorkRequirement:
+        return self.cancel_work_requirement_by_id(work_requirement.id, abort)
 
-    def cancel_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
-        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.CANCELLING)
+    def cancel_work_requirement_by_id(self, work_requirement_id: str, abort: bool = False) -> WorkRequirement:
+        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.CANCELLING, abort)
 
     def find_all_work_requirements(self) -> List[WorkRequirementSummary]:
         search = WorkRequirementSearch()

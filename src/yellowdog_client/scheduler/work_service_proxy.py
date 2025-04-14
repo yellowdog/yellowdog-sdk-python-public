@@ -23,9 +23,13 @@ class WorkServiceProxy:
     def get_work_requirement_by_name(self, namespace: str, work_requirement_name: str) -> WorkRequirement:
         return self._proxy.get(WorkRequirement, "namespaces/%s/requirements/%s" % (namespace, work_requirement_name))
 
-    def transition_work_requirement(self, requirement_id: str,
-                                    next_status: WorkRequirementStatus) -> WorkRequirement:
-        url = "requirements/%s/transition/%s" % (requirement_id, str(next_status))
+    def transition_work_requirement(
+            self,
+            requirement_id: str,
+            next_status: WorkRequirementStatus,
+            abort_if_cancelling: bool
+    ) -> WorkRequirement:
+        url = "requirements/%s/transition/%s?abort=%s" % (requirement_id, str(next_status), abort_if_cancelling)
         return self._proxy.put(WorkRequirement, url=url)
 
     def find_work_requirements(self, search: WorkRequirementSearch, slice_reference: SliceReference) -> Slice[WorkRequirementSummary]:
