@@ -28,3 +28,4 @@ class Node(Identified):
     """The workers on this instance."""
     actionQueueStatus: Optional[NodeActionQueueStatus] = None
     """The status of the action queue for the node."""
+    agentVersion: Optional[str] = None
