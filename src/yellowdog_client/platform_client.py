@@ -1,7 +1,8 @@
 import sys
 
 from ._version import __version__
-from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy
+from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy, AccountClientImpl, AccountServiceProxy
+from .account.account_client import AccountClient
 from .client_collection import ClientCollection
 from .cloud_info import CloudInfoClient, CloudInfoClientImpl, CloudInfoProxy
 from .common import Proxy, Closeable, UserAgent
@@ -26,6 +27,7 @@ class PlatformClient(Closeable):
 
     def __init__(
             self,
+            account_client: AccountClient,
             keyring_client: KeyringClient,
             compute_client: ComputeClient,
             images_client: ImagesClient,
@@ -37,6 +39,8 @@ class PlatformClient(Closeable):
             cloud_info_client: CloudInfoClient
     ) -> None:
         self.__clients = ClientCollection()
+        self.account_client: AccountClient = self.__clients.add(account_client)
+        """Account service client. Used for controlling accounts"""
         self.compute_client: ComputeClient = self.__clients.add(compute_client)
         """Compute service client. Used for controlling compute requirements and instances"""
         self.keyring_client: KeyringClient = self.__clients.add(keyring_client)
@@ -90,8 +94,9 @@ class PlatformClient(Closeable):
         usage_url = services_schema.defaultUrl if services_schema.usageServiceUrl is None else services_schema.usageServiceUrl
         cloud_info_url = services_schema.defaultUrl if services_schema.cloudInfoServiceUrl is None else services_schema.cloudInfoServiceUrl
 
-        compute_client = ComputeClientImpl(ComputeServiceProxy(proxy.append_base_url(compute_url)))
+        account_client = AccountClientImpl(AccountServiceProxy(proxy.append_base_url(account_url)))
         keyring_client = KeyringClientImpl(KeyringServiceProxy(proxy.append_base_url(account_url)))
+        compute_client = ComputeClientImpl(ComputeServiceProxy(proxy.append_base_url(compute_url)))
         images_client = ImagesClientImpl(ImagesServiceProxy(proxy.append_base_url(images_url)))
         namespaces_client = NamespacesClientImpl(NamespacesServiceProxy(proxy.append_base_url(scheduler_url)))
         work_client = WorkClientImpl(WorkServiceProxy(proxy.append_base_url(scheduler_url)))
@@ -101,6 +106,7 @@ class PlatformClient(Closeable):
         cloud_info_client = CloudInfoClientImpl(CloudInfoProxy(proxy.append_base_url(cloud_info_url)))
 
         return PlatformClient(
+            account_client=account_client,
             keyring_client=keyring_client,
             compute_client=compute_client,
             images_client=images_client,
