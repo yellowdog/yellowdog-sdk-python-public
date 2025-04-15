@@ -197,12 +197,13 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
+
     def find_all_work_requirements(self) -> List[WorkRequirementSummary]:
         """
         Returns summaries of all existing work requirements within the system for the requesting user.
 
         :return: a list of work requirement summaries
-        @deprecated use {@link #getWorkRequirements(WorkRequirementSearch) instead to search tasks.
+        @deprecated use {@link #getWorkRequirements(WorkRequirementSearch)} instead to search tasks.
         """
 
         pass
