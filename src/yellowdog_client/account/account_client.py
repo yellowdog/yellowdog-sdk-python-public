@@ -75,7 +75,7 @@ class AccountClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def update_group(self, request: UpdateGroupRequest) -> Group:
+    def update_group(self, group_id: str, request: UpdateGroupRequest) -> Group:
         pass
 
     @abstractmethod

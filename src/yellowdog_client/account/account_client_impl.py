@@ -78,8 +78,8 @@ class AccountClientImpl(AccountClient):
     def add_group(self, request: AddGroupRequest) -> Group:
         return self.__service_proxy.add_group(request)
 
-    def update_group(self, request: UpdateGroupRequest) -> Group:
-        return self.__service_proxy.update_group(request)
+    def update_group(self, group_id: str, request: UpdateGroupRequest) -> Group:
+        return self.__service_proxy.update_group(group_id, request)
 
     def get_group_users(self, group_id: str) -> SearchClient[User]:
         def get_next_slice_function(slice_reference: SliceReference) -> Slice[User]:

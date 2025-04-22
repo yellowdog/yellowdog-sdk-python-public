@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-python3 -m venv venv               # Create a new virtual environment
-. venv/bin/activate                # Activate the virtual environment
+python3 -m venv .venv              # Create a new virtual environment
+. .venv/bin/activate               # Activate the virtual environment
 pip install pip -U                 # Upgrade pip
 pip install tox                    # Install tox
 tox -e dev                         # Create a development environment

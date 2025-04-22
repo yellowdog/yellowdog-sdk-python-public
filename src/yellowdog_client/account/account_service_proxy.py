@@ -12,7 +12,7 @@ class AccountServiceProxy:
         self.proxy: Proxy = proxy.append_base_url("/account/")
 
     def get_user(self, user_id: str) -> User:
-        return self.proxy.get("users/%s" % user_id)
+        return self.proxy.get(User, "users/%s" % user_id)
 
     def search_users(self, search: UserSearch, slice_reference: SliceReference) -> Slice[User]:
         return self.proxy.get(
@@ -27,13 +27,13 @@ class AccountServiceProxy:
         )
 
     def get_application(self, application_id: str) -> Application:
-        return self.proxy.get("applications/%s" % application_id)
+        return self.proxy.get(Application, "applications/%s" % application_id)
 
     def update_application(self, application_id: str, request: UpdateApplicationRequest) -> Application:
-        return self.proxy.put(UpdateApplicationRequest, request, "applications/%s" % application_id)
+        return self.proxy.put(Application, request, "applications/%s" % application_id)
 
     def add_application(self, request: AddApplicationRequest) -> AddApplicationResponse:
-        return self.proxy.post(AddApplicationRequest, request, "applications")
+        return self.proxy.post(AddApplicationResponse, request, "applications")
 
     def regenerate_application_api_key(self, application_id: str) -> ApiKey:
         return self.proxy.post(url="applications/%s/key" % application_id)
@@ -54,10 +54,10 @@ class AccountServiceProxy:
         return self.proxy.delete("applications/%s" % application_id)
 
     def list_permissions(self) -> List[PermissionDetail]:
-        return self.proxy.get("permissions")
+        return self.proxy.get(List[PermissionDetail], "permissions")
 
     def get_role(self, role_id: str) -> Role:
-        return self.proxy.get("roles/%s" % role_id)
+        return self.proxy.get(Role, "roles/%s" % role_id)
 
     def search_roles(self, search: RoleSearch, slice_reference: SliceReference) -> Slice[Role]:
         return self.proxy.get(
@@ -72,13 +72,13 @@ class AccountServiceProxy:
         )
 
     def get_group(self, group_id: str) -> Group:
-        return self.proxy.get("groups/%s" % group_id)
+        return self.proxy.get(Group, "groups/%s" % group_id)
 
     def add_group(self, request: AddGroupRequest) -> Group:
         return self.proxy.post(Group, request, "groups")
 
-    def update_group(self, request: UpdateGroupRequest) -> Group:
-        return self.proxy.put(Group, request, "groups")
+    def update_group(self, group_id: str, request: UpdateGroupRequest) -> Group:
+        return self.proxy.put(Group, request, "groups/%s" % group_id)
 
     def list_group_users(self, group_id: str, slice_reference: SliceReference) -> Slice[User]:
         return self.proxy.get(
@@ -99,13 +99,13 @@ class AccountServiceProxy:
         )
 
     def add_user_to_group(self, group_id: str, user_id: str) -> None:
-        return self.proxy.put("groups/%s/users/%s" % (group_id, user_id))
+        return self.proxy.put(url="groups/%s/users/%s" % (group_id, user_id))
 
     def add_application_to_group(self, group_id: str, application_id: str) -> None:
-        return self.proxy.put("groups/%s/applications/%s" % (group_id, application_id))
+        return self.proxy.put(url="groups/%s/applications/%s" % (group_id, application_id))
 
     def add_role_to_group(self, group_id: str, role_id: str) -> None:
-        return self.proxy.put("groups/%s/roles/%s" % (group_id, role_id))
+        return self.proxy.put(url="groups/%s/roles/%s" % (group_id, role_id))
 
     def remove_user_from_group(self, group_id: str, user_id: str) -> None:
         return self.proxy.delete("groups/%s/users/%s" % (group_id, user_id))
