@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from .work_requirement_helper import WorkRequirementHelper
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
-from yellowdog_client.model import Slice, SliceReference, Task, TaskGroup, TaskSearch, WorkRequirement, \
-    WorkRequirementSearch, WorkRequirementSummary
+from yellowdog_client.model import Slice, SliceReference, Task, TaskGroup, TaskSearch, WorkRequirement, WorkRequirementSearch, WorkRequirementSummary
 
 
 class WorkClient(ABC, Closeable):
@@ -114,32 +113,31 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def cancel_work_requirement(self, work_requirement: WorkRequirement, abort: bool = False) -> WorkRequirement:
+    def cancel_work_requirement(self, work_requirement: WorkRequirement, abort: Optional[bool] = None) -> WorkRequirement:
         """
         Instructs the Scheduler to cancel the supplied work requirement, no further tasks will be executed and all workers shall be released.
 
         :param work_requirement: the work requirement to cancel
-        :param abort: if tasks should be aborted if they have been allocated to a worker
+        :param abort:  if tasks should be aborted if they have been allocated to a worker
         :return: the latest state of the work requirement after the cancel instruction was submitted
         """
 
         pass
 
     @abstractmethod
-    def cancel_work_requirement_by_id(self, work_requirement_id: str, abort: bool = False) -> WorkRequirement:
+    def cancel_work_requirement_by_id(self, work_requirement_id: str, abort: Optional[bool] = None) -> WorkRequirement:
         """
         Instructs the Scheduler to cancel the supplied work requirement, no further tasks will be executed and all workers shall be released.
 
         :param work_requirement_id: the ID of the work requirement to cancel
-        :param abort: if tasks should be aborted if they have been allocated to a worker
+        :param abort:  if tasks should be aborted if they have been allocated to a worker
         :return: the latest state of the work requirement after the cancel instruction was submitted
         """
 
         pass
 
     @abstractmethod
-    def add_work_requirement_listener(self, work_requirement: WorkRequirement,
-                                      listener: SubscriptionEventListener[WorkRequirement]) -> None:
+    def add_work_requirement_listener(self, work_requirement: WorkRequirement, listener: SubscriptionEventListener[WorkRequirement]) -> None:
         """
         Adds an event listener to receive notifications of changes for the specified work requirement.
         The client manages subscriptions to YellowDog Scheduler such that the first listener created for a requirement will cause a Server-Sent Events subscription to be initiated; additional listeners for the same requirement share that subscription.
@@ -151,8 +149,7 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def add_work_requirement_listener_by_id(self, work_requirement_id: str,
-                                            listener: SubscriptionEventListener[WorkRequirement]) -> None:
+    def add_work_requirement_listener_by_id(self, work_requirement_id: str, listener: SubscriptionEventListener[WorkRequirement]) -> None:
         """
         Adds an event listener to receive notifications of changes for the specified work requirement.
         The client manages subscriptions to YellowDog Scheduler such that the first listener created for a requirement will cause a Server-Sent Events subscription to be initiated; additional listeners for the same requirement share that subscription.
@@ -197,13 +194,12 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
-
     def find_all_work_requirements(self) -> List[WorkRequirementSummary]:
         """
         Returns summaries of all existing work requirements within the system for the requesting user.
 
         :return: a list of work requirement summaries
-        @deprecated use {@link #getWorkRequirements(WorkRequirementSearch)} instead to search tasks.
+        @deprecated use #getWorkRequirements(WorkRequirementSearch) instead to search tasks.
         """
 
         pass
@@ -244,8 +240,7 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def add_tasks_to_task_group_by_name(self, namespace: str, work_requirement_name: str, task_group_name: str,
-                                        tasks: List[Task]) -> List[Task]:
+    def add_tasks_to_task_group_by_name(self, namespace: str, work_requirement_name: str, task_group_name: str, tasks: List[Task]) -> List[Task]:
         """
         Submits NEW tasks to the YellowDog Scheduler service to be added to the specified task group.
 
