@@ -36,7 +36,7 @@ class AccountServiceProxy:
         return self.proxy.post(AddApplicationResponse, request, "applications")
 
     def regenerate_application_api_key(self, application_id: str) -> ApiKey:
-        return self.proxy.post(url="applications/%s/key" % application_id)
+        return self.proxy.post(ApiKey, url="applications/%s/key" % application_id)
 
     def search_applications(self, search: ApplicationSearch, slice_reference: SliceReference) -> Slice[Application]:
         return self.proxy.get(
