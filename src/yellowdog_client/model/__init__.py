@@ -266,6 +266,8 @@ from .task_data import TaskData
 from .task_data_input import TaskDataInput
 from .task_data_output import TaskDataOutput
 from .task_error import TaskError
+from .task_error_matcher import TaskErrorMatcher
+from .task_error_type import TaskErrorType
 from .task_group import TaskGroup
 from .task_group_status import TaskGroupStatus
 from .task_input import TaskInput
@@ -578,6 +580,8 @@ __all__ = [
     "TaskDataInput",
     "TaskDataOutput",
     "TaskError",
+    "TaskErrorMatcher",
+    "TaskErrorType",
     "TaskGroup",
     "TaskGroupStatus",
     "TaskInput",

@@ -7,7 +7,7 @@ class NodeStatus(Enum):
     """The node is running and its heartbeat is being received."""
     LATE = "LATE", True, False
     """The node's heartbeat is late."""
-    LOST = "LOST", False, False
+    LOST = "LOST", False, True
     """The node's heartbeat has not been received for long enough that it is considered lost."""
     DEREGISTERED = "DEREGISTERED", False, True
     """The node has been deregistered from the worker pool."""

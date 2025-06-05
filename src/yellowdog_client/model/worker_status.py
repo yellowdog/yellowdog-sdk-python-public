@@ -16,7 +16,11 @@ class WorkerStatus(Enum):
     LOST = "LOST", False, False
     """The Worker's heartbeat has not been received for long enough that the Worker is considered to have been lost."""
     FOUND = "FOUND", True, True
-    """The Worker was considered to be lost but its heartbeat has returned, however it has not yet requested instruction."""
+    """
+    The Worker was considered to be lost but its heartbeat has returned, however it has not yet requested instruction.
+    @deprecated Workers can no longer be FOUND once LOST. Status can be removed when all clients >= v9.3.0
+    """
+
     SHUTDOWN = "SHUTDOWN", False, False
     """The Worker has been instructed to shut down."""
 

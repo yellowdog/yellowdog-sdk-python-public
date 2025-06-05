@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from .cloud_provider import CloudProvider
 from .double_range import DoubleRange
+from .task_error_matcher import TaskErrorMatcher
 
 
 @dataclass
@@ -45,3 +46,5 @@ class RunSpecification:
     pools in the specified namespaces.
     """
 
+    retryableErrors: Optional[List[TaskErrorMatcher]] = None
+    """Defines the errors that should result in a task retrying if encountered."""

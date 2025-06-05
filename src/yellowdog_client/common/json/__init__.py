@@ -26,9 +26,16 @@ def _determine_subclass(value: dict, cls: type) -> type:
     elif "action" in value:
         type_field = "action"
         type_value = value[type_field]
-    elif "errorType" in value:
+    elif "errorType" in value and cls is BaseCustomException:
         type_field = "errorType"
         type_value = ErrorType(value[type_field])
+
+        naked_class = get_naked_class(cls)
+
+        subclasses = all_subclasses(naked_class)
+        if subclasses:
+            return {getattr(x, type_field).value: x for x in subclasses}[type_value.value]
+        return cls
     else:
         return cls
 
