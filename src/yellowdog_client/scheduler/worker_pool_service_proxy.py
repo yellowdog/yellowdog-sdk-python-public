@@ -62,6 +62,9 @@ class WorkerPoolServiceProxy:
     def get_node_by_id(self, node_id: str) -> Node:
         return self._proxy.get(Node, "nodes/%s" % node_id)
 
+    def get_node_by_worker_id(self, worker_id: str) -> Node:
+        return self._proxy.get(Node, "workers/%s/node" % worker_id)
+
     def shutdown_node(self, node_id: str) -> Node:
         return self._proxy.delete("nodes/%s" % node_id, Node)
 

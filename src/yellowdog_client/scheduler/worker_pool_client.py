@@ -315,6 +315,17 @@ class WorkerPoolClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def get_node_by_worker_id(self, worker_id: str) -> Node:
+        """
+        Gets the latest state of the node with a worker with the specified ID.
+
+        :param worker_id: the ID of the worker
+        :return: the latest state of the node
+        """
+
+        pass
+
+    @abstractmethod
     def shutdown_node(self, node: Node) -> Node:
         """
         Shuts down the specified node gracefully, allowing any running tasks to finish first.

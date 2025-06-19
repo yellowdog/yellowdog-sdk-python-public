@@ -124,6 +124,9 @@ class WorkerPoolClientImpl(WorkerPoolClient):
     def get_node_by_id(self, node_id: str) -> Node:
         return self.__service_proxy.get_node_by_id(node_id)
 
+    def get_node_by_worker_id(self, worker_id: str) -> Node:
+        return self.__service_proxy.get_node_by_worker_id(worker_id)
+
     def shutdown_node(self, node: Node) -> Node:
         return self.shutdown_node_by_id(node.id)
 
