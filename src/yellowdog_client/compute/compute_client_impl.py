@@ -193,6 +193,9 @@ class ComputeClientImpl(ComputeClient):
     def get_compute_source_template(self, compute_source_template_id: str) -> ComputeSourceTemplate:
         return self.__service_proxy.get_compute_source_template_by_id(compute_source_template_id)
 
+    def get_compute_source_template_by_name(self, namespace: str, compute_source_template_name: str) -> ComputeSourceTemplate:
+        return self.__service_proxy.get_compute_source_template_by_name(namespace, compute_source_template_name)
+
     def find_all_compute_source_templates(self) -> List[ComputeSourceTemplateSummary]:
         return self.__service_proxy.find_all_compute_source_templates()
 

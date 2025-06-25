@@ -404,6 +404,10 @@ class ComputeClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def get_compute_source_template_by_name(self, namespace: str, compute_source_template_name: str) -> ComputeSourceTemplate:
+        pass
+
+    @abstractmethod
     def find_all_compute_source_templates(self) -> List[ComputeSourceTemplateSummary]:
         pass
 

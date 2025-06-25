@@ -84,6 +84,9 @@ class ComputeServiceProxy:
     def get_compute_source_template_by_id(self, compute_source_template_id: str) -> ComputeSourceTemplate:
         return self._proxy.get(ComputeSourceTemplate, "templates/sources/%s" % compute_source_template_id)
 
+    def get_compute_source_template_by_name(self, namespace, compute_source_template_name) -> ComputeSourceTemplate:
+        return self._proxy.get(ComputeSourceTemplate, "namespaces/%s/templates/sources/%s" % (namespace, compute_source_template_name))
+
     def find_all_compute_source_templates(self) -> List[ComputeSourceTemplateSummary]:
         return self._proxy.get(List[ComputeSourceTemplateSummary], "templates/sources")
 
@@ -106,7 +109,7 @@ class ComputeServiceProxy:
         return self._proxy.get(ComputeRequirementTemplate, "templates/requirements/%s" % template_id)
 
     def get_compute_requirement_template_by_name(self, namespace: str, name: str) -> ComputeRequirementTemplate:
-        return self._proxy.get(ComputeRequirementTemplate, "templates/requirements/%s/%s" % (namespace, name))
+        return self._proxy.get(ComputeRequirementTemplate, "namespaces/%s/templates/requirements/%s" % (namespace, name))
 
     def find_all_compute_requirement_templates(self) -> List[ComputeRequirementTemplateSummary]:
         return self._proxy.get(List[ComputeRequirementTemplateSummary], "templates/requirements")
