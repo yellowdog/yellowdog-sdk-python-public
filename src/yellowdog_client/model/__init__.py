@@ -106,6 +106,7 @@ from .configured_worker_pool_properties import ConfiguredWorkerPoolProperties
 from .constants import Constants
 from .create_keyring_request import CreateKeyringRequest
 from .create_keyring_response import CreateKeyringResponse
+from .create_namespace_request import CreateNamespaceRequest
 from .credential import Credential
 from .credential_availability import CredentialAvailability
 from .currency import Currency
@@ -177,10 +178,12 @@ from .measurement_search_validator import MeasurementSearchValidator
 from .metadata_filter import MetadataFilter
 from .model_exception import ModelException
 from .named import Named
+from .namespace import Namespace
 from .namespace_autoscaling_capacity_response import NamespaceAutoscalingCapacityResponse
 from .namespace_objects_response import NamespaceObjectsResponse
 from .namespace_policy import NamespacePolicy
 from .namespace_policy_search import NamespacePolicySearch
+from .namespace_search import NamespaceSearch
 from .namespace_storage_configuration import NamespaceStorageConfiguration
 from .new_password_request import NewPasswordRequest
 from .node import Node
@@ -420,6 +423,7 @@ __all__ = [
     "Constants",
     "CreateKeyringRequest",
     "CreateKeyringResponse",
+    "CreateNamespaceRequest",
     "Credential",
     "CredentialAvailability",
     "Currency",
@@ -491,10 +495,12 @@ __all__ = [
     "MetadataFilter",
     "ModelException",
     "Named",
+    "Namespace",
     "NamespaceAutoscalingCapacityResponse",
     "NamespaceObjectsResponse",
     "NamespacePolicy",
     "NamespacePolicySearch",
+    "NamespaceSearch",
     "NamespaceStorageConfiguration",
     "NewPasswordRequest",
     "Node",
