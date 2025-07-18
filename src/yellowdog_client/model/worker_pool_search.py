@@ -9,6 +9,7 @@ from .worker_pool_status import WorkerPoolStatus
 @dataclass
 class WorkerPoolSearch:
     namespace: Optional[str] = None
+    namespaces: Optional[List[str]] = None
     name: Optional[str] = None
     type: Optional[str] = None
     statuses: Optional[List[WorkerPoolStatus]] = None

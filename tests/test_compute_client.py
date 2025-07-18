@@ -1,10 +1,14 @@
+from typing import List
+
 import pytest
 from yellowdog_client import PlatformClient
 from yellowdog_client.compute import ComputeClient
 from yellowdog_client.model import ServicesSchema, ApiKey, ComputeRequirement, SingleSourceProvisionStrategy, \
     SimulatorComputeSource, \
     ComputeRequirementStatus, ComputeRequirementSearch, SortDirection, Slice, Instance, SimulatorInstance, \
-    InstanceSearch, InstanceId, ComputeSourceTemplate, ComputeSource, StringAttributeValue
+    InstanceSearch, InstanceId, ComputeSourceTemplate, ComputeSource, StringAttributeValue, \
+    ComputeRequirementDynamicTemplate, ComputeRequirementTemplateSearch, ComputeRequirementTemplateSummary, \
+    ComputeSourceTemplateSummary, ComputeSourceTemplateSearch
 
 from util.api import MockApi, HttpMethod
 from util.data import make, make_string
@@ -63,6 +67,47 @@ def test_can_search_compute_requirements(mock_api, compute_client: ComputeClient
 
     assert actual == expected.items
     mock_api.verify_all_requests_called()
+    
+def test_can_search_compute_requirement_templates(mock_api, compute_client: ComputeClient):
+    compute_requirement_template: ComputeRequirementDynamicTemplate = _make_compute_requirement_dynamic_template("test-requirement", "test-namespace")
+
+    expected = mock_api.mock(
+        "/compute/templates/requirements",
+        HttpMethod.GET,
+        params={
+            "namespaces": compute_requirement_template.namespace,
+            "sliced": "true"
+        },
+        response=Slice(items=[ComputeRequirementTemplateSummary()])
+    )
+
+    actual: List[ComputeRequirementTemplateSummary] = compute_client.get_compute_requirement_templates(ComputeRequirementTemplateSearch(
+        namespaces=[compute_requirement_template.namespace]
+    )).list_all()
+
+    assert actual == expected.items
+    mock_api.verify_all_requests_called()
+
+def test_can_search_compute_source_templates(mock_api, compute_client: ComputeClient):
+    compute_source_template: ComputeSourceTemplate = _make_compute_source_template()
+    compute_source_template.namespace = "test-namespace"
+
+    expected = mock_api.mock(
+        "/compute/templates/sources",
+        HttpMethod.GET,
+        params={
+            "namespaces": compute_source_template.namespace,
+            "sliced": "true"
+        },
+        response=Slice(items=[ComputeSourceTemplateSummary()])
+    )
+
+    actual: List[ComputeSourceTemplateSummary] = compute_client.get_compute_source_templates(ComputeSourceTemplateSearch(
+        namespaces=[compute_source_template.namespace]
+    )).list_all()
+
+    assert actual == expected.items
+    mock_api.verify_all_requests_called()
 
 
 def test_can_search_instances(mock_api, compute_client: ComputeClient):
@@ -109,6 +154,15 @@ def _make_compute_requirement() -> ComputeRequirement:
     )
     compute_requirement.id = make_string()
     return compute_requirement
+
+def _make_compute_requirement_dynamic_template(name: str, namespace: str) -> ComputeRequirementDynamicTemplate:
+    compute_requirement_template = ComputeRequirementDynamicTemplate(
+        name=name,
+        namespace=namespace,
+        strategyType="test-strategy"
+    )
+    compute_requirement_template.id = make_string()
+    return compute_requirement_template
 
 
 def _make_instance() -> Instance:

@@ -4,7 +4,7 @@ from yellowdog_client.common import SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
 from yellowdog_client.common.server_sent_events import SubscriptionManager
 from yellowdog_client.model import BestComputeSourceReport, ComputeRequirementSearch, SliceReference, Slice, \
-    InstanceSearch, InstanceId
+    InstanceSearch, InstanceId, ComputeSourceTemplateSearch, ComputeRequirementTemplateSearch
 from yellowdog_client.model import ComputeRequirement, ComputeRequirementTemplateUsage
 from yellowdog_client.model import ComputeRequirementStatus
 from yellowdog_client.model import ComputeRequirementTemplateSummary
@@ -199,6 +199,12 @@ class ComputeClientImpl(ComputeClient):
     def find_all_compute_source_templates(self) -> List[ComputeSourceTemplateSummary]:
         return self.__service_proxy.find_all_compute_source_templates()
 
+    def get_compute_source_templates(self, search: ComputeSourceTemplateSearch) -> SearchClient[ComputeSourceTemplateSummary]:
+        def get_next_slice_function(slice_reference: SliceReference) -> Slice[ComputeSourceTemplateSummary]:
+            return self.__service_proxy.search_compute_source_templates(search, slice_reference)
+
+        return SearchClient(get_next_slice_function)
+
     def add_compute_requirement_template(self, template: ComputeRequirementTemplate) -> ComputeRequirementTemplate:
         return self.__service_proxy.add_compute_requirement_template(template)
 
@@ -225,6 +231,12 @@ class ComputeClientImpl(ComputeClient):
 
     def find_all_compute_requirement_templates(self) -> List[ComputeRequirementTemplateSummary]:
         return self.__service_proxy.find_all_compute_requirement_templates()
+
+    def get_compute_requirement_templates(self, search: ComputeRequirementTemplateSearch) -> SearchClient[ComputeRequirementTemplateSummary]:
+        def get_next_slice_function(slice_reference: SliceReference) -> Slice[ComputeRequirementTemplateSummary]:
+            return self.__service_proxy.search_compute_requirement_templates(search, slice_reference)
+
+        return SearchClient(get_next_slice_function)
 
     def provision_compute_requirement_template(self,
                                                template_request: ComputeRequirementTemplateUsage) -> ComputeRequirement:

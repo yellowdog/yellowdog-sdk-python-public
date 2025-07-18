@@ -3,7 +3,8 @@ from typing import List
 from yellowdog_client.common import Proxy
 from yellowdog_client.common.server_sent_events.sse4python import EventSource
 from yellowdog_client.model import ComputeRequirementTemplate, ComputeRequirementStatus, ComputeRequirementSearch, \
-    SliceReference, Slice, InstanceSearch, Instance, InstanceId
+    SliceReference, Slice, InstanceSearch, Instance, InstanceId, ComputeRequirementTemplateSearch, \
+    ComputeSourceTemplateSearch
 from yellowdog_client.model import InstanceStatus, \
     ComputeRequirement, ComputeRequirementTemplateSummary, ComputeSourceTemplate, ComputeRequirementTemplateUsage, \
     ComputeSourceTemplateSummary, ComputeRequirementTemplateTestResult, BestComputeSourceReport, \
@@ -90,6 +91,12 @@ class ComputeServiceProxy:
     def find_all_compute_source_templates(self) -> List[ComputeSourceTemplateSummary]:
         return self._proxy.get(List[ComputeSourceTemplateSummary], "templates/sources")
 
+    def search_compute_source_templates(self, search: ComputeSourceTemplateSearch, slice_reference: SliceReference) -> Slice[ComputeSourceTemplateSummary]:
+        params = self._proxy.to_params(search, slice_reference)
+        params["sliced"] = "true"
+        return self._proxy.get(Slice[ComputeSourceTemplateSummary], "templates/sources", params)
+
+
     def add_compute_requirement_template(
             self,
             template: ComputeRequirementTemplate
@@ -113,6 +120,11 @@ class ComputeServiceProxy:
 
     def find_all_compute_requirement_templates(self) -> List[ComputeRequirementTemplateSummary]:
         return self._proxy.get(List[ComputeRequirementTemplateSummary], "templates/requirements")
+
+    def search_compute_requirement_templates(self, search: ComputeRequirementTemplateSearch, slice_reference: SliceReference) -> Slice[ComputeRequirementTemplateSummary]:
+        params = self._proxy.to_params(search, slice_reference)
+        params["sliced"] = "true"
+        return self._proxy.get(Slice[ComputeRequirementTemplateSummary], "templates/requirements", params)
 
     def provision_compute_requirement_template(self, usage: ComputeRequirementTemplateUsage) -> ComputeRequirement:
         return self._proxy.post(ComputeRequirement, usage, "templates/provision")

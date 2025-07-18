@@ -6,7 +6,7 @@ from typing import List, Optional
 from .compute_requirement_helper import ComputeRequirementHelper
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
-from yellowdog_client.model import BestComputeSourceReport, ComputeRequirement, ComputeRequirementSearch, ComputeRequirementSummary, ComputeRequirementSummarySearch, ComputeRequirementTemplate, ComputeRequirementTemplateSummary, ComputeRequirementTemplateTestResult, ComputeRequirementTemplateUsage, ComputeSourceTemplate, ComputeSourceTemplateSummary, Instance, InstanceId, InstanceSearch
+from yellowdog_client.model import BestComputeSourceReport, ComputeRequirement, ComputeRequirementSearch, ComputeRequirementSummary, ComputeRequirementSummarySearch, ComputeRequirementTemplate, ComputeRequirementTemplateSearch, ComputeRequirementTemplateSummary, ComputeRequirementTemplateTestResult, ComputeRequirementTemplateUsage, ComputeSourceTemplate, ComputeSourceTemplateSearch, ComputeSourceTemplateSummary, Instance, InstanceId, InstanceSearch
 
 
 class ComputeClient(ABC, Closeable):
@@ -409,6 +409,18 @@ class ComputeClient(ABC, Closeable):
 
     @abstractmethod
     def find_all_compute_source_templates(self) -> List[ComputeSourceTemplateSummary]:
+        """@deprecated use #getComputeSourceTemplates(ComputeSourceTemplateSearch) instead."""
+        pass
+
+    @abstractmethod
+    def get_compute_source_templates(self, search: ComputeSourceTemplateSearch) -> SearchClient[ComputeSourceTemplateSummary]:
+        """
+        Returns a search client for searching compute source templates.
+
+        :param search: the search object to filter & sort results
+        :return: a search client for searching compute source templates.
+        """
+
         pass
 
     @abstractmethod
@@ -440,7 +452,19 @@ class ComputeClient(ABC, Closeable):
         """
         Returns summaries of all existing compute requirement templates within the system for the requesting user.
 
+        @deprecated use #getComputeRequirementTemplates(ComputeRequirementTemplateSearch) instead.
         :return: a list of compute requirement template summaries
+        """
+
+        pass
+
+    @abstractmethod
+    def get_compute_requirement_templates(self, search: ComputeRequirementTemplateSearch) -> SearchClient[ComputeRequirementTemplateSummary]:
+        """
+        Returns a search client for searching compute requirement templates.
+
+        :param search: the search object to filter & sort results
+        :return: a search client for searching compute requirement templates.
         """
 
         pass

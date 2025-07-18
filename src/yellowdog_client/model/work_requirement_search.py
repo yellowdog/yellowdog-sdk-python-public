@@ -9,6 +9,7 @@ from .work_requirement_status import WorkRequirementStatus
 @dataclass
 class WorkRequirementSearch:
     namespace: Optional[str] = None
+    namespaces: Optional[List[str]] = None
     name: Optional[str] = None
     tag: Optional[str] = None
     statuses: Optional[List[WorkRequirementStatus]] = None

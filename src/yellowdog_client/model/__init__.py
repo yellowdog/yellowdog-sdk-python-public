@@ -86,6 +86,7 @@ from .compute_requirement_summary import ComputeRequirementSummary
 from .compute_requirement_summary_search import ComputeRequirementSummarySearch
 from .compute_requirement_supported_operations import ComputeRequirementSupportedOperations
 from .compute_requirement_template import ComputeRequirementTemplate
+from .compute_requirement_template_search import ComputeRequirementTemplateSearch
 from .compute_requirement_template_summary import ComputeRequirementTemplateSummary
 from .compute_requirement_template_test_result import ComputeRequirementTemplateTestResult
 from .compute_requirement_template_usage import ComputeRequirementTemplateUsage
@@ -97,6 +98,7 @@ from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_exhaustion_status import ComputeSourceExhaustionStatus
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_template import ComputeSourceTemplate
+from .compute_source_template_search import ComputeSourceTemplateSearch
 from .compute_source_template_summary import ComputeSourceTemplateSummary
 from .compute_source_traits import ComputeSourceTraits
 from .compute_source_traits_filter import ComputeSourceTraitsFilter
@@ -110,6 +112,7 @@ from .create_namespace_request import CreateNamespaceRequest
 from .credential import Credential
 from .credential_availability import CredentialAvailability
 from .currency import Currency
+from .dashboard_request import DashboardRequest
 from .double_range import DoubleRange
 from .email_change_request import EmailChangeRequest
 from .error_response import ErrorResponse
@@ -403,6 +406,7 @@ __all__ = [
     "ComputeRequirementSummarySearch",
     "ComputeRequirementSupportedOperations",
     "ComputeRequirementTemplate",
+    "ComputeRequirementTemplateSearch",
     "ComputeRequirementTemplateSummary",
     "ComputeRequirementTemplateTestResult",
     "ComputeRequirementTemplateUsage",
@@ -414,6 +418,7 @@ __all__ = [
     "ComputeSourceExhaustionStatus",
     "ComputeSourceStatus",
     "ComputeSourceTemplate",
+    "ComputeSourceTemplateSearch",
     "ComputeSourceTemplateSummary",
     "ComputeSourceTraits",
     "ComputeSourceTraitsFilter",
@@ -427,6 +432,7 @@ __all__ = [
     "Credential",
     "CredentialAvailability",
     "Currency",
+    "DashboardRequest",
     "DoubleRange",
     "EmailChangeRequest",
     "ErrorResponse",

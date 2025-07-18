@@ -10,6 +10,7 @@ from .sort_direction import SortDirection
 class ComputeRequirementSummarySearch:
     name: Optional[str] = None
     namespace: Optional[str] = None
+    namespaces: Optional[List[str]] = None
     tag: Optional[str] = None
     statuses: Optional[List[ComputeRequirementStatus]] = None
     createdTime: Optional[InstantRange] = None
