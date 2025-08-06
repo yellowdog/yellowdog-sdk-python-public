@@ -22,6 +22,9 @@ class NodeSearch:
     vcpus: Optional[DoubleRange] = None
     workerClaimCount: Optional[LongRange] = None
     workerRegisteredTime: Optional[InstantRange] = None
+    registeredTime: Optional[InstantRange] = None
+    deregisteredTime: Optional[InstantRange] = None
+    preemptionWarningTime: Optional[InstantRange] = None
     workerTaskGroupId: Optional[str] = None
     workerTag: Optional[str] = None
     workerStatuses: Optional[List[WorkerStatus]] = None

@@ -24,6 +24,10 @@ class Node(Identified):
     """The date and time when the status last changed."""
     registeredTime: Optional[datetime] = None
     """The time when the node was registered."""
+    deregisteredTime: Optional[datetime] = None
+    """The time when the node was deregistered."""
+    preemptionWarningTime: Optional[datetime] = None
+    """The time when the node notified of preemption."""
     workers: Optional[List[Worker]] = None
     """The workers on this instance."""
     actionQueueStatus: Optional[NodeActionQueueStatus] = None
