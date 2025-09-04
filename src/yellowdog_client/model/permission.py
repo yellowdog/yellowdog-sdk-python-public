@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Set
+from typing import List
 
 
 class Permission(Enum):
@@ -24,7 +24,8 @@ class Permission(Enum):
     COMPUTE_REQUIREMENT_WRITE = "COMPUTE_REQUIREMENT_WRITE", "Write Compute Requirements", COMPUTE_READ
     COMPUTE_SOURCE_TEMPLATE_WRITE = "COMPUTE_SOURCE_TEMPLATE_WRITE", "Write Compute Source Templates", COMPUTE_READ
     COMPUTE_USAGE_READ = "COMPUTE_USAGE_READ", "Read Compute Usage Data", None
-    COMPUTE_USER_ATTRIBUTE_WRITE = "COMPUTE_USER_ATTRIBUTE_WRITE", "Write Compute User Attributes", COMPUTE_READ
+    COMPUTE_USER_ATTRIBUTE_READ = "COMPUTE_USER_ATTRIBUTE_READ", "Read Compute User Attributes", COMPUTE_READ
+    COMPUTE_USER_ATTRIBUTE_WRITE = "COMPUTE_USER_ATTRIBUTE_WRITE", "Write Compute User Attributes", COMPUTE_USER_ATTRIBUTE_READ
     IMAGE_READ = "IMAGE_READ", "Read Images", None
     IMAGE_WRITE = "IMAGE_WRITE", "Write Images", IMAGE_READ
     KEYRING_READ = "KEYRING_READ", "Read Keyrings", None
@@ -35,6 +36,9 @@ class Permission(Enum):
     METRICS_WRITE = "METRICS_WRITE", "Write Metrics", METRICS_READ
     NAMESPACE_READ = "NAMESPACE_READ", "Read Namespaces", None
     NAMESPACE_WRITE = "NAMESPACE_WRITE", "Write Namespaces", NAMESPACE_READ
+    ACCOUNT_NAMESPACE_WRITE = "ACCOUNT_NAMESPACE_WRITE", "Write Account Namespaces", NAMESPACE_READ
+    NAMESPACE_POLICY_READ = "NAMESPACE_POLICY_READ", "Read Namespace Policies", NAMESPACE_READ
+    NAMESPACE_POLICY_WRITE = "NAMESPACE_POLICY_WRITE", "Write Namespace Policies", NAMESPACE_POLICY_READ
     OBJECT_STORAGE_CONFIGURATION_READ = "OBJECT_STORAGE_CONFIGURATION_READ", "Read Object Storage Configurations", None
     OBJECT_STORAGE_CONFIGURATION_WRITE = "OBJECT_STORAGE_CONFIGURATION_WRITE", "Write Object Storage Configurations", OBJECT_STORAGE_CONFIGURATION_READ
     OBJECT_READ = "OBJECT_READ", "Read Objects", OBJECT_STORAGE_CONFIGURATION_READ
@@ -43,10 +47,11 @@ class Permission(Enum):
     WORK_REQUIREMENT_WRITE = "WORK_REQUIREMENT_WRITE", "Write Work Requirements", WORK_REQUIREMENT_READ
     WORKER_POOL_READ = "WORKER_POOL_READ", "Read Worker Pools", None
     WORKER_POOL_WRITE = "WORKER_POOL_WRITE", "Write Worker Pools", WORKER_POOL_READ
+    WORKER_POOL_WORKER_WRITE = "WORKER_POOL_WORKER_WRITE", "Write Worker Pool Workers", WORKER_POOL_READ
     WORKER_POOL_TOKEN_READ = "WORKER_POOL_TOKEN_READ", "Read Worker Pool Tokens", None
     WORKER_POOL_TOKEN_WRITE = "WORKER_POOL_TOKEN_WRITE", "Write Worker Pool Tokens", WORKER_POOL_READ
 
-    def __new__(cls, value, title: str, includes: Set[Permission]):
+    def __new__(cls, value, title: str, includes: List[Permission]):
         obj = object.__new__(cls)
         obj._value_ = value
         obj.title = title

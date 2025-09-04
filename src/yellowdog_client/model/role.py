@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, Set
+from typing import List, Optional
 
 from .identified import Identified
 from .permission import Permission
@@ -9,5 +9,5 @@ from .permission import Permission
 class Role(Identified):
     id: Optional[str] = field(default=None, init=False)
     name: str
-    permissions: Set[Permission]
+    permissions: List[Permission]
     description: Optional[str] = None
