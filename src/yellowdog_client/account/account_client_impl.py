@@ -5,7 +5,7 @@ from yellowdog_client.account.account_service_proxy import AccountServiceProxy
 from yellowdog_client.common import SearchClient
 from yellowdog_client.model import User, SliceReference, UserSearch, Slice, GroupSummary, Application, \
     ApplicationSearch, UpdateApplicationRequest, AddApplicationResponse, AddApplicationRequest, ApiKey, \
-    PermissionDetail, Role, Group, AddGroupRequest, UpdateGroupRequest, GroupSearch, RoleSearch
+    PermissionDetail, Role, Group, AddGroupRequest, UpdateGroupRequest, GroupSearch, RoleSearch, RoleScope
 
 
 class AccountClientImpl(AccountClient):
@@ -105,8 +105,8 @@ class AccountClientImpl(AccountClient):
     def add_application_to_group(self, group_id: str, application_id: str) -> None:
         return self.__service_proxy.add_application_to_group(group_id, application_id)
 
-    def add_role_to_group(self, group_id: str, role_id: str) -> None:
-        return self.__service_proxy.add_role_to_group(group_id, role_id)
+    def add_role_to_group(self, group_id: str, role_id: str, scope: RoleScope) -> None:
+        return self.__service_proxy.add_role_to_group(group_id, role_id, scope)
 
     def remove_user_from_group(self, group_id: str, user_id: str) -> None:
         return self.__service_proxy.remove_user_from_group(group_id, user_id)

@@ -14,4 +14,6 @@ class UserPortalContext:
     email: Optional[str] = None
     eulaAccepted: bool = False
     passwordSet: bool = False
+    allNamespacesReadable: bool = False
+    readableNamespaces: Optional[List[str]] = None
     features: Optional[List[Feature]] = None

@@ -138,6 +138,8 @@ from .gcs_namespace_storage_configuration import GcsNamespaceStorageConfiguratio
 from .google_cloud_credential import GoogleCloudCredential
 from .grant_application_access_request import GrantApplicationAccessRequest
 from .grant_user_access_request import GrantUserAccessRequest
+from .granted_permission_scope import GrantedPermissionScope
+from .granted_permissions import GrantedPermissions
 from .group import Group
 from .group_role import GroupRole
 from .group_search import GroupSearch
@@ -186,6 +188,7 @@ from .namespace_autoscaling_capacity_response import NamespaceAutoscalingCapacit
 from .namespace_objects_response import NamespaceObjectsResponse
 from .namespace_policy import NamespacePolicy
 from .namespace_policy_search import NamespacePolicySearch
+from .namespace_ref import NamespaceRef
 from .namespace_search import NamespaceSearch
 from .namespace_storage_configuration import NamespaceStorageConfiguration
 from .new_password_request import NewPasswordRequest
@@ -231,6 +234,7 @@ from .okta_account_authentication_properties import OktaAccountAuthenticationPro
 from .operating_system_licence import OperatingSystemLicence
 from .permission import Permission
 from .permission_detail import PermissionDetail
+from .permission_scope import PermissionScope
 from .price import Price
 from .processor_architecture import ProcessorArchitecture
 from .provider_node_summary import ProviderNodeSummary
@@ -245,6 +249,8 @@ from .requirement_allowance import RequirementAllowance
 from .requirements_allowance import RequirementsAllowance
 from .retry_properties import RetryProperties
 from .role import Role
+from .role_scope import RoleScope
+from .role_scope_validator import RoleScopeValidator
 from .role_search import RoleSearch
 from .role_summary import RoleSummary
 from .run_specification import RunSpecification
@@ -458,6 +464,8 @@ __all__ = [
     "GoogleCloudCredential",
     "GrantApplicationAccessRequest",
     "GrantUserAccessRequest",
+    "GrantedPermissionScope",
+    "GrantedPermissions",
     "Group",
     "GroupRole",
     "GroupSearch",
@@ -506,6 +514,7 @@ __all__ = [
     "NamespaceObjectsResponse",
     "NamespacePolicy",
     "NamespacePolicySearch",
+    "NamespaceRef",
     "NamespaceSearch",
     "NamespaceStorageConfiguration",
     "NewPasswordRequest",
@@ -551,6 +560,7 @@ __all__ = [
     "OperatingSystemLicence",
     "Permission",
     "PermissionDetail",
+    "PermissionScope",
     "Price",
     "ProcessorArchitecture",
     "ProviderNodeSummary",
@@ -565,6 +575,8 @@ __all__ = [
     "RequirementsAllowance",
     "RetryProperties",
     "Role",
+    "RoleScope",
+    "RoleScopeValidator",
     "RoleSearch",
     "RoleSummary",
     "RunSpecification",

@@ -93,6 +93,11 @@ class SecondExampleSubclass(ExampleBaseClass):
     fieldFromSecond: str
 
 
+@dataclass
+class ExampleWithKeyword:
+    global_: str
+
+
 ET = TypeVar('ET', bound=ExampleBaseClass)
 
 
@@ -153,6 +158,7 @@ symmetric_operations = [
     pytest.param('{"field": "some text"}', ExampleWithFieldNotInInit, ExampleWithFieldNotInInit.create(
         "some text"
     ), id="field not in init"),
+    pytest.param('{"global": "some text"}', ExampleWithKeyword, ExampleWithKeyword(global_="some text"), id="keyword field"),
 ]
 
 deserialization_operations = [

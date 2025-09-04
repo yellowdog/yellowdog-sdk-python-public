@@ -4,7 +4,7 @@ from yellowdog_client.common import Proxy
 from yellowdog_client.model import UserSearch, SliceReference, Slice, GroupSummary, Application, \
     UpdateApplicationRequest, AddApplicationRequest, AddApplicationResponse, ApiKey, ApplicationSearch, \
     PermissionDetail, \
-    Role, RoleSearch, Group, AddGroupRequest, UpdateGroupRequest, GroupSearch, User
+    Role, RoleSearch, Group, AddGroupRequest, UpdateGroupRequest, GroupSearch, User, RoleScope
 
 
 class AccountServiceProxy:
@@ -104,8 +104,8 @@ class AccountServiceProxy:
     def add_application_to_group(self, group_id: str, application_id: str) -> None:
         return self.proxy.put(url="groups/%s/applications/%s" % (group_id, application_id))
 
-    def add_role_to_group(self, group_id: str, role_id: str) -> None:
-        return self.proxy.put(url="groups/%s/roles/%s" % (group_id, role_id))
+    def add_role_to_group(self, group_id: str, role_id: str, scope: RoleScope) -> None:
+        return self.proxy.put(data=scope, url="groups/%s/roles/%s" % (group_id, role_id))
 
     def remove_user_from_group(self, group_id: str, user_id: str) -> None:
         return self.proxy.delete("groups/%s/users/%s" % (group_id, user_id))

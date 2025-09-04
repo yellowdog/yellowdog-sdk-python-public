@@ -23,3 +23,4 @@ class ComputeRequirementDynamicTemplate(ComputeRequirementTemplate):
     constraints: Optional[List[AttributeConstraint]] = None
     preferences: Optional[List[AttributePreference]] = None
     sourceTraits: Optional[ComputeSourceTraitsFilter] = None
+    sourceNamespaces: Optional[List[str]] = None

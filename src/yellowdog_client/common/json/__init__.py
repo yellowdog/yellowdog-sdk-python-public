@@ -10,7 +10,6 @@ from jsons._compatibility_impl import get_union_params, get_naked_class
 from jsons._load_impl import load
 from jsons._dump_impl import dump
 from typish import get_args
-
 from yellowdog_client.model import Slice
 from yellowdog_client.model.exceptions import BaseCustomException
 from yellowdog_client.model.exceptions import ErrorType
@@ -99,6 +98,7 @@ def object_deserializer(value: dict, cls: type, **kwargs) -> object:
     instance = naked_subclass.__new__(naked_subclass)
     class_name = naked_subclass.__name__
     for attr_name, attr_value in value.items():
+        attr_name = f"{attr_name}_" if attr_name in keywords else attr_name
         try:
             attr_type = type_hints[attr_name]
         except KeyError:
@@ -156,6 +156,12 @@ jsons.set_deserializer(slice_deserializer, Slice)
 jsons.set_deserializer(union_deserializer, (Union, Optional))
 jsons.set_deserializer(object_deserializer, object, False)
 
+keywords = {'global'}
+
+
+def deserialization_key_transformer(key: str) -> str:
+    return key[:-1] if key[:-1] in keywords else key
+
 
 class Json:
     @classmethod
@@ -164,7 +170,7 @@ class Json:
 
     @staticmethod
     def dump(value: object) -> object:
-        return jsons.dump(value, strip_nulls=True, strip_privates=True, use_enum_name=True)
+        return jsons.dump(value, strip_nulls=True, strip_privates=True, use_enum_name=True, key_transformer=deserialization_key_transformer)
 
     @classmethod
     def loads(cls, value: str, value_class: Type[T]) -> T:

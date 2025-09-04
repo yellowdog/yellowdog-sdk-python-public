@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
+from .granted_permissions import GrantedPermissions
 from .identified import Identified
-from .permission import Permission
 
 
 @dataclass
@@ -14,4 +14,4 @@ class AccessDelegate(Identified):
     subject: Optional[str] = None
     description: Optional[str] = None
     createdTime: Optional[datetime] = None
-    requiredPermissions: Optional[List[Permission]] = None
+    permissions: Optional[GrantedPermissions] = None

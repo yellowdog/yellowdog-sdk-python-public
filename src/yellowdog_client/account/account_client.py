@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from yellowdog_client.common import Closeable, SearchClient
-from yellowdog_client.model import AddApplicationRequest, AddApplicationResponse, AddGroupRequest, ApiKey, Application, ApplicationSearch, Group, GroupSearch, GroupSummary, PermissionDetail, Role, RoleSearch, UpdateApplicationRequest, UpdateGroupRequest, User, UserSearch
+from yellowdog_client.model import AddApplicationRequest, AddApplicationResponse, AddGroupRequest, ApiKey, Application, ApplicationSearch, Group, GroupSearch, GroupSummary, PermissionDetail, Role, RoleScope, RoleSearch, UpdateApplicationRequest, UpdateGroupRequest, User, UserSearch
 
 
 class AccountClient(ABC, Closeable):
@@ -99,7 +99,7 @@ class AccountClient(ABC, Closeable):
         pass
 
     @abstractmethod
-    def add_role_to_group(self, group_id: str, role_id: str) -> None:
+    def add_role_to_group(self, group_id: str, role_id: str, scope: RoleScope) -> None:
         pass
 
     @abstractmethod
