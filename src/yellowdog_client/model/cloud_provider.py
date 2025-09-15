@@ -3,8 +3,6 @@ from enum import Enum
 
 class CloudProvider(Enum):
     """Enumerates Cloud Compute Providers."""
-    ALIBABA = "ALIBABA", "Alibaba"
-    """Alibaba Cloud"""
     AWS = "AWS", "AWS"
     """Amazon Web Services (AWS)"""
     GOOGLE = "GOOGLE", "Google Cloud"

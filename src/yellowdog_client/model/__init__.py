@@ -11,13 +11,6 @@ from .add_group_request import AddGroupRequest
 from .add_node_actions_request import AddNodeActionsRequest
 from .add_user_request import AddUserRequest
 from .add_user_response import AddUserResponse
-from .alibaba_compute_source import AlibabaComputeSource
-from .alibaba_credential import AlibabaCredential
-from .alibaba_instance import AlibabaInstance
-from .alibaba_instance_charge_type import AlibabaInstanceChargeType
-from .alibaba_instances_compute_source import AlibabaInstancesComputeSource
-from .alibaba_namespace_storage_configuration import AlibabaNamespaceStorageConfiguration
-from .alibaba_spot_strategy import AlibabaSpotStrategy
 from .allowance import Allowance
 from .allowance_exhausted_notification import AllowanceExhaustedNotification
 from .allowance_limit_enforcement import AllowanceLimitEnforcement
@@ -337,13 +330,6 @@ __all__ = [
     "AddNodeActionsRequest",
     "AddUserRequest",
     "AddUserResponse",
-    "AlibabaComputeSource",
-    "AlibabaCredential",
-    "AlibabaInstance",
-    "AlibabaInstanceChargeType",
-    "AlibabaInstancesComputeSource",
-    "AlibabaNamespaceStorageConfiguration",
-    "AlibabaSpotStrategy",
     "Allowance",
     "AllowanceExhaustedNotification",
     "AllowanceLimitEnforcement",
