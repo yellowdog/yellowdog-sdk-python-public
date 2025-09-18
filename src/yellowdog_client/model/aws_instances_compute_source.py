@@ -26,6 +26,7 @@ class AwsInstancesComputeSource(AwsComputeSource):
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
+    rootDeviceName: Optional[str] = field(default=None, init=False)
     name: str
     credential: str
     region: str
@@ -42,6 +43,7 @@ class AwsInstancesComputeSource(AwsComputeSource):
     """The ID of the subnet to use for the provisioned instances."""
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
+    bootVolumeSizeGb: Optional[int] = None
     iamInstanceProfileArn: Optional[str] = None
     """The ARN of the IAM Instance Profile to use for the provisioned instances."""
     keyName: Optional[str] = None
