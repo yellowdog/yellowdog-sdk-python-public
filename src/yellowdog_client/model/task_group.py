@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import List, Optional
 
 from .identified import Identified
 from .named import Named
@@ -27,7 +27,14 @@ class TaskGroup(Identified, Named, Tagged):
     priority: float = 0
     """The task group priority."""
     dependentOn: Optional[str] = None
-    """The name of another task group within the same WorkRequirement that must be successfully completed before the task group is started."""
+    """
+    The name of another task group within the same WorkRequirement that must be successfully completed before the task group is started.
+
+    @deprecated use #dependencies instead
+    """
+
+    dependencies: Optional[List[str]] = None
+    """The names of other task groups within the same WorkRequirement that must be successfully completed before the task group is started."""
     starved: bool = False
     """Indicates if the task group is unable to claim any workers."""
     waitingOnDependency: bool = False
