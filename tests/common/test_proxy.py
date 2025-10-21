@@ -1,3 +1,4 @@
+import datetime
 import traceback
 from dataclasses import dataclass
 from http import HTTPStatus
@@ -5,15 +6,15 @@ from typing import List
 
 import pytest
 from requests import HTTPError
-from yellowdog_client.common import Proxy, UserAgent
-from yellowdog_client.common.credentials import ApiKeyAuthenticationHeadersProvider
-from yellowdog_client.common.server_sent_events import SubscriptionManager, SubscriptionEventListener
-from yellowdog_client.model import ApiKey
 
 from util.api import MockApi, HttpMethod
 from util.data import make
 from util.sse.sse_server import SseServer
 from util.waiter import wait_until
+from yellowdog_client.common import Proxy, UserAgent
+from yellowdog_client.common.credentials import ApiKeyAuthenticationHeadersProvider
+from yellowdog_client.common.server_sent_events import SubscriptionManager, SubscriptionEventListener
+from yellowdog_client.model import ApiKey
 
 TEST_ENDPOINT = "/test"
 
@@ -124,3 +125,32 @@ def test_does_not_retry_more_than_max(mock_api: MockApi):
         proxy.get(Example, TEST_ENDPOINT)
 
     assert ex_info.value.response.status_code == HTTPStatus.SERVICE_UNAVAILABLE
+
+
+def test_serializes_date_params_in_iso_format(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url())
+
+    mock_api.mock(TEST_ENDPOINT, HttpMethod.GET, params={"foo": "2018-10-02T14%3A38%3A09.023Z"})
+
+    proxy.get(None, TEST_ENDPOINT, params={"foo": datetime.datetime(
+        year=2018,
+        month=10,
+        day=2,
+        hour=14,
+        minute=38,
+        second=9,
+        microsecond=23000,
+        tzinfo=datetime.timezone.utc
+    )})
+
+    mock_api.verify_all_requests_called()
+
+
+def test_serializes_duration_params_in_iso_format(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url())
+
+    mock_api.mock(TEST_ENDPOINT, HttpMethod.GET, params={"foo": "P1DT2H30S"})
+
+    proxy.get(None, TEST_ENDPOINT, params={"foo": datetime.timedelta(days=1, hours=2, seconds=30)})
+
+    mock_api.verify_all_requests_called()

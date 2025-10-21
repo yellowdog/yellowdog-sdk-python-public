@@ -1,12 +1,14 @@
 from dataclasses import dataclass, asdict
+from datetime import datetime, timedelta
 from typing import TypeVar, Type, Dict, Optional
 
 from requests import Request, Session, Response, HTTPError
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from yellowdog_client.model.exceptions import BaseCustomException
 
+from yellowdog_client.model.exceptions import BaseCustomException
 from .credentials import ApiKeyAuthenticationHeadersProvider
+from .iso_datetime import iso_timedelta_format, iso_format
 from .json import Json
 from .server_sent_events.sse4python import EventSource
 from .user_agent import UserAgent
@@ -56,6 +58,12 @@ class Proxy:
 
     def execute(self, method: str, url: str = "", data: object = None, return_type: Type[T] = None,
                 params: Dict[str, object] = None) -> T:
+        if params is not None:
+            for key, value in params.items():
+                if isinstance(value, datetime):
+                    params[key] = iso_format(value)
+                elif isinstance(value, timedelta):
+                    params[key] = iso_timedelta_format(value)
         response = self.raw_execute(method, url, Json.dump(data) if data else None, params)
         return Json.load(response.json(), return_type) if return_type else None
 

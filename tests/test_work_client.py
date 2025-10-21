@@ -104,7 +104,7 @@ def test_can_find_tasks(mock_api: MockApi, work_client: WorkClient):
 
     search_params = {
         "workRequirementId": search.workRequirementId,
-        "startedTime.min": "2020-01-01+00%3A00%3A00",
+        "startedTime.min": "2020-01-01T00%3A00%3A00.000Z",
         "hasInputs": "True",
         "statuses": ["READY", "FAILED"],
         "sortField": "name",
