@@ -66,6 +66,12 @@ class WorkClientImpl(WorkClient):
     def start_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
         return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.RUNNING, False)
 
+    def finish_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
+        return self.finish_work_requirement_by_id(work_requirement.id)
+
+    def finish_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
+        return self.__service_proxy.transition_work_requirement(work_requirement_id, WorkRequirementStatus.FINISHING, False)
+
     def cancel_work_requirement(self, work_requirement: WorkRequirement, abort: bool = False) -> WorkRequirement:
         return self.cancel_work_requirement_by_id(work_requirement.id, abort)
 

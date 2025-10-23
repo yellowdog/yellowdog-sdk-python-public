@@ -16,6 +16,8 @@ class WorkRequirementStatus(Enum):
     Task group resources (e.g. Workers) will be released.
     """
 
+    FINISHING = "FINISHING", False
+    """The work requirement is waiting for all tasks to finish, no further tasks can be added."""
     COMPLETED = "COMPLETED", True
     """All task groups in the work requirement have been completed."""
     FAILED = "FAILED", True

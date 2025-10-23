@@ -113,6 +113,28 @@ class WorkClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def finish_work_requirement(self, work_requirement: WorkRequirement) -> WorkRequirement:
+        """
+        Instructs the Scheduler not to accept further tasks for the supplied work requirement and to finish it after all tasks are finished.
+
+        :param work_requirement: the work requirement to finish
+        :return: the latest state of the work requirement after the finish instruction was submitted
+        """
+
+        pass
+
+    @abstractmethod
+    def finish_work_requirement_by_id(self, work_requirement_id: str) -> WorkRequirement:
+        """
+        Instructs the Scheduler not to accept further tasks for the supplied work requirement and to finish it after all tasks are finished.
+
+        :param work_requirement_id: the ID of the work requirement to finish
+        :return: the latest state of the work requirement after the finish instruction was submitted
+        """
+
+        pass
+
+    @abstractmethod
     def cancel_work_requirement(self, work_requirement: WorkRequirement, abort: Optional[bool] = None) -> WorkRequirement:
         """
         Instructs the Scheduler to cancel the supplied work requirement, no further tasks will be executed and all workers shall be released.
