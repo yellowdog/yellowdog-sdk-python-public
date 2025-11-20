@@ -92,6 +92,12 @@ class AccountServiceProxy:
             self.proxy.to_params(slice_reference)
         )
 
+    def list_group_roles(self, group_id: str, slice_reference: SliceReference) -> Slice[Role]:
+        return self.proxy.get(
+            Slice[Role], "groups/%s/roles" % group_id,
+            self.proxy.to_params(slice_reference)
+        )
+
     def search_groups(self, search: GroupSearch, slice_reference: SliceReference) -> Slice[GroupSummary]:
         return self.proxy.get(
             Slice[GroupSummary], "groups",

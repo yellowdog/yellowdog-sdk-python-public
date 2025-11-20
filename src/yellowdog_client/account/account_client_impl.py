@@ -93,6 +93,12 @@ class AccountClientImpl(AccountClient):
 
         return SearchClient(get_next_slice_function)
 
+    def get_group_roles(self, group_id: str) -> SearchClient[Role]:
+        def get_next_slice_function(slice_reference: SliceReference) -> Slice[Role]:
+            return self.__service_proxy.list_group_roles(group_id, slice_reference)
+
+        return SearchClient(get_next_slice_function)
+
     def get_groups(self, search: GroupSearch) -> SearchClient[GroupSummary]:
         def get_next_slice_function(slice_reference: SliceReference) -> Slice[GroupSummary]:
             return self.__service_proxy.search_groups(search, slice_reference)

@@ -87,6 +87,10 @@ class AccountClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def get_group_roles(self, group_id: str) -> SearchClient[Role]:
+        pass
+
+    @abstractmethod
     def get_groups(self, search: GroupSearch) -> SearchClient[GroupSummary]:
         pass
 
