@@ -27,6 +27,7 @@ YellowDog services
    compute
    scheduler
    account
+   namespace
    images
    object_store
    usage

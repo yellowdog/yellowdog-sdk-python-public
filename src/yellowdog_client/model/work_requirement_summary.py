@@ -18,6 +18,8 @@ class WorkRequirementSummary(Identified, Tagged):
     tag: Optional[str] = None
     createdTime: Optional[datetime] = None
     """The date and time when the work requirement was first submitted to YellowDog Scheduler."""
+    statusChangedTime: Optional[datetime] = None
+    """The date and time when the status last changed"""
     priority: float = 0
     """The priority of the work requirement."""
     completedTaskCount: int = 0
