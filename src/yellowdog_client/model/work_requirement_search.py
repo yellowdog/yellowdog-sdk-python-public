@@ -15,5 +15,6 @@ class WorkRequirementSearch:
     statuses: Optional[List[WorkRequirementStatus]] = None
     isHealthy: Optional[bool] = None
     createdTime: Optional[InstantRange] = None
+    statusChangedTime: Optional[InstantRange] = None
     sortField: Optional[str] = None
     sortDirection: Optional[SortDirection] = None

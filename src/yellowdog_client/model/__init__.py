@@ -127,7 +127,9 @@ from .gce_host_maintenance_behaviour import GceHostMaintenanceBehaviour
 from .gce_instance import GceInstance
 from .gce_instance_group_compute_source import GceInstanceGroupComputeSource
 from .gce_instances_compute_source import GceInstancesComputeSource
+from .gce_target_distribution_shape import GceTargetDistributionShape
 from .gcs_namespace_storage_configuration import GcsNamespaceStorageConfiguration
+from .get_logs_request import GetLogsRequest
 from .google_cloud_credential import GoogleCloudCredential
 from .grant_application_access_request import GrantApplicationAccessRequest
 from .grant_user_access_request import GrantUserAccessRequest
@@ -164,6 +166,7 @@ from .keyring_access_secrets import KeyringAccessSecrets
 from .keyring_accessor import KeyringAccessor
 from .keyring_credential import KeyringCredential
 from .keyring_summary import KeyringSummary
+from .log_level import LogLevel
 from .long_range import LongRange
 from .machine_image import MachineImage
 from .machine_image_family import MachineImageFamily
@@ -243,7 +246,6 @@ from .requirements_allowance import RequirementsAllowance
 from .retry_properties import RetryProperties
 from .role import Role
 from .role_scope import RoleScope
-from .role_scope_validator import RoleScopeValidator
 from .role_search import RoleSearch
 from .role_summary import RoleSummary
 from .run_specification import RunSpecification
@@ -266,6 +268,7 @@ from .string_attribute_value import StringAttributeValue
 from .sub_region import SubRegion
 from .sub_region_search import SubRegionSearch
 from .tagged import Tagged
+from .tail_logs_request import TailLogsRequest
 from .task import Task
 from .task_data import TaskData
 from .task_data_input import TaskDataInput
@@ -446,7 +449,9 @@ __all__ = [
     "GceInstance",
     "GceInstanceGroupComputeSource",
     "GceInstancesComputeSource",
+    "GceTargetDistributionShape",
     "GcsNamespaceStorageConfiguration",
+    "GetLogsRequest",
     "GoogleCloudCredential",
     "GrantApplicationAccessRequest",
     "GrantUserAccessRequest",
@@ -483,6 +488,7 @@ __all__ = [
     "KeyringAccessor",
     "KeyringCredential",
     "KeyringSummary",
+    "LogLevel",
     "LongRange",
     "MachineImage",
     "MachineImageFamily",
@@ -562,7 +568,6 @@ __all__ = [
     "RetryProperties",
     "Role",
     "RoleScope",
-    "RoleScopeValidator",
     "RoleSearch",
     "RoleSummary",
     "RunSpecification",
@@ -585,6 +590,7 @@ __all__ = [
     "SubRegion",
     "SubRegionSearch",
     "Tagged",
+    "TailLogsRequest",
     "Task",
     "TaskData",
     "TaskDataInput",

@@ -8,6 +8,7 @@ from .sort_direction import SortDirection
 class NamespaceSearch:
     namespace: Optional[str] = None
     namespaces: Optional[List[str]] = None
+    namespaceContains: Optional[str] = None
     deletable: Optional[bool] = None
     sortField: Optional[str] = None
     sortDirection: Optional[SortDirection] = None

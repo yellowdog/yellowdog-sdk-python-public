@@ -49,8 +49,8 @@ class Permission(Enum):
     OBJECT_WRITE = "OBJECT_WRITE", "Write Objects", PermissionScope.GLOBAL_ONLY, OBJECT_READ
     METRICS_READ = "METRICS_READ", "Read Metrics", PermissionScope.NAMESPACED_OR_GLOBAL, None
     METRICS_WRITE = "METRICS_WRITE", "Write Metrics", PermissionScope.NAMESPACED_OR_GLOBAL, METRICS_READ
-    LOG_READ = "LOG_READ", "Read Logs", PermissionScope.GLOBAL_ONLY, None
-    COMPUTE_USAGE_READ = "COMPUTE_USAGE_READ", "Read Compute Usage Data", PermissionScope.GLOBAL_ONLY, None
+    LOG_READ = "LOG_READ", "Read Logs", PermissionScope.NAMESPACED_OR_GLOBAL, None
+    COMPUTE_USAGE_READ = "COMPUTE_USAGE_READ", "Read Compute Usage Data", PermissionScope.NAMESPACED_OR_GLOBAL, None
 
     def __new__(cls, value, title: str, scope: PermissionScope, includes: List[Permission]):
         obj = object.__new__(cls)
