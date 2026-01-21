@@ -48,3 +48,11 @@ class RunSpecification:
 
     retryableErrors: Optional[List[TaskErrorMatcher]] = None
     """Defines the errors that should result in a task retrying if encountered."""
+    batchAllocation: Optional[bool] = None
+    """
+    Enables the batch allocation of tasks to nodes. Nodes will maintain local task queues and request batches of
+    tasks as these queues are drained by workers. This can increase throughput for short-running tasks by reducing
+    the latency between a worker completing a task and starting the next one. It can also enable larger numbers of
+    workers to be efficiently utilised by reducing overall load on the YellowDog Scheduler service.
+    """
+

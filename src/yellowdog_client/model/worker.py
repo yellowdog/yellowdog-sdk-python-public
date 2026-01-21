@@ -18,6 +18,12 @@ class Worker(Identified):
     """A count of the tasks groups which have claims on the worker. Always identical to the size of #taskGroupIds."""
     exclusive: bool = False
     """Indicates if the worker is exclusively claimed by a single task group."""
+    batchAllocation: bool = False
+    """
+    Indicates if the worker has been claimed by a task group for batch allocation. Tasks will be allocated to the
+    worker's node in batches before being distributed to the worker.
+    """
+
     currentTaskId: Optional[str] = None
     """The ID of the task currently allocated to the worker."""
     registeredTime: Optional[datetime] = None

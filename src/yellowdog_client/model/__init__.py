@@ -11,6 +11,7 @@ from .add_group_request import AddGroupRequest
 from .add_node_actions_request import AddNodeActionsRequest
 from .add_user_request import AddUserRequest
 from .add_user_response import AddUserResponse
+from .aggregate_instance_usage_filter import AggregateInstanceUsageFilter
 from .allowance import Allowance
 from .allowance_exhausted_notification import AllowanceExhaustedNotification
 from .allowance_limit_enforcement import AllowanceLimitEnforcement
@@ -287,6 +288,7 @@ from .task_output_source import TaskOutputSource
 from .task_search import TaskSearch
 from .task_status import TaskStatus
 from .task_summary import TaskSummary
+from .task_working_time import TaskWorkingTime
 from .track import Track
 from .track_search import TrackSearch
 from .transfer_status_response import TransferStatusResponse
@@ -333,6 +335,7 @@ __all__ = [
     "AddNodeActionsRequest",
     "AddUserRequest",
     "AddUserResponse",
+    "AggregateInstanceUsageFilter",
     "Allowance",
     "AllowanceExhaustedNotification",
     "AllowanceLimitEnforcement",
@@ -609,6 +612,7 @@ __all__ = [
     "TaskSearch",
     "TaskStatus",
     "TaskSummary",
+    "TaskWorkingTime",
     "Track",
     "TrackSearch",
     "TransferStatusResponse",

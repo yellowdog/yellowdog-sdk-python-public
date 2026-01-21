@@ -11,6 +11,7 @@ from .task_error import TaskError
 from .task_input import TaskInput
 from .task_output import TaskOutput
 from .task_status import TaskStatus
+from .task_working_time import TaskWorkingTime
 
 
 @dataclass
@@ -24,6 +25,7 @@ class Task(Identified, Named, Tagged):
     retryCount: Optional[int] = field(default=None, init=False)
     """How many times the task has failed and then been set back to WAITING to be retried."""
     taskGroupId: Optional[str] = field(default=None, init=False)
+    nodeId: Optional[str] = field(default=None, init=False)
     workerId: Optional[str] = field(default=None, init=False)
     errors: Optional[List[TaskError]] = field(default=None, init=False)
     taskType: str
@@ -41,6 +43,8 @@ class Task(Identified, Named, Tagged):
     """The time the task was last started by a Worker."""
     finishedTime: Optional[datetime] = None
     """The time the task was finished."""
+    workingTime: Optional[TaskWorkingTime] = None
+    """The times taken to do the task measured from the worker."""
     abortRequestedTime: Optional[datetime] = None
     """The time when task abort was requested."""
     inputs: Optional[List[TaskInput]] = None
