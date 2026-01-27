@@ -1,7 +1,8 @@
 import sys
 
 from ._version import __version__
-from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy, AccountClientImpl, AccountServiceProxy
+from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy, AccountClientImpl, AccountServiceProxy, \
+    ApplicationClient, ApplicationServiceProxy, ApplicationClientImpl
 from .account.account_client import AccountClient
 from .client_collection import ClientCollection
 from .cloud_info import CloudInfoClient, CloudInfoClientImpl, CloudInfoProxy
@@ -36,7 +37,8 @@ class PlatformClient(Closeable):
             worker_pool_client: WorkerPoolClient,
             object_store_client: ObjectStoreClient,
             allowances_client: AllowancesClient,
-            cloud_info_client: CloudInfoClient
+            cloud_info_client: CloudInfoClient,
+            application_client: ApplicationClient
     ) -> None:
         self.__clients = ClientCollection()
         self.account_client: AccountClient = self.__clients.add(account_client)
@@ -59,6 +61,8 @@ class PlatformClient(Closeable):
         """Allowances client. Used to constrain how much compute can be used"""
         self.cloud_info_client: CloudInfoClient = self.__clients.add(cloud_info_client)
         """Cloud Info client. Used to query Cloud Info data """
+        self.application_client: ApplicationClient = self.__clients.add(application_client)
+        """Application client. Used to controlling applications """
 
     @staticmethod
     def create(services_schema: ServicesSchema, api_key: ApiKey) -> "PlatformClient":
@@ -104,6 +108,7 @@ class PlatformClient(Closeable):
         object_store_client = ObjectStoreClient(ObjectStoreServiceProxy(proxy.append_base_url(object_store_url)))
         allowances_client = AllowancesClientImpl(AllowancesServiceProxy(proxy.append_base_url(usage_url)))
         cloud_info_client = CloudInfoClientImpl(CloudInfoProxy(proxy.append_base_url(cloud_info_url)))
+        application_client = ApplicationClientImpl(ApplicationServiceProxy(proxy.append_base_url(account_url)))
 
         return PlatformClient(
             account_client=account_client,
@@ -115,7 +120,8 @@ class PlatformClient(Closeable):
             worker_pool_client=worker_pool_client,
             object_store_client=object_store_client,
             allowances_client=allowances_client,
-            cloud_info_client=cloud_info_client
+            cloud_info_client=cloud_info_client,
+            application_client=application_client
         )
 
     def close(self) -> None:

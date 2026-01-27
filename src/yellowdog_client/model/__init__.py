@@ -19,6 +19,7 @@ from .allowance_reset_type import AllowanceResetType
 from .allowance_search import AllowanceSearch
 from .api_key import ApiKey
 from .application import Application
+from .application_details import ApplicationDetails
 from .application_search import ApplicationSearch
 from .attribute_constraint import AttributeConstraint
 from .attribute_definition import AttributeDefinition
@@ -343,6 +344,7 @@ __all__ = [
     "AllowanceSearch",
     "ApiKey",
     "Application",
+    "ApplicationDetails",
     "ApplicationSearch",
     "AttributeConstraint",
     "AttributeDefinition",
