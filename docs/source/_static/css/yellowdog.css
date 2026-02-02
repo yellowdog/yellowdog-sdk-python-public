@@ -1,0 +1,34 @@
+/*
+Sphinx RTD Theme Customisation
+==============================
+*/
+.wy-nav-content {
+    max-width: 100% !important;
+}
+body,
+.wy-body-for-nav,
+.wy-nav-content,
+.rst-content {
+    /* Align fonts with company branding */
+    font-family: 'Roboto', sans-serif;
+}
+h1, h2, h3, h4, h5, h6,
+.rst-content h1,
+.rst-content h2,
+.rst-content h3,
+.rst-content h4,
+.rst-content h5,
+.rst-content h6 {
+    /* Align fonts with company branding */
+    font-family: 'Mulish', sans-serif !important;
+}
+.rst-content code, .rst-content tt, code {
+    /* Default is 75% which makes it hard to read */
+    font-size: 90% !important;
+    /* Improves readability of navigation (does not affect inline code elsewhere) */
+    font-family: 'Roboto', sans-serif;
+}
+.wy-side-nav-search>a:hover {
+    /* prevents messing with the logo on hover */
+    background: none !important;
+}
