@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from .identified import Identified
 from .node_action_queue_status import NodeActionQueueStatus
 from .node_details import NodeDetails
 from .node_status import NodeStatus
+from .node_task_queue import NodeTaskQueue
 from .worker import Worker
 
 
@@ -33,3 +34,10 @@ class Node(Identified):
     actionQueueStatus: Optional[NodeActionQueueStatus] = None
     """The status of the action queue for the node."""
     agentVersion: Optional[str] = None
+    """The version of the agent running on the node."""
+    taskGroupTaskQueues: Optional[Dict[str, NodeTaskQueue]] = None
+    """
+    A map keyed on task group holding status information related to the
+    task queues local to the node.
+    """
+

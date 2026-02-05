@@ -13,6 +13,8 @@ class TaskError:
     """The time at which the error occurred."""
     error: str
     """A description of the error."""
+    nodeId: Optional[str] = None
+    """The ID of the node where the error occurred."""
     workerId: Optional[str] = None
     """The ID of the worker where the error occurred."""
     errorType: str = TaskErrorType.UNKNOWN_ERROR

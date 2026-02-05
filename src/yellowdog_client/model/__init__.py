@@ -204,6 +204,7 @@ from .node_search import NodeSearch
 from .node_slot_numbering import NodeSlotNumbering
 from .node_status import NodeStatus
 from .node_summary import NodeSummary
+from .node_task_queue import NodeTaskQueue
 from .node_type import NodeType
 from .node_worker_target import NodeWorkerTarget
 from .node_worker_target_type import NodeWorkerTargetType
@@ -529,6 +530,7 @@ __all__ = [
     "NodeSlotNumbering",
     "NodeStatus",
     "NodeSummary",
+    "NodeTaskQueue",
     "NodeType",
     "NodeWorkerTarget",
     "NodeWorkerTargetType",

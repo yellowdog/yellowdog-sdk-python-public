@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class InstanceStatus(Enum):
-    """Describes the status of a instance."""
+    """Describes the status of an instance."""
     PENDING = "PENDING", True
     """The instance is in the process of being provisioned, or rebooted."""
     RUNNING = "RUNNING", True

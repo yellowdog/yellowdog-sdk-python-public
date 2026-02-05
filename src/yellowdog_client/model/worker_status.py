@@ -6,11 +6,13 @@ class WorkerStatus(Enum):
     DOING_TASK = "DOING_TASK", True, True
     """The Worker has been instructed to execute a task."""
     SLEEPING = "SLEEPING", True, True
-    """The Worker has been instructed to sleep for a specified period of time."""
+    """The Worker is claimed by one or more task groups but has been instructed to sleep as no tasks are READY for it."""
     STOPPED = "STOPPED", True, True
-    """The Worker has been instructed to stop."""
+    """The Worker is not claimed and has been instructed to stop."""
     STARTING = "STARTING", True, True
-    """The Agent has been instructed to start the Worker."""
+    """The Worker has become claimed and the Agent has been instructed to start the Worker."""
+    BATCH_ALLOCATION = "BATCH_ALLOCATION", True, True
+    """The Worker has become claimed for batch allocation. Its status is now monitored locally to the node."""
     LATE = "LATE", True, False
     """The Worker's heartbeat is late."""
     LOST = "LOST", False, False
