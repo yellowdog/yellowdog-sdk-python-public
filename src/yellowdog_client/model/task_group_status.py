@@ -19,7 +19,7 @@ class TaskGroupStatus(Enum):
     The task group will remain in HELD state until the user reactivates the parent work requirement.
     """
 
-    FINISHING = "FINISHING", True, False, True
+    FINISHING = "FINISHING", False, False, True
     """The task group is waiting for all tasks to finish, no further tasks can be added."""
     COMPLETED = "COMPLETED", False, True, False
     """All tasks within the task group have been completed."""
@@ -32,11 +32,11 @@ class TaskGroupStatus(Enum):
     CANCELLED = "CANCELLED", False, True, False
     """The parent work requirement has been cancelled, no tasks are currently being executed or will be executed."""
 
-    def __new__(cls, value, finishing: bool, finished: bool, active: bool):
+    def __new__(cls, value, terminating: bool, terminated: bool, active: bool):
         obj = object.__new__(cls)
         obj._value_ = value
-        obj.finishing = finishing
-        obj.finished = finished
+        obj.terminating = terminating
+        obj.terminated = terminated
         obj.active = active
         return obj
 
