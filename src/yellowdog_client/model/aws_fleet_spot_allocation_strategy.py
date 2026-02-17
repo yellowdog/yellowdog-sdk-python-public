@@ -10,6 +10,8 @@ class AwsFleetSpotAllocationStrategy(Enum):
     """AWS EC2 Fleet will launch instances from Spot instance pools with optimal capacity for the number of instances that are launching."""
     CAPACITY_OPTIMIZED_ORDER_PRIORITIZED = "CAPACITY_OPTIMIZED_ORDER_PRIORITIZED"
     """AWS EC2 Fleet will launch instances optimizing for capacity first, but honor priority based on the order of the instanceOverrides in the AwsFleetComputeSource on a best-effort basis."""
+    PRICE_CAPACITY_OPTIMIZED = "PRICE_CAPACITY_OPTIMIZED"
+    """AWS EC2 Fleet will launch instances from the lowest price pool that has the highest available capacity and lowest chance of interruption."""
 
     def __str__(self) -> str:
         return self.name
