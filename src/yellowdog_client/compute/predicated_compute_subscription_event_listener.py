@@ -13,8 +13,8 @@ if typing.TYPE_CHECKING:
     from yellowdog_client.compute import ComputeClient
 
 
-class PredicatedComputeSubscriptionEventListener(SubscriptionEventListener):
-    __runner: SynchronizedPredicatedRunner = None
+class PredicatedComputeSubscriptionEventListener(SubscriptionEventListener[ComputeRequirement]):
+    __runner: SynchronizedPredicatedRunner
 
     def __init__(
             self,
@@ -22,7 +22,7 @@ class PredicatedComputeSubscriptionEventListener(SubscriptionEventListener):
             predicate: Callable[[ComputeRequirement], bool],
             compute_client: ComputeClient
     ) -> None:
-        super(PredicatedComputeSubscriptionEventListener, self).__init__()
+        super().__init__()
         self.__future = future
         self.__predicate = predicate
         self.__runner = SynchronizedPredicatedRunner(predicate=self._runner_predicate)

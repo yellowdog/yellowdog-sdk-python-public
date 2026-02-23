@@ -21,8 +21,8 @@ class NamespacesServiceProxy:
     def create_namespace(self, request: CreateNamespaceRequest) -> str:
         return self._proxy.raw_execute(method='POST', json=Json.dump(request)).text
 
-    def delete_namespace(self, namespace_id: str):
-        return self._proxy.delete(url=f"/{namespace_id}")
+    def delete_namespace(self, namespace_id: str) -> None:
+        self._proxy.delete(url=f"/{namespace_id}")
 
     def save_namespace_policy(self, namespace_policy: NamespacePolicy) -> None:
         return self._proxy.put(url=f"{namespace_policy.namespace}/policy", data=namespace_policy)

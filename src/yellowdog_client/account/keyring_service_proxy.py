@@ -15,7 +15,7 @@ class KeyringServiceProxy:
     def find_all_keyrings(self) -> List[KeyringSummary]:
         return self._proxy.get(List[KeyringSummary])
 
-    def create_keyring(self, name, description):
+    def create_keyring(self, name: str, description: str) -> CreateKeyringResponse:
         return self._proxy.post(CreateKeyringResponse, CreateKeyringRequest(
             name=name,
             description=description

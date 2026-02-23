@@ -1,6 +1,6 @@
-from dataclasses import dataclass, field
+from abc import ABC
 
 
-@dataclass
-class BestComputeSourceReportConstraint:
-    type: str = field(default=None, init=False)
+
+class BestComputeSourceReportConstraint(ABC):
+    type: str

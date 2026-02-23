@@ -1,24 +1,24 @@
-from threading import Lock
-from typing import Set, TypeVar, Type
 from copy import deepcopy
+from threading import Lock
+from typing import Set, TypeVar, Type, Generic
 
 from yellowdog_client.common import Closeable
 from yellowdog_client.common.json import Json
 from yellowdog_client.model.exceptions import InvalidOperationException
-from .subscription_event_listener import SubscriptionEventListener
 from .sse4python import EventSource
 from .sse4python import ServerSentEvent
+from .subscription_event_listener import SubscriptionEventListener
 
 T = TypeVar('T')
 
 
-class Subscription(Closeable):
-    _sync_lock: Lock = None
-    _id: str = None
-    _listeners: Set[SubscriptionEventListener] = set()
-    _event_source: EventSource = None
+class Subscription(Generic[T], Closeable):
+    _sync_lock: Lock
+    _id: str
+    _listeners: Set[SubscriptionEventListener[T]]
+    _event_source: EventSource
 
-    def __init__(self, sse: EventSource, listener: SubscriptionEventListener, class_type: Type[T]) -> None:
+    def __init__(self, sse: EventSource, listener: SubscriptionEventListener[T], class_type: Type[T]) -> None:
         self._sync_lock = Lock()
         self._id = hex(hash(self))
         self._listeners = set()
@@ -30,7 +30,7 @@ class Subscription(Closeable):
         self._event_source.bind(event_source_completed=self._notify_server_cancelled)
         self._event_source.start()
 
-    def __copy_listeners(self) -> Set[SubscriptionEventListener]:
+    def __copy_listeners(self) -> Set[SubscriptionEventListener[T]]:
         with self._sync_lock:
             return set(x for x in self._listeners)
 
@@ -52,19 +52,19 @@ class Subscription(Closeable):
         for subscription_event_listener in self.__copy_listeners():
             subscription_event_listener.subscription_cancelled()
 
-    def add_subscription_listener(self, listener: SubscriptionEventListener) -> None:
+    def add_subscription_listener(self, listener: SubscriptionEventListener[T]) -> None:
         if self._event_source.is_closed:
             raise InvalidOperationException("Subscription is not active")
         with self._sync_lock:
             self._listeners.add(listener)
 
-    def remove_listener(self, listener: SubscriptionEventListener) -> None:
+    def remove_listener(self, listener: SubscriptionEventListener[T]) -> None:
         with self._sync_lock:
             self._listeners.remove(listener)
             if len(self._listeners) < 1:
                 self.close()
 
-    def has_listener(self, listener: SubscriptionEventListener) -> bool:
+    def has_listener(self, listener: SubscriptionEventListener[T]) -> bool:
         with self._sync_lock:
             return listener in self._listeners
 

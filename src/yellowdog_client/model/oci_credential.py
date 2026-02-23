@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Optional
 
 from .credential import Credential
@@ -8,6 +9,7 @@ from .credential import Credential
 class OciCredential(Credential):
     """Holds the properties that form a set of credentials for Oracle Cloud Infrastructure (OCI)."""
     type: str = field(default="co.yellowdog.platform.account.credentials.OciCredential", init=False)
+    expiryTime: Optional[datetime] = field(default=None, init=False)
     name: str
     userId: str
     """The OCI User ID (ocid)."""

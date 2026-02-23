@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import TypeVar, Type, List, Union, Optional, Any
+from typing import TypeVar, Type, List, Union, Optional, Any, ClassVar
 import json
 import typing
 
@@ -18,7 +18,7 @@ from yellowdog_client.common.iso_datetime import iso_format, iso_parse, iso_time
 T = TypeVar('T')
 
 
-def _determine_subclass(value: dict, cls: type) -> type:
+def _determine_subclass(value: dict[str, Type[Any]], cls: type) -> type:
     if "type" in value:
         type_field = "type"
         type_value = value[type_field]
@@ -27,43 +27,57 @@ def _determine_subclass(value: dict, cls: type) -> type:
         type_value = value[type_field]
     elif "errorType" in value and cls is BaseCustomException:
         type_field = "errorType"
-        type_value = ErrorType(value[type_field])
+        error_type: ErrorType = ErrorType(value[type_field])
 
         naked_class = get_naked_class(cls)
 
         subclasses = all_subclasses(naked_class)
         if subclasses:
-            return {getattr(x, type_field).value: x for x in subclasses}[type_value.value]
+            return {getattr(x, type_field).value: x for x in subclasses}[error_type.value]
         return cls
     else:
         return cls
 
     naked_class = get_naked_class(cls)
 
-    subclasses = all_subclasses(naked_class)
+    subclasses = leaf_subclasses(naked_class)
     if subclasses:
         return {getattr(x, type_field): x for x in subclasses}[type_value]
     return cls
 
 
-def all_subclasses(cls):
+def all_subclasses(cls: type) -> set[type]:
     return set(cls.__subclasses__()).union(
         [s for c in cls.__subclasses__() for s in all_subclasses(c)])
 
 
-def slice_deserializer(value: dict, cls: type, **kwargs) -> object:
-    slice = Slice()
+def leaf_subclasses(cls: type) -> set[type]:
+    subclasses = set()
+
+    def recurse(subcls: type) -> None:
+        for subclass in subcls.__subclasses__():
+            if subclass.__subclasses__():
+                recurse(subclass)
+            else:
+                subclasses.add(subclass)
+
+    recurse(cls)
+    return subclasses
+
+
+def slice_deserializer(value: dict[str, Any], cls: type, **kwargs: Any) -> object:
+    slice: Slice[Any] = Slice()
     if "nextSliceId" in value:
         slice.nextSliceId = value["nextSliceId"]
 
     if "items" in value:
         arg = get_args(cls)[0]
-        slice.items = default_list_deserializer(value["items"], List[arg])
+        slice.items = default_list_deserializer(value["items"], List[arg])  # type: ignore[valid-type]  # runtime type construction from get_args()
 
     return slice
 
 
-class NestedDeserializationError(JsonsError):
+class NestedDeserializationError(JsonsError):  # type: ignore[misc]  # JsonsError is untyped third-party class
     def __init__(self, value: object, class_name: str, attribute_name: str, reason: str):
         message = f"Cannot deserialize '{value}' into {class_name}.{attribute_name}. Reason: {reason}"
         Exception.__init__(self, message)
@@ -73,7 +87,7 @@ class NestedDeserializationError(JsonsError):
         self.reason = reason
 
 
-def union_deserializer(obj: object, cls: Union, **kwargs) -> object:
+def union_deserializer(obj: object, cls: Union, **kwargs: Any) -> object:
     errors = {}
     for sub_type in get_union_params(cls):
         if obj is not None and sub_type is NoneType:
@@ -91,7 +105,7 @@ def union_deserializer(obj: object, cls: Union, **kwargs) -> object:
         raise NestedDeserializationError(obj, cls, '', err_msg)
 
 
-def object_deserializer(value: dict, cls: type, **kwargs) -> object:
+def object_deserializer(value: dict[str, Type[Any]], cls: type[Any], **kwargs: Any) -> object:
     subclass = _determine_subclass(value, cls)
     naked_subclass = get_naked_class(subclass)
     type_hints = get_type_hints(subclass, naked_subclass)
@@ -103,6 +117,9 @@ def object_deserializer(value: dict, cls: type, **kwargs) -> object:
             attr_type = type_hints[attr_name]
         except KeyError:
             # Silently ignore for backwards compatibility with new fields introduced into the API
+            continue
+
+        if typing.get_origin(attr_type) is ClassVar:
             continue
 
         try:
@@ -118,9 +135,10 @@ def object_deserializer(value: dict, cls: type, **kwargs) -> object:
 
 
 def dict_serializer(
-        obj: dict,
+        obj: dict[str, Any],
         cls: Optional[type] = None,
-        **kwargs) -> dict:
+        **kwargs: Any
+) -> dict[str, Any]:
     result = dict()
     for key in obj:
         obj_ = obj[key]
@@ -132,7 +150,7 @@ def dict_serializer(
     return result
 
 
-def get_type_hints(cls: Any, naked_cls: Any):
+def get_type_hints(cls: Any, naked_cls: Any) -> dict[str, Any]:
     if naked_cls != cls:
         type_hints = typing.get_type_hints(naked_cls)
         type_params = dict(zip(naked_cls.__parameters__, cls.__args__))
@@ -178,4 +196,4 @@ class Json:
 
     @staticmethod
     def load(value: object, value_class: Type[T]) -> T:
-        return jsons.load(value, value_class)
+        return typing.cast(T, jsons.load(value, value_class))

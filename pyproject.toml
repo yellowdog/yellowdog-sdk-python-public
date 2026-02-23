@@ -39,12 +39,16 @@ dependencies = [
     "isodate>=0.6.1,<1"
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 tests = [
     "pytest==8.3.3",
     "pytest-httpserver==1.0.8",
     "typing_compat==0.1.0",
     "busypie==0.5.1"
+]
+mypy = [
+    "types-requests",
+    "mypy==1.19.1"
 ]
 docs = [
     "Sphinx==9.1.0",
@@ -56,10 +60,28 @@ deploy = [
     "twine==3.3.0"
 ]
 
-
 [project.urls]
 "Homepage" = "https://yellowdog.co"
 "Source" = "https://github.com/yellowdog/yellowdog-sdk-python-public"
 
 [tool.setuptools.dynamic]
 version = { attr = "yellowdog_client._version.__version__" }
+
+[tool.setuptools.package-data]
+yellowdog_client = ["py.typed"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+mypy_path = "src:stubs"
+packages = ["yellowdog_client"]
+
+[[tool.mypy.overrides]]
+module = "yellowdog_client.object_store.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+# These old abandoned dependencies are not typed. They need to be replaced but until then, we need tell mypy to ignore them.
+module = ["jsons", "jsons.*", "pydispatch", "pydispatch.*", "typish", "typish.*"]
+follow_imports = "skip"
+ignore_missing_imports = true

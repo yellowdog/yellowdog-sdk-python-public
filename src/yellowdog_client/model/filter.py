@@ -1,6 +1,9 @@
-from dataclasses import dataclass
+from abc import ABC
+from datetime import datetime
+from typing import Optional
 
 
-@dataclass
-class Filter:
-    pass
+
+class Filter(ABC):
+    fromTime: Optional[datetime]
+    untilTime: Optional[datetime]

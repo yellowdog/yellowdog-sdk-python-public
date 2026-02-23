@@ -10,8 +10,8 @@ from .user import User
 class ExternalUser(User):
     """Represents an external user within the YellowDog Platform."""
     type: str = field(default="co.yellowdog.platform.model.ExternalUser", init=False)
-    externalId: str = field(default=None, init=False)
-    authenticationProvider: AuthenticationProvider = field(default=None, init=False)
+    externalId: str = field(init=False)
+    authenticationProvider: AuthenticationProvider = field(init=False)
     id: Optional[str] = field(default=None, init=False)
     name: str
     email: Optional[str] = None

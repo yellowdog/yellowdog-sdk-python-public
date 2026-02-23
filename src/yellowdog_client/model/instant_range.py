@@ -6,6 +6,6 @@ from .range import Range
 
 
 @dataclass
-class InstantRange(Range):
+class InstantRange(Range[datetime]):
     min: Optional[datetime] = None
     max: Optional[datetime] = None

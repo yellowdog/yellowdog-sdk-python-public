@@ -1,17 +1,25 @@
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Set
+from typing import ClassVar, Dict, Optional, Set
 
+from .cloud_provider import CloudProvider
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
 from .gce_compute_source import GceComputeSource
 from .gce_host_maintenance_behaviour import GceHostMaintenanceBehaviour
+from .instance_pricing import InstancePricing
 from .instance_summary import InstanceSummary
 
 
 @dataclass
 class GceInstancesComputeSource(GceComputeSource):
     """Defines a source of compute composed of Google Compute Engine (GCE) instances individually provisioned."""
+    BULK_INSERT_SINGLE_REQUEST_MAX: ClassVar[int] = 1000
+    """
+    The maximum number of instances that can be requested in a single API call to GCE
+    The validation message in @GceInstancesComputeSourceValidator should be aligned if changed
+    """
+
     type: str = field(default="co.yellowdog.platform.model.GceInstancesComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
     credentials: Optional[Set[str]] = field(default=None, init=False)
@@ -22,6 +30,8 @@ class GceInstancesComputeSource(GceComputeSource):
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
+    provider: Optional[CloudProvider] = field(default=None, init=False)
+    instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     name: str
     credential: str
     project: str

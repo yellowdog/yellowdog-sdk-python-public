@@ -1,6 +1,7 @@
 from typing import List
 
 from yellowdog_client.common import Proxy
+from yellowdog_client.common.server_sent_events.sse4python import EventSource
 from yellowdog_client.model import WorkRequirement, WorkRequirementStatus, WorkRequirementSummary, Task, \
     TaskSearch, SliceReference, Slice
 
@@ -37,7 +38,7 @@ class WorkServiceProxy:
         params["sliced"] = "true"
         return self._proxy.get(Slice[WorkRequirementSummary], "requirements", params)
 
-    def stream_work_requirement_updates(self, requirement_id: str):
+    def stream_work_requirement_updates(self, requirement_id: str) -> EventSource:
         return self._proxy.stream(f"requirements/{requirement_id}/updates")
 
     def add_tasks_to_task_group(self, task_group_id: str, tasks: List[Task]) -> List[Task]:

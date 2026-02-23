@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 from enum import Enum
 
 
 class InstanceStatus(Enum):
     """Describes the status of an instance."""
+    alive: bool
+
     PENDING = "PENDING", True
     """The instance is in the process of being provisioned, or rebooted."""
     RUNNING = "RUNNING", True
@@ -20,7 +24,7 @@ class InstanceStatus(Enum):
     UNKNOWN = "UNKNOWN", False
     """The status of the instance is unknown. The instance can be restarted to try to recover or terminated."""
 
-    def __new__(cls, value, alive: bool):
+    def __new__(cls, value: str, alive: bool) -> InstanceStatus:
         obj = object.__new__(cls)
         obj._value_ = value
         obj.alive = alive

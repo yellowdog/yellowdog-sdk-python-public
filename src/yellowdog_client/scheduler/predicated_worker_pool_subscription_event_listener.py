@@ -13,14 +13,14 @@ if typing.TYPE_CHECKING:
     from yellowdog_client.scheduler import WorkerPoolClient
 
 
-class PredicatedWorkerPoolSubscriptionEventListener(SubscriptionEventListener):
+class PredicatedWorkerPoolSubscriptionEventListener(SubscriptionEventListener[WorkerPool]):
     def __init__(
             self,
             future: Future[WorkerPool],
             predicate: Callable[[WorkerPool], bool],
             worker_pool_client: WorkerPoolClient
     ) -> None:
-        super(PredicatedWorkerPoolSubscriptionEventListener, self).__init__()
+        super().__init__()
         self.__future = future
         self.__predicate = predicate
         self.__runner = SynchronizedPredicatedRunner(predicate=self._runner_predicate)

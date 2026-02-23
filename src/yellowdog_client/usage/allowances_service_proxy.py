@@ -21,7 +21,7 @@ class AllowancesServiceProxy:
     def boost_allowance_by_id(self, allowance_id: str, boost_hours: int) -> Allowance:
         return self._proxy.post(Allowance, url="%s/boost/%s" % (allowance_id, boost_hours))
 
-    def search_allowances(self, search: AllowanceSearch, slice_reference: SliceReference):
+    def search_allowances(self, search: AllowanceSearch, slice_reference: SliceReference) -> Slice[Allowance]:
         return self._proxy.get(Slice[Allowance], params=self._proxy.to_params(search, slice_reference))
 
     def check_compute_requirement_exhaustion(self, compute_requirement: ComputeRequirement) -> List[AllowanceExhaustedNotification]:

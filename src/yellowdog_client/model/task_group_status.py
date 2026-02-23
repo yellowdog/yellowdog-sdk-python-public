@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 
 
@@ -7,6 +9,13 @@ class TaskGroupStatus(Enum):
 
     The status of the task group provides an aggregated view of the statuses of tasks within the task group.
     """
+
+    terminating: bool
+    """Returns true, if the status indicates the task group is approaching a terminal state; otherwise, false."""
+    terminated: bool
+    """Returns true, if the status indicates the task group has reached a terminal state; otherwise, false."""
+    active: bool
+    """Returns true, if the status indicates the task group is still able to allocate tasks to execute; otherwise, false."""
 
     PENDING = "PENDING", False, False, False
     """The task group is awaiting resources required to execute tasks."""
@@ -32,7 +41,7 @@ class TaskGroupStatus(Enum):
     CANCELLED = "CANCELLED", False, True, False
     """The parent work requirement has been cancelled, no tasks are currently being executed or will be executed."""
 
-    def __new__(cls, value, terminating: bool, terminated: bool, active: bool):
+    def __new__(cls, value: str, terminating: bool, terminated: bool, active: bool) -> TaskGroupStatus:
         obj = object.__new__(cls)
         obj._value_ = value
         obj.terminating = terminating

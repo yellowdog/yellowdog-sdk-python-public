@@ -22,7 +22,7 @@ class TaskInput:
 
     # KEEP
     @staticmethod
-    def from_task_namespace(object_name_pattern: str, verification: TaskInputVerification = None) -> 'TaskInput':
+    def from_task_namespace(object_name_pattern: str, verification: Optional[TaskInputVerification] = None) -> 'TaskInput':
         """Specifies that matching objects from the same namespace as the task should be downloaded to the working directory prior to task execution."""
         return TaskInput(
             source=TaskInputSource.TASK_NAMESPACE,
@@ -31,7 +31,7 @@ class TaskInput:
         )
 
     @staticmethod
-    def from_namespace(namespace: str, object_name_pattern: str, verification: TaskInputVerification = None) -> 'TaskInput':
+    def from_namespace(namespace: str, object_name_pattern: str, verification: Optional[TaskInputVerification] = None) -> 'TaskInput':
         """Specifies that matching objects from the supplied namespace should be downloaded to the working directory prior to task execution."""
         return TaskInput(
             source=TaskInputSource.OTHER_NAMESPACE,

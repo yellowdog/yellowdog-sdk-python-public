@@ -42,7 +42,7 @@ class WorkRequirementHelper:
         self._work_requirement: WorkRequirement = work_requirement
         self._work_service_client_impl: WorkClient = work_service_client_impl
 
-    def when_requirement_matches(self, predicate: Callable[[WorkRequirement], bool]) -> Future:
+    def when_requirement_matches(self, predicate: Callable[[WorkRequirement], bool]) -> Future[WorkRequirement]:
         """
         Returns a :class:`concurrent.futures.Future` that is completed when the specified predicate evaluates to true.
 
@@ -63,7 +63,7 @@ class WorkRequirementHelper:
             # WorkRequirement
 
         """
-        future = Future()
+        future: Future[WorkRequirement] = Future()
         future.set_running_or_notify_cancel()
         listener = PredicatedWorkSubscriptionEventListener(
             future=future,
@@ -81,7 +81,7 @@ class WorkRequirementHelper:
         )
         return future
 
-    def when_requirement_status_is(self, status: WorkRequirementStatus) -> Future:
+    def when_requirement_status_is(self, status: WorkRequirementStatus) -> Future[WorkRequirement]:
         """
         Returns a task that is completed when the work requirement status matches the specified status.
 

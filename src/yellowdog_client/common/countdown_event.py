@@ -1,5 +1,5 @@
-from threading import Lock
 from concurrent.futures import Future
+from threading import Lock
 
 from cancel_token import CancellationToken
 
@@ -12,7 +12,7 @@ class CountdownEvent(object):
         self._counter_lock = Lock()
         self.initial_count: int = count
         self._counter: int = count
-        self._future_to_wait: Future = Future()
+        self._future_to_wait: Future[int] = Future()
         self._future_to_wait.set_running_or_notify_cancel()
 
     @property
@@ -28,8 +28,11 @@ class CountdownEvent(object):
                 self._future_to_wait.set_result(result=0)
 
     def wait(self, cancellation_token: CancellationToken) -> int:
-        cancellation_token.on_cancel(callback=self._future_to_wait.cancel)
+        cancellation_token.on_cancel(callback=self._cancel)
         return self._future_to_wait.result()
+
+    def _cancel(self) -> None:
+        self._future_to_wait.cancel()
 
 
 

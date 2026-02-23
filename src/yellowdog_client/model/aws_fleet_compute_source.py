@@ -9,6 +9,7 @@ from .aws_fleet_purchase_option import AwsFleetPurchaseOption
 from .aws_fleet_spot_options import AwsFleetSpotOptions
 from .aws_placement_group import AwsPlacementGroup
 from .aws_secondary_network_interface import AwsSecondaryNetworkInterface
+from .cloud_provider import CloudProvider
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
@@ -33,6 +34,7 @@ class AwsFleetComputeSource(AwsComputeSource):
     exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
     rootDeviceName: Optional[str] = field(default=None, init=False)
+    provider: Optional[CloudProvider] = field(default=None, init=False)
     name: str
     credential: str
     region: str

@@ -1,5 +1,6 @@
 from typing import Dict
 
+from requests import models
 from requests.auth import AuthBase
 
 from yellowdog_client.model import ApiKey
@@ -15,7 +16,7 @@ class ApiKeyAuthenticationHeadersProvider(AuthBase):
             raise ValueError("ApiKey must not be None")
         self.__key = key
 
-    def __call__(self, r):
+    def __call__(self, r: models.PreparedRequest) -> models.PreparedRequest:
         api_key_auth_headers = self._build_header()
         r.headers.update(api_key_auth_headers)
         return r

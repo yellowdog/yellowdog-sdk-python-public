@@ -1,4 +1,4 @@
-from typing import Callable, Dict, TypeVar
+from typing import Callable, Dict, TypeVar, Any, Generic, Type
 from threading import Lock
 
 from .sse4python import EventSource
@@ -9,34 +9,33 @@ from yellowdog_client.model import Identified
 from yellowdog_client.model import ComputeRequirement
 from yellowdog_client.model import WorkRequirement
 
-IIdentified = TypeVar('IIdentified', Identified, ComputeRequirement, WorkRequirement)
+T = TypeVar('T', bound=Identified)
 
+class SubscriptionManager(Generic[T], Closeable):
+    _sync_lock: Lock
+    _update_events_provider: Callable[[str], EventSource]
+    _class_type: Type[T]
+    _subscriptions: Dict[str, Subscription[T]]
 
-class SubscriptionManager(Closeable):
-    _sync_lock: Lock = None
-    _update_events_provider: Callable[[str], EventSource] = None
-    _class_type: type = None
-    _subscriptions: Dict[str, Subscription] = None
-
-    def __init__(self, update_events_provider: Callable[[str], EventSource], class_type: type) -> None:
+    def __init__(self, update_events_provider: Callable[[str], EventSource], class_type: Type[T]) -> None:
         self._sync_lock = Lock()
         self._update_events_provider = update_events_provider
         self._class_type = class_type
         self._subscriptions = {}
 
-    def create_subscription(self, id: str, listener: SubscriptionEventListener) -> Subscription:
+    def create_subscription(self, id: str, listener: SubscriptionEventListener[T]) -> Subscription[T]:
         sse = self._update_events_provider(id)
         subscription = Subscription(sse=sse, listener=listener, class_type=self._class_type)
         self._subscriptions[id] = subscription
         return subscription
 
     @staticmethod
-    def add_to_subscription(subscription: Subscription, listener: SubscriptionEventListener) -> Subscription:
+    def add_to_subscription(subscription: Subscription[T], listener: SubscriptionEventListener[T]) -> Subscription[T]:
         if listener is not None:
             subscription.add_subscription_listener(listener=listener)
         return subscription
 
-    def add_listener(self, id: str, listener: SubscriptionEventListener) -> None:
+    def add_listener(self, id: str, listener: SubscriptionEventListener[T]) -> None:
         with self._sync_lock:
             if id in self._subscriptions:
                 existing_subscription = self._subscriptions[id]
@@ -44,7 +43,7 @@ class SubscriptionManager(Closeable):
             else:
                 self.create_subscription(id, listener)
 
-    def remove_listener(self, listener: SubscriptionEventListener) -> None:
+    def remove_listener(self, listener: SubscriptionEventListener[T]) -> None:
         with self._sync_lock:
             for subscription_key in self._subscriptions:
                 subscription = self._subscriptions[subscription_key]

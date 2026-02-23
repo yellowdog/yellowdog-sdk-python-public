@@ -1,8 +1,15 @@
+from __future__ import annotations
+
 from enum import Enum
 
 
 class WorkerPoolStatus(Enum):
     """Indicates the status of a worker pool"""
+    available: bool
+    """Returns true, if the status indicates the pool is currently available (i.e. workers can register, be claimed and do work); otherwise, false."""
+    finished: bool
+    """Returns true, if the status indicates the pool has finished and will do no further work; otherwise, false."""
+
     PENDING = "PENDING", True, False
     """The worker pool has been started but no workers have yet registered."""
     CONFIGURING = "CONFIGURING", False, False
@@ -18,7 +25,7 @@ class WorkerPoolStatus(Enum):
     TERMINATED = "TERMINATED", False, True
     """The worker pool is terminated and the associated compute requirement is terminated (provisioned worker pool) or all nodes have shutdown (configured worker pool)."""
 
-    def __new__(cls, value, available: bool, finished: bool):
+    def __new__(cls, value: str, available: bool, finished: bool) -> WorkerPoolStatus:
         obj = object.__new__(cls)
         obj._value_ = value
         obj.available = available

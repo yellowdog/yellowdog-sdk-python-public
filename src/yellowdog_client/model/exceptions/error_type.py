@@ -49,5 +49,5 @@ class ErrorType(Enum):
         else:
             return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name

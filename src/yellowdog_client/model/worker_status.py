@@ -1,8 +1,15 @@
+from __future__ import annotations
+
 from enum import Enum
 
 
 class WorkerStatus(Enum):
     """Describes the current status of a Worker."""
+    available: bool
+    """Returns true, if the status indicates the Worker is currently available; otherwise, false."""
+    healthy: bool
+    """Returns true, if the status indicates the Worker is currently healthy; otherwise, false."""
+
     DOING_TASK = "DOING_TASK", True, True
     """The Worker has been instructed to execute a task."""
     SLEEPING = "SLEEPING", True, True
@@ -26,7 +33,7 @@ class WorkerStatus(Enum):
     SHUTDOWN = "SHUTDOWN", False, False
     """The Worker has been instructed to shut down."""
 
-    def __new__(cls, value, available: bool, healthy: bool):
+    def __new__(cls, value: str, available: bool, healthy: bool) -> WorkerStatus:
         obj = object.__new__(cls)
         obj._value_ = value
         obj.available = available

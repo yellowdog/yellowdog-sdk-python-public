@@ -6,10 +6,10 @@ from .subscription_event_listener import SubscriptionEventListener
 T = TypeVar('T')
 
 
-class TrackingSubscriptionEventListener(SubscriptionEventListener):
+class TrackingSubscriptionEventListener(SubscriptionEventListener[T]):
     __previous: Optional[T] = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__previous = None
 
     def _tracking_initialised(self, obj: T) -> None:

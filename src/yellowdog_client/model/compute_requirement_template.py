@@ -1,9 +1,18 @@
-from dataclasses import dataclass, field
+from abc import ABC
+from typing import Dict, Optional
 
 from .identified import Identified
 from .named import Named
 
 
-@dataclass
-class ComputeRequirementTemplate(Identified, Named):
-    type: str = field(default=None, init=False)
+
+class ComputeRequirementTemplate(Identified, Named, ABC):
+    type: str
+    id: Optional[str]
+    name: Optional[str]
+    namespace: Optional[str]
+    description: Optional[str]
+    strategyType: Optional[str]
+    imagesId: Optional[str]
+    userData: Optional[str]
+    instanceTags: Optional[Dict[str, str]]

@@ -1,11 +1,11 @@
-from typing import Callable, TypeVar
+from typing import Callable, TypeVar, Optional
 
 from .subscription_event_listener import SubscriptionEventListener
 
 T = TypeVar('T')
 
 
-class DelegatedSubscriptionEventListener(SubscriptionEventListener):
+class DelegatedSubscriptionEventListener(SubscriptionEventListener[T]):
     """
     Simple callback listener
 
@@ -16,15 +16,15 @@ class DelegatedSubscriptionEventListener(SubscriptionEventListener):
     :param on_cancel: optional. Callback for listener cancellation events
     """
 
-    __on_update: Callable[[T], None] = None
-    __on_error: Callable[[Exception], None] = None
-    __on_cancel: Callable[[], None] = None
+    __on_update: Callable[[T], None]
+    __on_error: Optional[Callable[[Exception], None]] = None
+    __on_cancel: Optional[Callable[[], None]] = None
 
     def __init__(
             self,
             on_update: Callable[[T], None],
-            on_error: Callable[[Exception], None] = None,
-            on_cancel: Callable[[], None] = None
+            on_error: Optional[Callable[[Exception], None]] = None,
+            on_cancel: Optional[Callable[[], None]] = None
     ) -> None:
         self.__on_update = on_update
         self.__on_error = on_error

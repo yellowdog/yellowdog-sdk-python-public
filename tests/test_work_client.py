@@ -8,7 +8,8 @@ from util.sse.sse_server import SseServer
 from yellowdog_client import PlatformClient
 from yellowdog_client.common.json import Json
 from yellowdog_client.model import ServicesSchema, ApiKey, WorkRequirement, Slice, Task, TaskSearch, InstantRange, \
-    TaskStatus, SortDirection, WorkRequirementStatus, WorkRequirementSummary, WorkRequirementSearch
+    TaskStatus, SortDirection, WorkRequirementStatus, WorkRequirementSummary, WorkRequirementSearch, TaskGroupStatus, DoubleRange, \
+    TaskGroup, RunSpecification, TaskSummary, CloudProvider, TaskErrorMatcher
 from yellowdog_client.scheduler import WorkClient
 
 
@@ -21,8 +22,96 @@ def work_client(mock_api: MockApi) -> WorkClient:
     return platform_client.work_client
 
 
+def now() -> datetime.datetime:
+    return datetime.datetime.now().replace(tzinfo=datetime.timezone.utc, microsecond=0)
+
+
+def work_requirement() -> WorkRequirement:
+    task_group = TaskGroup(
+        name="group1",
+        runSpecification=RunSpecification(
+            taskTypes=["type1", "type2"],
+            instanceTypes=["foo", "bar"],
+            vcpus=DoubleRange(min=1.0, max=4.0),
+            ram=DoubleRange(min=0.1, max=0.8),
+            minWorkers=1,
+            maxWorkers=10,
+            tasksPerWorker=1,
+            exclusiveWorkers=True,
+            maximumTaskRetries=1,
+            taskTimeout=datetime.timedelta(minutes=30),
+            providers=[CloudProvider.AWS, CloudProvider.AZURE],
+            regions=["us-east-1", "eu-west-1"],
+            workerTags=["tag1", "tag2"],
+            namespaces=["namespace1", "namespace2"],
+            retryableErrors=[TaskErrorMatcher(
+                errorTypes=["foo"],
+                statusesAtFailure=[TaskStatus.EXECUTING, TaskStatus.READY],
+                processExitCodes=[1, 2, 3]
+            )],
+            batchAllocation=True
+        ),
+        tag="group-tag",
+        priority=1.0,
+        dependentOn="bar",
+        dependencies=["bar", "baz"],
+        starved=True,
+        waitingOnDependency=True,
+        finishIfAllTasksFinished=True,
+        finishIfAnyTaskFailed=True,
+        completedTaskTtl=datetime.timedelta(hours=1)
+    )
+    task_group.id = "ydid:taskgroup:000000:000000:12345678-1234-1234-1234-123456789012"
+    task_group.status = TaskGroupStatus.COMPLETED
+    task_group.statusChangedTime = now()
+    task_group.taskSummary = TaskSummary(
+        statusCounts={
+            TaskStatus.COMPLETED: 1,
+            TaskStatus.FAILED: 0,
+        },
+        taskCount=1,
+        lastUpdatedTime=now()
+    )
+    result = WorkRequirement(
+        namespace="test-namespace",
+        name="test-work-requirement",
+        taskGroups=[task_group],
+        tag="foo",
+        priority=1.0
+    )
+    result.id = "ydid:workreq:000000:000000:12345678-1234-1234-1234-123456789012"
+    result.createdTime = now()
+    result.status = WorkRequirementStatus.COMPLETED
+    result.statusChangedTime = now()
+    return result
+
+
+def work_requirement_summary() -> WorkRequirementSummary:
+    return WorkRequirementSummary(
+        id="ydid:workreq:000000:000000:12345678-1234-1234-1234-123456789012",
+        namespace="test-namespace",
+        name="test-work-requirement",
+        tag="foo",
+        createdTime=now(),
+        statusChangedTime=now(),
+        priority=1.0,
+        completedTaskCount=10,
+        totalTaskCount=10,
+        status=WorkRequirementStatus.COMPLETED,
+        healthy=True
+    )
+
+def task() -> Task:
+    return Task(
+        name="test-task",
+        taskType="foo",
+        startedTime=now(),
+    )
+
+
 def test_can_add_work_requirement(mock_api: MockApi, work_client: WorkClient):
-    expected = mock_api.mock(f"/work/requirements", HttpMethod.POST, response_type=WorkRequirement)
+    expected = work_requirement()
+    expected = mock_api.mock(f"/work/requirements", HttpMethod.POST, response=expected)
 
     actual = work_client.add_work_requirement(expected)
 
@@ -31,7 +120,7 @@ def test_can_add_work_requirement(mock_api: MockApi, work_client: WorkClient):
 
 
 def test_can_add_update_requirement(mock_api: MockApi, work_client: WorkClient):
-    expected = make(WorkRequirement)
+    expected = work_requirement()
     expected = mock_api.mock(f"/work/requirements", HttpMethod.PUT, request=expected, response=expected)
 
     actual = work_client.update_work_requirement(expected)
@@ -41,7 +130,7 @@ def test_can_add_update_requirement(mock_api: MockApi, work_client: WorkClient):
 
 
 def test_can_get_work_requirement(mock_api: MockApi, work_client: WorkClient):
-    expected = make(WorkRequirement)
+    expected = work_requirement()
     expected = mock_api.mock(f"/work/requirements/{expected.id}", HttpMethod.GET, response=expected)
 
     actual = work_client.get_work_requirement(expected)
@@ -49,9 +138,10 @@ def test_can_get_work_requirement(mock_api: MockApi, work_client: WorkClient):
     assert actual == expected
     mock_api.verify_all_requests_called()
 
+
 def test_can_find_all_work_requirements(mock_api: MockApi, work_client: WorkClient):
-    first_slice = Slice(items=[make(WorkRequirementSummary)], nextSliceId=make_string())
-    second_slice = Slice(items=[make(WorkRequirementSummary)])
+    first_slice = Slice(items=[work_requirement_summary()], nextSliceId=make_string())
+    second_slice = Slice(items=[work_requirement_summary()])
     expected = first_slice.items + second_slice.items
 
     mock_api.mock(f"/work/requirements", HttpMethod.GET, params={
@@ -68,9 +158,10 @@ def test_can_find_all_work_requirements(mock_api: MockApi, work_client: WorkClie
     assert actual == expected
     mock_api.verify_all_requests_called()
 
+
 def test_can_get_work_requirements(mock_api: MockApi, work_client: WorkClient):
-    first_slice = Slice(items=[make(WorkRequirementSummary)], nextSliceId=make_string())
-    second_slice = Slice(items=[make(WorkRequirementSummary)])
+    first_slice = Slice(items=[work_requirement_summary()], nextSliceId=make_string())
+    second_slice = Slice(items=[work_requirement_summary()])
     expected = first_slice.items + second_slice.items
     search = WorkRequirementSearch()
 
@@ -90,8 +181,8 @@ def test_can_get_work_requirements(mock_api: MockApi, work_client: WorkClient):
 
 
 def test_can_find_tasks(mock_api: MockApi, work_client: WorkClient):
-    first_slice = Slice(items=[make(Task)], nextSliceId=make_string())
-    second_slice = Slice(items=[make(Task)])
+    first_slice = Slice(items=[task()], nextSliceId=make_string())
+    second_slice = Slice(items=[task()])
     expected = first_slice.items + second_slice.items
     search = TaskSearch(
         workRequirementId=make_string(),
@@ -127,28 +218,22 @@ def test_can_find_tasks(mock_api: MockApi, work_client: WorkClient):
 
 
 def test_can_wait_for_work_requirement_status(mock_api: MockApi):
-    work_requirement = WorkRequirement(
-        namespace="test",
-        name="test",
-        taskGroups=[]
-    )
-    work_requirement.id = "ydid:workreq:000000:6c9343f5-ddd7-4903-bcbf-12c7a6bf1e1a"
-    work_requirement.status = WorkRequirementStatus.RUNNING
+    expected = work_requirement()
 
-    with SseServer(f"/work/requirements/{work_requirement.id}/updates") as sse_server:
+    with SseServer(f"/work/requirements/{expected.id}/updates") as sse_server:
         platform_client = PlatformClient.create(
             ServicesSchema(defaultUrl=sse_server.get_root_url()),
             make(ApiKey)
         )
         work_client = platform_client.work_client
 
-        sse_server.forward(f"/work/requirements/{work_requirement.id}", mock_api.url())
-        mock_api.mock(f"/work/requirements/{work_requirement.id}", HttpMethod.GET, response=work_requirement)
+        sse_server.forward(f"/work/requirements/{expected.id}", mock_api.url())
+        mock_api.mock(f"/work/requirements/{expected.id}", HttpMethod.GET, response=expected)
 
-        work_requirement_helper = work_client.get_work_requirement_helper(work_requirement)
+        work_requirement_helper = work_client.get_work_requirement_helper(expected)
 
         future = work_requirement_helper.when_requirement_status_is(WorkRequirementStatus.COMPLETED)
-        work_requirement.status = WorkRequirementStatus.COMPLETED
-        sse_server.broadcast(type="entity_updated", data=Json.dumps(work_requirement), id=work_requirement.id)
-        work_requirement = future.result(2)
-        assert work_requirement.status == WorkRequirementStatus.COMPLETED
+        expected.status = WorkRequirementStatus.COMPLETED
+        sse_server.broadcast(type="entity_updated", data=Json.dumps(expected), id=expected.id)
+        expected = future.result(2)
+        assert expected.status == WorkRequirementStatus.COMPLETED

@@ -100,7 +100,6 @@ from .compute_source_traits_filter import ComputeSourceTraitsFilter
 from .compute_source_usage import ComputeSourceUsage
 from .configured_worker_pool import ConfiguredWorkerPool
 from .configured_worker_pool_properties import ConfiguredWorkerPoolProperties
-from .constants import Constants
 from .create_keyring_request import CreateKeyringRequest
 from .create_keyring_response import CreateKeyringResponse
 from .create_namespace_request import CreateNamespaceRequest
@@ -426,7 +425,6 @@ __all__ = [
     "ComputeSourceUsage",
     "ConfiguredWorkerPool",
     "ConfiguredWorkerPoolProperties",
-    "Constants",
     "CreateKeyringRequest",
     "CreateKeyringResponse",
     "CreateNamespaceRequest",

@@ -1,12 +1,14 @@
 from dataclasses import dataclass, field
 from typing import Dict, Optional, Set
 
+from .cloud_provider import CloudProvider
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
 from .gce_compute_source import GceComputeSource
 from .gce_host_maintenance_behaviour import GceHostMaintenanceBehaviour
 from .gce_target_distribution_shape import GceTargetDistributionShape
+from .instance_pricing import InstancePricing
 from .instance_summary import InstanceSummary
 
 
@@ -23,6 +25,8 @@ class GceInstanceGroupComputeSource(GceComputeSource):
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
+    provider: Optional[CloudProvider] = field(default=None, init=False)
+    instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     name: str
     credential: str
     project: str

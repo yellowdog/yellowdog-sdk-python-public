@@ -6,8 +6,8 @@ T = TypeVar('T', bound=Closeable)
 
 
 class ClientCollection(Closeable):
-    def __init__(self):
-        self.__clients: List[T] = []
+    def __init__(self) -> None:
+        self.__clients: List[Closeable] = []
 
     def add(self, client: T) -> T:
         self.__clients.append(client)

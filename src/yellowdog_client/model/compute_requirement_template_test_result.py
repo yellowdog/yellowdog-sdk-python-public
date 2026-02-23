@@ -1,6 +1,10 @@
-from dataclasses import dataclass, field
+from abc import ABC
+from typing import Optional
+
+from .compute_requirement import ComputeRequirement
 
 
-@dataclass
-class ComputeRequirementTemplateTestResult:
-    type: str = field(default=None, init=False)
+
+class ComputeRequirementTemplateTestResult(ABC):
+    type: str
+    computeRequirement: Optional[ComputeRequirement]

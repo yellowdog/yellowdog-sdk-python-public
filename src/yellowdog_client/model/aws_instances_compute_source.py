@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set
+from typing import ClassVar, Dict, List, Optional, Set
 
 from .aws_capacity_reservation import AwsCapacityReservation
 from .aws_compute_source import AwsComputeSource
 from .aws_placement_group import AwsPlacementGroup
 from .aws_secondary_network_interface import AwsSecondaryNetworkInterface
+from .cloud_provider import CloudProvider
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
@@ -15,6 +16,13 @@ from .instance_summary import InstanceSummary
 @dataclass
 class AwsInstancesComputeSource(AwsComputeSource):
     """Defines a source of compute composed of AWS EC2 instances using the RunInstances API."""
+    BULK_INSERT_SINGLE_REQUEST_MAX: ClassVar[int] = 500
+    """
+    The maximum number of instances that can be requested in a single API call due to maximum number of EBS volumes
+    Set to the lowest constraint across all regions.
+    The validation message in @AwsInstancesComputeSourceValidator should be aligned if changed
+    """
+
     type: str = field(default="co.yellowdog.platform.model.AwsInstancesComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
     instancePricing: Optional[InstancePricing] = field(default=None, init=False)
@@ -27,6 +35,7 @@ class AwsInstancesComputeSource(AwsComputeSource):
     exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
     rootDeviceName: Optional[str] = field(default=None, init=False)
+    provider: Optional[CloudProvider] = field(default=None, init=False)
     name: str
     credential: str
     region: str

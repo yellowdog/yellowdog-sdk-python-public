@@ -2,9 +2,11 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional, Set
 
 from .azure_compute_source import AzureComputeSource
+from .cloud_provider import CloudProvider
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
 from .compute_source_traits import ComputeSourceTraits
+from .instance_pricing import InstancePricing
 from .instance_summary import InstanceSummary
 
 
@@ -20,6 +22,8 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     statusMessage: Optional[str] = field(default=None, init=False)
     exhaustion: Optional[ComputeSourceExhaustion] = field(default=None, init=False)
     supportingResourceCreated: Optional[bool] = field(default=None, init=False)
+    provider: Optional[CloudProvider] = field(default=None, init=False)
+    instancePricing: Optional[InstancePricing] = field(default=None, init=False)
     name: str
     credential: str
     region: str

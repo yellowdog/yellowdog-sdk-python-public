@@ -1,10 +1,18 @@
-from dataclasses import dataclass, field
+from abc import ABC
+from typing import List, Optional
 
+from .access_delegate import AccessDelegate
 from .identified import Identified
 from .named import Named
 
 
-@dataclass
-class User(Identified, Named):
+
+class User(Identified, Named, ABC):
     """Represents a user within the YellowDog Platform."""
-    type: str = field(default=None, init=False)
+    type: str
+    id: Optional[str]
+    name: str
+    email: Optional[str]
+    eulaAccepted: bool
+    accessDelegates: Optional[List[AccessDelegate]]
+    passwordSet: bool

@@ -126,6 +126,6 @@ class AccountClientImpl(AccountClient):
     def delete_group(self, group_id: str) -> None:
         return self.__service_proxy.delete_group(group_id)
 
-    def close(self):
+    def close(self) -> None:
         # Has no closing resources
         pass

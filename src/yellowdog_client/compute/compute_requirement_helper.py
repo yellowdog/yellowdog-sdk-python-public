@@ -25,14 +25,14 @@ class ComputeRequirementHelper:
     :param compute_service_client_impl: The compute service client.
     """
 
-    __compute_requirement: ComputeRequirement = None
-    __compute_service_client_impl: ComputeClient = None
+    __compute_requirement: ComputeRequirement
+    __compute_service_client_impl: ComputeClient
 
     def __init__(self, compute_requirement: ComputeRequirement, compute_service_client_impl: ComputeClient) -> None:
         self.__compute_requirement = compute_requirement
         self.__compute_service_client_impl = compute_service_client_impl
 
-    def _build_requirement_listener(self, future: Future,
+    def _build_requirement_listener(self, future: Future[ComputeRequirement],
                                     predicate: Callable[[ComputeRequirement], bool]) -> ComputeSubscriptionListener:
         return ComputeSubscriptionListener(
             future=future,
@@ -40,7 +40,7 @@ class ComputeRequirementHelper:
             compute_client=self.__compute_service_client_impl
         )
 
-    def when_requirement_matches(self, predicate: Callable[[ComputeRequirement], bool]) -> Future:
+    def when_requirement_matches(self, predicate: Callable[[ComputeRequirement], bool]) -> Future[ComputeRequirement]:
         """
         Returns a :class:`concurrent.futures.Future` that is completed when the specified predicate evaluates to true.
 
@@ -61,7 +61,7 @@ class ComputeRequirementHelper:
             # ComputeRequirement
 
         """
-        future = Future()
+        future: Future[ComputeRequirement] = Future()
         future.set_running_or_notify_cancel()
         listener = self._build_requirement_listener(future=future, predicate=predicate)
         self.__compute_service_client_impl.add_compute_requirement_listener(
@@ -79,7 +79,7 @@ class ComputeRequirementHelper:
     def _requirement_status_predicate(status: ComputeRequirementStatus, requirement: ComputeRequirement) -> bool:
         return requirement.status == status
 
-    def when_requirement_status_is(self, status: ComputeRequirementStatus) -> Future:
+    def when_requirement_status_is(self, status: ComputeRequirementStatus) -> Future[ComputeRequirement]:
         """
         Returns a task that is completed when the compute requirement status matches the specified status.
 

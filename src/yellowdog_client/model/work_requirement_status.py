@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 
 
@@ -7,6 +9,9 @@ class WorkRequirementStatus(Enum):
 
     The status of a work requirement provides an aggregated view of the statuses of the task groups within that requirement.
     """
+
+    finished: bool
+    """Returns true, if the status indicates the work requirement is finished; otherwise, false."""
 
     RUNNING = "RUNNING", False
     """The work requirement is in progress and its tasks can be executed."""
@@ -27,7 +32,7 @@ class WorkRequirementStatus(Enum):
     CANCELLED = "CANCELLED", True
     """The work requirement has been explicitly cancelled by the user."""
 
-    def __new__(cls, value, finished: bool):
+    def __new__(cls, value: str, finished: bool) -> WorkRequirementStatus:
         obj = object.__new__(cls)
         obj._value_ = value
         obj.finished = finished

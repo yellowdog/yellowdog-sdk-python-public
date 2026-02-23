@@ -55,6 +55,6 @@ class RunSpecification:
     the latency between a worker completing a task and starting the next one. It can also enable larger numbers of
     workers to be efficiently utilised by reducing overall load on the YellowDog Scheduler service.
     """
+
     disablePreallocation: Optional[bool] = None
     """If true, tasks are only allocated to nodes as workers become idle and are not queued on the node."""
-

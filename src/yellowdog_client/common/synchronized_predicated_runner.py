@@ -3,8 +3,8 @@ from threading import Lock
 
 
 class SynchronizedPredicatedRunner(object):
-    __sync_lock: Lock = None
-    __predicate: Callable[[], bool] = None
+    __sync_lock: Lock
+    __predicate: Callable[[], bool]
 
     def __init__(self, predicate: Callable[[], bool]) -> None:
         self.__sync_lock = Lock()

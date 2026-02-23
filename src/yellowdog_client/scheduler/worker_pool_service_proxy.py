@@ -1,8 +1,8 @@
-from typing import List, Optional
 from datetime import timedelta
+from typing import List, Optional, Dict, Any
 
-from yellowdog_client.common.server_sent_events.sse4python import EventSource
 from yellowdog_client.common import Proxy
+from yellowdog_client.common.server_sent_events.sse4python import EventSource
 from yellowdog_client.model import ProvisionedWorkerPool, ComputeRequirementTemplateUsage, \
     ProvisionedWorkerPoolProperties, WorkerPool, NodeSearch, Node, Slice, \
     SliceReference, WorkerPoolSummary, NodeActionGroup, NodeActionQueueSnapshot, AddNodeActionsRequest, \
@@ -28,12 +28,13 @@ class WorkerPoolServiceProxy:
     def provision_worker_pool(
             self,
             template_usage: ComputeRequirementTemplateUsage,
-            worker_pool_properties: ProvisionedWorkerPoolProperties
+            worker_pool_properties: Optional[ProvisionedWorkerPoolProperties] = None
     ) -> ProvisionedWorkerPool:
-        data = {
+        data: Dict[str, Any] = {
             "requirementTemplateUsage": template_usage,
-            "provisionedProperties": worker_pool_properties
         }
+        if worker_pool_properties is not None:
+            data["provisionedProperties"] = worker_pool_properties
         return self._proxy.post(ProvisionedWorkerPool, data, "provisioned/template")
 
     def resize_worker_pool(self, worker_pool_id: str, size: int) -> ProvisionedWorkerPool:

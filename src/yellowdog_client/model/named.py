@@ -1,7 +1,9 @@
-from dataclasses import dataclass
+from abc import ABC
+from typing import Optional
 
 
-@dataclass
-class Named:
+
+class Named(ABC):
     """Interface implemented by all model types that have a name field"""
-    pass
+    name: Optional[str]
+    """Returns the name"""

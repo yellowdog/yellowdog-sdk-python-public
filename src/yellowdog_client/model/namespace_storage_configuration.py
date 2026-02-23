@@ -1,6 +1,8 @@
-from dataclasses import dataclass, field
+from abc import ABC
+from typing import Optional
 
 
-@dataclass
-class NamespaceStorageConfiguration:
-    type: str = field(default=None, init=False)
+
+class NamespaceStorageConfiguration(ABC):
+    type: str
+    namespace: Optional[str]

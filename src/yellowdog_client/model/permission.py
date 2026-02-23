@@ -7,6 +7,10 @@ from .permission_scope import PermissionScope
 
 
 class Permission(Enum):
+    title: str
+    scope: PermissionScope
+    includes: List[Permission]
+
     NAMESPACE_READ = "NAMESPACE_READ", "Read Namespaces", PermissionScope.NAMESPACED_OR_GLOBAL, None
     COMPUTE_READ = "COMPUTE_READ", "Read Compute", PermissionScope.NAMESPACED_OR_GLOBAL, NAMESPACE_READ
     COMPUTE_REQUIREMENT_TEMPLATE_WRITE = "COMPUTE_REQUIREMENT_TEMPLATE_WRITE", "Write Compute Requirement Templates", PermissionScope.NAMESPACED_OR_GLOBAL, COMPUTE_READ
@@ -52,7 +56,7 @@ class Permission(Enum):
     LOG_READ = "LOG_READ", "Read Logs", PermissionScope.NAMESPACED_OR_GLOBAL, None
     COMPUTE_USAGE_READ = "COMPUTE_USAGE_READ", "Read Compute Usage Data", PermissionScope.NAMESPACED_OR_GLOBAL, None
 
-    def __new__(cls, value, title: str, scope: PermissionScope, includes: List[Permission]):
+    def __new__(cls, value: str, title: str, scope: PermissionScope, includes: List[Permission]) -> Permission:
         obj = object.__new__(cls)
         obj._value_ = value
         obj.title = title

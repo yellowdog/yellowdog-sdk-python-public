@@ -1,9 +1,11 @@
-from dataclasses import dataclass, field
-from typing import Generic, TypeVar
+from abc import ABC
+from typing import Generic, Optional, TypeVar
 
 TValue = TypeVar('TValue')
 
 
-@dataclass
-class AttributeValue(Generic[TValue]):
-    type: str = field(default=None, init=False)
+
+class AttributeValue(Generic[TValue], ABC):
+    type: str
+    attribute: Optional[str]
+    value: Optional[TValue]

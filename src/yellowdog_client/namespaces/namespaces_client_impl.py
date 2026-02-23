@@ -24,7 +24,7 @@ class NamespacesClientImpl(NamespacesClient):
     def create_namespace(self, request: CreateNamespaceRequest) -> str:
         return self.__service_proxy.create_namespace(request)
 
-    def delete_namespace(self, namespace_id: str):
+    def delete_namespace(self, namespace_id: str) -> None:
         self.__service_proxy.delete_namespace(namespace_id)
 
     def save_namespace_policy(self, namespace_policy: NamespacePolicy) -> None:

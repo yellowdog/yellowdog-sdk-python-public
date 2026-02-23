@@ -23,6 +23,8 @@ class ComputeRequirementSummary:
     """The number of alive instances."""
     createdTime: Optional[datetime] = None
     """The date and time when this compute requirement was first submitted to YellowDog Compute."""
+    statusChangedTime: Optional[datetime] = None
+    """The date and time when this compute requrement status or nextStatus last changed"""
     status: Optional[ComputeRequirementStatus] = None
     """The status of this compute requirement."""
     healthy: bool = False

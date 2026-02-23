@@ -1,9 +1,10 @@
-from dataclasses import dataclass
-from typing import Generic, TypeVar
+from abc import ABC
+from typing import Generic, Optional, TypeVar
 
 T = TypeVar('T')
 
 
-@dataclass
-class Range(Generic[T]):
-    pass
+
+class Range(Generic[T], ABC):
+    min: Optional[T]
+    max: Optional[T]

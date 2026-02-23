@@ -15,8 +15,8 @@ class WorkerPoolHelper:
         self._worker_pool: WorkerPool = worker_pool
         self._worker_pool_client: WorkerPoolClient = worker_pool_client
 
-    def when_worker_pool_matches(self, predicate: Callable[[WorkerPool], bool]) -> Future:
-        future = Future()
+    def when_worker_pool_matches(self, predicate: Callable[[WorkerPool], bool]) -> Future[WorkerPool]:
+        future: Future[WorkerPool] = Future()
         future.set_running_or_notify_cancel()
         listener = pwpsel.PredicatedWorkerPoolSubscriptionEventListener(
             future=future,
@@ -27,5 +27,5 @@ class WorkerPoolHelper:
         listener.updated(self._worker_pool_client.get_worker_pool(self._worker_pool))
         return future
 
-    def when_worker_pool_status_is(self, status: WorkerPoolStatus) -> Future:
+    def when_worker_pool_status_is(self, status: WorkerPoolStatus) -> Future[WorkerPool]:
         return self.when_worker_pool_matches(lambda pool: pool.status == status)

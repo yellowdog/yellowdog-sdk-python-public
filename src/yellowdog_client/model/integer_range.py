@@ -5,6 +5,6 @@ from .range import Range
 
 
 @dataclass
-class IntegerRange(Range):
+class IntegerRange(Range[int]):
     min: Optional[int] = None
     max: Optional[int] = None

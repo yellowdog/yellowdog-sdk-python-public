@@ -1,7 +1,9 @@
-from dataclasses import dataclass
+from abc import ABC
+from typing import Optional
 
 
-@dataclass
-class Identified:
+
+class Identified(ABC):
     """Interface implemented by all model types that have a system generated ID field for identification"""
-    pass
+    id: Optional[str]
+    """Returns the ID"""

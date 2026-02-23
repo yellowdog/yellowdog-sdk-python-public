@@ -38,5 +38,5 @@ class CloudInfoClientImpl(CloudInfoClient):
 
         return SearchClient(get_next_slice)
 
-    def close(self):
+    def close(self) -> None:
         pass

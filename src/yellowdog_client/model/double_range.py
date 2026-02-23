@@ -5,6 +5,6 @@ from .range import Range
 
 
 @dataclass
-class DoubleRange(Range):
+class DoubleRange(Range[float]):
     min: Optional[float] = None
     max: Optional[float] = None

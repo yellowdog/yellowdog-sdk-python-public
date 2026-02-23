@@ -14,9 +14,9 @@ class SelfBindingStatusMatchPredicate(object):
             for x in self._when_status_matches_predicates
         }
 
-    def _add_when_status_matches_future(self, future: Future, predicate: Callable[[Any], bool]) -> None:
+    def _add_when_status_matches_future(self, future: Future[Any], predicate: Callable[[Any], bool]) -> None:
         self._when_status_matches_predicates[future] = predicate
 
-    def _remove_when_status_matches_future(self, future: Future) -> None:
+    def _remove_when_status_matches_future(self, future: Future[Any]) -> None:
         if future in self._when_status_matches_predicates:
             self._when_status_matches_predicates.pop(future)

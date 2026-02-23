@@ -1,6 +1,8 @@
-from dataclasses import dataclass
+from abc import ABC
+from typing import Optional
 
 
-@dataclass
-class OAuth2AuthenticationProperties:
-    pass
+
+class OAuth2AuthenticationProperties(ABC):
+    clientId: Optional[str]
+    clientSecret: Optional[str]

@@ -29,5 +29,7 @@ class WorkerPoolSummary(Identified, Named):
     """The status of the worker pool."""
     createdTime: Optional[datetime] = None
     """The date and time when the worker pool was first created."""
+    statusChangedTime: Optional[datetime] = None
+    """The date and time when the worker pool status was last updated"""
     healthy: bool = False
     """Indicates if the worker pool is healthy. If false then workers may be late or lost."""

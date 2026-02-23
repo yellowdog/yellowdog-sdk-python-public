@@ -5,7 +5,7 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import timedelta
-from io import BufferedIOBase
+from io import IOBase
 from typing import Optional, Union, Tuple, Dict
 
 import requests
@@ -17,16 +17,16 @@ from .server_sent_event import ServerSentEvent
 
 @dataclass
 class SseConnection:
-    data: BufferedIOBase
+    data: IOBase
     chunked: bool
 
 
 class SseStream:
     # SSE Spec: Lines must be separated by either a U+000D CARRIAGE RETURN U+000A LINE FEED (CRLF) character pair,
     # a single U+000A LINE FEED (LF) character, or a single U+000D CARRIAGE RETURN (CR) character.
-    _line_end_pattern: re.Pattern = re.compile(r'\r\n|\r|\n')
-    _event_endings: Tuple[bytes] = (b'\r\n\r\n', b'\r\r', b'\n\n')
-    _event_line_pattern: re.Pattern = re.compile('(?P<name>[^:]*):?( ?(?P<value>.*))?')
+    _line_end_pattern: re.Pattern[str] = re.compile(r'\r\n|\r|\n')
+    _event_endings: Tuple[bytes, ...] = (b'\r\n\r\n', b'\r\r', b'\n\n')
+    _event_line_pattern: re.Pattern[str] = re.compile('(?P<name>[^:]*):?( ?(?P<value>.*))?')
 
     def __init__(
             self,
@@ -46,14 +46,14 @@ class SseStream:
             result = self._read_event()
 
         if isinstance(result, Exception):
-            pass
+            raise result
 
         if result.retry is not None:
-            self._connector.retry_interval = timedelta(milliseconds=result.retry)
+            self._connector._retry_interval = timedelta(milliseconds=result.retry)
 
         return result
 
-    def _read_event(self) -> Union[ServerSentEvent, Exception]:
+    def _read_event(self) -> Optional[Union[ServerSentEvent, Exception]]:
         event_bytes: bytes = b''
         while not event_bytes.endswith(self._event_endings):
             event_bytes += self._read_line()
@@ -69,7 +69,7 @@ class SseStream:
     # Will return None if the event is only blank lines or comments
     # Will return an Exception if the event cannot be parsed
     # Otherwise will return the event
-    def _parse_event(self, event_string: str) -> Optional[ServerSentEvent, Exception]:
+    def _parse_event(self, event_string: str) -> Optional[Union[ServerSentEvent, Exception]]:
         event = ServerSentEvent()
 
         found_field = False
@@ -105,12 +105,14 @@ class SseStream:
 
 
 class SseClient(ABC):
-    def stream(self, initial_retry_interval: timedelta = timedelta(seconds=3)) -> SseStream:
-        connection = self._connect(initial_retry_interval)
+    _retry_interval: timedelta
+
+    def stream(self) -> SseStream:
+        connection = self._connect()
         return SseStream(connection, self)
 
     @abstractmethod
-    def _connect(self, retry_interval: timedelta) -> SseConnection:
+    def _connect(self) -> SseConnection:
         pass
 
 
@@ -119,21 +121,23 @@ class RequestsSseClient(SseClient):
             self,
             url: str,
             auth: Optional[AuthBase] = None,
-            headers: Optional[Dict[str, str]] = None
+            headers: Optional[Dict[str, str]] = None,
+            initial_retry_interval: timedelta = timedelta(seconds=3)
     ):
         self._url: str = url
         self._auth: Optional[AuthBase] = auth
         self._headers: Optional[Dict[str, str]] = headers or {}
+        self._retry_interval: timedelta = initial_retry_interval
 
-    def _connect(self, retry_interval: timedelta) -> SseConnection:
-        response = self._get(retry_interval)
+    def _connect(self) -> SseConnection:
+        response = self._get()
 
         return SseConnection(
             data=response.raw,
             chunked=response.headers.get('Transfer-Encoding') == 'chunked'
         )
 
-    def _get(self, retry_interval: timedelta) -> Response:
+    def _get(self) -> Response:
         headers = {
             'Cache-Control': 'no-cache',
             'Accept': 'text/event-stream'
@@ -157,4 +161,4 @@ class RequestsSseClient(SseClient):
                 status_code = ex.response.status_code
                 if status_code < 500:
                     raise ex
-                time.sleep(retry_interval.total_seconds())
+                time.sleep(self._retry_interval.total_seconds())

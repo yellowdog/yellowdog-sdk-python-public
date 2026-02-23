@@ -1,8 +1,12 @@
-from dataclasses import dataclass, field
+from abc import ABC
+from typing import Optional
 
 from .named import Named
 
 
-@dataclass
-class AttributeDefinition(Named):
-    type: str = field(default=None, init=False)
+
+class AttributeDefinition(Named, ABC):
+    type: str
+    name: Optional[str]
+    title: Optional[str]
+    description: Optional[str]

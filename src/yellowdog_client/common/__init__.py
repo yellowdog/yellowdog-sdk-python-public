@@ -13,5 +13,6 @@ __all__ = [
     "CountdownEvent",
     "Proxy",
     "Closeable",
-    "UserAgent"
+    "UserAgent",
+    "check"
 ]

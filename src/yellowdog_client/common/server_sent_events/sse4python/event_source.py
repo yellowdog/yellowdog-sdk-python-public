@@ -1,6 +1,5 @@
 from threading import Thread
-from threading import Thread
-from typing import Callable, Dict
+from typing import Callable, Dict, Any
 
 from cancel_token import CancellationToken
 from pydispatch import Dispatcher
@@ -11,14 +10,14 @@ from .server_sent_event import ServerSentEvent
 from .sse_stream import RequestsSseClient
 
 
-class EventSource(Dispatcher):
+class EventSource(Dispatcher): # type: ignore[misc]  # Dispatcher is untyped third-party class
     EVENT_SOURCE_COMPLETED = "event_source_completed"
     EVENT_RECEIVED = "event_received"
     ERROR_RECEIVED = "error_received"
     _events_ = [EVENT_SOURCE_COMPLETED, EVENT_RECEIVED, ERROR_RECEIVED]
 
     def __init__(self, url: str, auth: AuthBase, headers: Dict[str, str]) -> None:
-        super(EventSource, self).__init__(None, None)
+        super().__init__(None, None)
         self.__url: str = url
         self.__auth: AuthBase = auth
         self.__headers: Dict[str, str] = headers
@@ -78,7 +77,7 @@ class EventSource(Dispatcher):
         return self._dispatch(lambda: self.emit(name=self.EVENT_RECEIVED, message=sse))
 
     @staticmethod
-    def _dispatch(callback: Callable) -> Thread:
+    def _dispatch(callback: Callable[..., Any]) -> Thread:
         thread = Thread(target=callback)
         thread.start()
         return thread

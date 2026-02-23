@@ -65,5 +65,5 @@ class ImagesClientImpl(ImagesClient):
 
         return SearchClient(get_next_slice_function)
 
-    def close(self):
+    def close(self) -> None:
         pass

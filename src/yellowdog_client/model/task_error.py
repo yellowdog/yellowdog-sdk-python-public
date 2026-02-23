@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from .task_error_type import TaskErrorType
 from .task_status import TaskStatus
 
 
@@ -17,6 +16,6 @@ class TaskError:
     """The ID of the node where the error occurred."""
     workerId: Optional[str] = None
     """The ID of the worker where the error occurred."""
-    errorType: str = TaskErrorType.UNKNOWN_ERROR
+    errorType: str = "UNKNOWN_ERROR"
     statusAtFailure: Optional[TaskStatus] = None
     processExitCode: Optional[int] = None

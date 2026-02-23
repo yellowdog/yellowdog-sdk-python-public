@@ -6,7 +6,7 @@ from yellowdog_client.model import Slice, SliceReference
 T = TypeVar('T')
 
 
-class SliceIterator(Generic[T], Iterator):
+class SliceIterator(Generic[T], Iterator[T]):
 
     def __init__(self, get_next_slice_function: Callable[[SliceReference], Slice[T]]):
         self.__get_next_slice_function: Callable[[SliceReference], Slice[T]] = get_next_slice_function
@@ -26,7 +26,7 @@ class SliceIterator(Generic[T], Iterator):
 
         new_slice: Slice[T] = self.__get_next_slice_function(self.__next_slice_reference)
 
-        if len(new_slice.items) == 0:
+        if new_slice.items is None or len(new_slice.items) == 0:
             self.__next_slice_reference = None
             return False
 

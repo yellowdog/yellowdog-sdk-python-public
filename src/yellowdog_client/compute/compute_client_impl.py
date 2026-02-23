@@ -1,20 +1,21 @@
 from typing import List, Optional
 
-from yellowdog_client.common import SearchClient
+
+from yellowdog_client.common import SearchClient, check
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
 from yellowdog_client.common.server_sent_events import SubscriptionManager
 from yellowdog_client.model import BestComputeSourceReport, ComputeRequirementSearch, SliceReference, Slice, \
     InstanceSearch, InstanceId, ComputeSourceTemplateSearch, ComputeRequirementTemplateSearch
 from yellowdog_client.model import ComputeRequirement, ComputeRequirementTemplateUsage
 from yellowdog_client.model import ComputeRequirementStatus
+from yellowdog_client.model import ComputeRequirementSummary
+from yellowdog_client.model import ComputeRequirementSummarySearch
 from yellowdog_client.model import ComputeRequirementTemplateSummary
 from yellowdog_client.model import ComputeRequirementTemplateTestResult
 from yellowdog_client.model import ComputeSourceTemplate
 from yellowdog_client.model import ComputeSourceTemplateSummary
 from yellowdog_client.model import Instance, ComputeRequirementTemplate
 from yellowdog_client.model import InstanceStatus
-from yellowdog_client.model import ComputeRequirementSummarySearch
-from yellowdog_client.model import ComputeRequirementSummary
 from .compute_client import ComputeClient
 from .compute_requirement_helper import ComputeRequirementHelper
 from .compute_service_proxy import ComputeServiceProxy
@@ -23,31 +24,23 @@ from .compute_service_proxy import ComputeServiceProxy
 class ComputeClientImpl(ComputeClient):
     def __init__(self, service_proxy: ComputeServiceProxy) -> None:
         self.__service_proxy: ComputeServiceProxy = service_proxy
-        self.__requirement_subscriptions = SubscriptionManager(self.__service_proxy.stream_compute_requirement_updates,
-                                                               ComputeRequirement)
-
-    @staticmethod
-    def _check_requirement_has_id(compute_requirement: Optional[ComputeRequirement]) -> None:
-        if not compute_requirement or not compute_requirement.id:
-            raise ValueError(
-                "Provided compute requirement has not been initialised. "
-                "Have you captured the return value from compute_client.add_compute_requirement()?"
-            )
+        self.__requirement_subscriptions = SubscriptionManager(self.__service_proxy.stream_compute_requirement_updates, ComputeRequirement)
 
     @staticmethod
     def _get_instance_ids(instances: List[Instance]) -> List[InstanceId]:
-        return [instance.id for instance in instances]
+        return [instance.id for instance in instances if instance.id is not None]
 
     def add_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
         return self.__service_proxy.add_compute_requirement(compute_requirement)
 
-    def update_compute_requirement(self, compute_requirement: ComputeRequirement,
-                                   reprovision: bool = False) -> ComputeRequirement:
+    def update_compute_requirement(self, compute_requirement: ComputeRequirement, reprovision: Optional[bool] = None) -> ComputeRequirement:
+        if reprovision is None:
+            reprovision = False
         return self.__service_proxy.update_compute_requirement(compute_requirement, reprovision)
 
     def get_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
-        self._check_requirement_has_id(compute_requirement)
-        return self.get_compute_requirement_by_id(compute_requirement.id)
+        id_ = check.not_none(compute_requirement.id, "compute_requirement.id")
+        return self.get_compute_requirement_by_id(id_)
 
     def get_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
         return self.__service_proxy.get_compute_requirement_by_id(compute_requirement_id)
@@ -56,32 +49,32 @@ class ComputeClientImpl(ComputeClient):
         return self.__service_proxy.get_compute_requirement_by_name(namespace, compute_requirement_name)
 
     def stop_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
-        self._check_requirement_has_id(compute_requirement)
-        return self.stop_compute_requirement_by_id(compute_requirement.id)
+        id_ = check.not_none(compute_requirement.id, "compute_requirement.id")
+        return self.stop_compute_requirement_by_id(id_)
 
     def stop_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
         return self.__service_proxy.transition_compute_requirement(compute_requirement_id,
                                                                    ComputeRequirementStatus.STOPPED)
 
     def start_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
-        self._check_requirement_has_id(compute_requirement)
-        return self.start_compute_requirement_by_id(compute_requirement.id)
+        id_ = check.not_none(compute_requirement.id, "compute_requirement.id")
+        return self.start_compute_requirement_by_id(id_)
 
     def start_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
         return self.__service_proxy.transition_compute_requirement(compute_requirement_id,
                                                                    ComputeRequirementStatus.RUNNING)
 
     def terminate_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
-        self._check_requirement_has_id(compute_requirement)
-        return self.terminate_compute_requirement_by_id(compute_requirement.id)
+        id_ = check.not_none(compute_requirement.id, "compute_requirement.id")
+        return self.terminate_compute_requirement_by_id(id_)
 
     def terminate_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
         return self.__service_proxy.transition_compute_requirement(compute_requirement_id,
                                                                    ComputeRequirementStatus.TERMINATED)
 
     def reprovision_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
-        self._check_requirement_has_id(compute_requirement)
-        return self.reprovision_compute_requirement_by_id(compute_requirement.id)
+        id_ = check.not_none(compute_requirement.id, "compute_requirement.id")
+        return self.reprovision_compute_requirement_by_id(id_)
 
     def reprovision_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
         return self.__service_proxy.transition_compute_requirement(compute_requirement_id,
@@ -123,31 +116,30 @@ class ComputeClientImpl(ComputeClient):
 
     def deprovision_instances_by_id(self, compute_requirement: ComputeRequirement,
                                     instance_ids: List[InstanceId]) -> None:
-        self._check_requirement_has_id(compute_requirement)
-        self._check_instance_source_ids(compute_requirement, instance_ids)
+        check.not_none(compute_requirement.id, "compute_requirement.id")
         self.__service_proxy.deprovision_instances(compute_requirement, instance_ids)
 
     def is_compute_requirement_updating(self, compute_requirement: ComputeRequirement) -> bool:
-        self._check_requirement_has_id(compute_requirement)
-        return self.is_compute_requirement_updating_by_id(compute_requirement.id)
+        id_ = check.not_none(compute_requirement.id, "compute_requirement.id")
+        return self.is_compute_requirement_updating_by_id(id_)
 
     def is_compute_requirement_updating_by_id(self, compute_requirement_id: str) -> bool:
         return self.__service_proxy.is_compute_requirement_updating(compute_requirement_id)
 
     def add_compute_requirement_listener(self, compute_requirement: ComputeRequirement,
-                                         listener: SubscriptionEventListener) -> None:
-        self._check_requirement_has_id(compute_requirement)
-        self.add_compute_requirement_listener_by_id(compute_requirement.id, listener)
+                                         listener: SubscriptionEventListener[ComputeRequirement]) -> None:
+        id_ = check.not_none(compute_requirement.id, "compute_requirement.id")
+        self.add_compute_requirement_listener_by_id(id_, listener)
 
     def add_compute_requirement_listener_by_id(self, compute_requirement_id: str,
-                                               listener: SubscriptionEventListener) -> None:
+                                               listener: SubscriptionEventListener[ComputeRequirement]) -> None:
         self.__requirement_subscriptions.add_listener(compute_requirement_id, listener)
 
-    def remove_compute_requirement_listener(self, listener: SubscriptionEventListener[ComputeRequirement]):
+    def remove_compute_requirement_listener(self, listener: SubscriptionEventListener[ComputeRequirement]) -> None:
         self.__requirement_subscriptions.remove_listener(listener)
 
     def get_compute_requirement_helper(self, compute_requirement: ComputeRequirement) -> ComputeRequirementHelper:
-        self._check_requirement_has_id(compute_requirement)
+        check.not_none(compute_requirement.id, "compute_requirement.id")
         return ComputeRequirementHelper(compute_requirement, self)
 
     def get_compute_requirement_helper_by_id(self, compute_requirement_id: str) -> ComputeRequirementHelper:
@@ -185,7 +177,8 @@ class ComputeClientImpl(ComputeClient):
         return self.__service_proxy.update_compute_source_template(compute_source_template)
 
     def delete_compute_source_template(self, compute_source_template: ComputeSourceTemplate) -> None:
-        self.delete_compute_source_template_by_id(compute_source_template.id)
+        id_ = check.not_none(compute_source_template.id, "compute_source_template.id")
+        self.delete_compute_source_template_by_id(id_)
 
     def delete_compute_source_template_by_id(self, compute_source_template_id: str) -> None:
         self.__service_proxy.delete_compute_source_template(compute_source_template_id)
@@ -215,6 +208,8 @@ class ComputeClientImpl(ComputeClient):
         return self.__service_proxy.update_compute_requirement_template(compute_requirement_template)
 
     def delete_compute_requirement_template(self, compute_requirement_template: ComputeRequirementTemplate) -> None:
+        if compute_requirement_template.id is None:
+            raise ValueError("compute_requirement_template.id must not be None")
         self.delete_compute_requirement_template_by_id(compute_requirement_template.id)
 
     def delete_compute_requirement_template_by_id(self, compute_requirement_template_id: str) -> None:
@@ -253,21 +248,10 @@ class ComputeClientImpl(ComputeClient):
     def close(self) -> None:
         self.__requirement_subscriptions.close()
 
-    @staticmethod
-    def _check_instance_source_ids(compute_requirement: ComputeRequirement, instances: List[InstanceId]):
-        requirement_source_ids = {source.id for source in compute_requirement.provisionStrategy.sources}
-        instance_source_ids = {instance.sourceId for instance in instances}
-        all_source_ids_in_requirement = all(source_id in requirement_source_ids for source_id in instance_source_ids)
-
-        if not all_source_ids_in_requirement:
-            raise ValueError("Instances must be part of the specified compute requirement")
-
     def _transition_instances(
             self,
             compute_requirement: ComputeRequirement,
             next_status: InstanceStatus,
             instance_ids: List[InstanceId]
     ) -> None:
-        self._check_requirement_has_id(compute_requirement)
-        self._check_instance_source_ids(compute_requirement, instance_ids)
         self.__service_proxy.transition_instances(compute_requirement, next_status, instance_ids)

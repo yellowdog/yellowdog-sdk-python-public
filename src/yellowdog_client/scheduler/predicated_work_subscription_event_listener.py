@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 from concurrent.futures import Future
-from typing import Callable
+from typing import Callable, Any
 
 from yellowdog_client.common import SynchronizedPredicatedRunner
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
@@ -13,14 +13,14 @@ if typing.TYPE_CHECKING:
     from yellowdog_client.scheduler import WorkClient
 
 
-class PredicatedWorkSubscriptionEventListener(SubscriptionEventListener):
+class PredicatedWorkSubscriptionEventListener(SubscriptionEventListener[WorkRequirement]):
     def __init__(
             self,
             future: Future[WorkRequirement],
             predicate: Callable[[WorkRequirement], bool],
             work_client: WorkClient
     ) -> None:
-        super(PredicatedWorkSubscriptionEventListener, self).__init__()
+        super().__init__()
         self.__future = future
         self.__predicate = predicate
         self.__runner = SynchronizedPredicatedRunner(predicate=self._runner_predicate)

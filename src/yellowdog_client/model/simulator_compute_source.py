@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Set
+from typing import ClassVar, Dict, Optional, Set
 
 from .cloud_provider import CloudProvider
 from .compute_source import ComputeSource
@@ -13,6 +13,9 @@ from .instance_summary import InstanceSummary
 @dataclass
 class SimulatorComputeSource(ComputeSource):
     """Defines a simulated source of compute that can be used to test the YellowDog Compute system."""
+    DEFAULT_SIMULATED_REGION_ID: ClassVar[str] = "sim-region"
+    DEFAULT_SIMULATED_INSTANCE_TYPE: ClassVar[str] = "sim-instance"
+    DEFAULT_SIMULATED_IMAGE_ID: ClassVar[str] = "sim-image"
     type: str = field(default="co.yellowdog.platform.model.SimulatorComputeSource", init=False)
     traits: Optional[ComputeSourceTraits] = field(default=None, init=False)
     provider: Optional[CloudProvider] = field(default=None, init=False)

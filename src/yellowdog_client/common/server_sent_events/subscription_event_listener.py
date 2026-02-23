@@ -4,7 +4,7 @@ T = TypeVar('T')
 
 
 class SubscriptionEventListener(Generic[T]):
-    def updated(self, obj: TypeVar) -> None:
+    def updated(self, obj: T) -> None:
         """
         Invoked when an updated instance of the object is received from ``YellowDog Platform``.
 

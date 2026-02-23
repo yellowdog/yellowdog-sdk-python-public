@@ -1,6 +1,6 @@
-from dataclasses import dataclass, asdict
+from dataclasses import asdict
 from datetime import datetime, timedelta
-from typing import TypeVar, Type, Dict, Optional
+from typing import TypeVar, Type, Dict, Optional, overload, Any
 
 from requests import Request, Session, Response, HTTPError
 from requests.adapters import HTTPAdapter
@@ -31,7 +31,16 @@ class Proxy:
         self._retry_count: int = retry_count
         self._max_retry_interval_seconds: int = max_retry_interval_seconds
 
-    def append_base_url(self, base_url: str):
+    @staticmethod
+    def _format_params(params: Optional[dict[str, object]]) -> None:
+        if params is not None:
+            for key, value in params.items():
+                if isinstance(value, datetime):
+                    params[key] = iso_format(value)
+                elif isinstance(value, timedelta):
+                    params[key] = iso_timedelta_format(value)
+
+    def append_base_url(self, base_url: Optional[str]) -> 'Proxy':
         if not base_url:
             raise Exception("Unable to configure client. No base_url has been configured")
 
@@ -43,31 +52,62 @@ class Proxy:
             self._base_url + base_url
         )
 
-    def get(self, return_type: Type[T], url: str = "", params: Dict[str, object] = None) -> T:
+    def get(self, return_type: Type[T], url: str = "", params: Optional[Dict[str, Any]] = None) -> T:
         return self.execute("GET", url, return_type=return_type, params=params)
 
-    def put(self, return_type: Type[T] = None, data: object = None, url: str = "") -> T:
+    @overload
+    def put(self, return_type: None = None, data: Optional[object] = None, url: str = "") -> None:
+        ...
+
+    @overload
+    def put(self, return_type: Type[T], data: Optional[object] = None, url: str = "") -> T:
+        ...
+
+    def put(self, return_type: Optional[Type[T]] = None, data: Optional[object] = None, url: str = "") -> Optional[T]:
         return self.execute("PUT", url, data, return_type)
 
-    def post(self, return_type: Type[T] = None, data: object = None, url: str = "",
-             params: Dict[str, object] = None) -> T:
+    @overload
+    def post(self, return_type: None = None, data: Optional[object] = None, url: str = "",
+             params: Optional[Dict[str, object]] = None) -> None:
+        ...
+
+    @overload
+    def post(self, return_type: Type[T], data: Optional[object] = None, url: str = "",
+             params: Optional[Dict[str, object]] = None) -> T:
+        ...
+
+    def post(self, return_type: Optional[Type[T]] = None, data: Optional[object] = None, url: str = "",
+             params: Optional[Dict[str, object]] = None) -> Optional[T]:
         return self.execute("POST", url, data, return_type, params)
 
-    def delete(self, url: str = "", return_type: Type[T] = None) -> T:
+    @overload
+    def delete(self, url: str = "", return_type: None = None) -> None:
+        ...
+
+    @overload
+    def delete(self, url: str = "", return_type: Type[T] = ...) -> T:
+        ...
+
+    def delete(self, url: str = "", return_type: Optional[Type[T]] = None) -> Optional[T]:
         return self.execute("DELETE", url, return_type=return_type)
 
-    def execute(self, method: str, url: str = "", data: object = None, return_type: Type[T] = None,
-                params: Dict[str, object] = None) -> T:
-        if params is not None:
-            for key, value in params.items():
-                if isinstance(value, datetime):
-                    params[key] = iso_format(value)
-                elif isinstance(value, timedelta):
-                    params[key] = iso_timedelta_format(value)
+    @overload
+    def execute(self, method: str, url: str = "", data: Optional[object] = None, return_type: None = None,
+                params: Optional[Dict[str, object]] = None) -> None:
+        ...
+
+    @overload
+    def execute(self, method: str, url: str = "", data: Optional[object] = None, return_type: Type[T] = ...,
+                params: Optional[Dict[str, object]] = None) -> T:
+        ...
+
+    def execute(self, method: str, url: str = "", data: Optional[object] = None, return_type: Optional[Type[T]] = None,
+                params: Optional[Dict[str, object]] = None) -> Optional[T]:
+        self._format_params(params)
         response = self.raw_execute(method, url, Json.dump(data) if data else None, params)
         return Json.load(response.json(), return_type) if return_type else None
 
-    def raw_execute(self, method: str, url: str = "", json: object = None, params: Dict[str, object] = None):
+    def raw_execute(self, method: str, url: str = "", json: Optional[object] = None, params: Optional[Dict[str, object]] = None) -> Response:
         return self.execute_session_with_retries(
             request=Request(
                 method=method,
@@ -89,8 +129,8 @@ class Proxy:
             headers=self._get_user_agent_headers()
         )
 
-    def execute_with_timeout(self, method: str, timeout: int, url: str = "", data: object = None,
-                             additional_headers: Dict[str, str] = None) -> Response:
+    def execute_with_timeout(self, method: str, timeout: int, url: str = "", data: Optional[object] = None,
+                             additional_headers: Optional[Dict[str, str]] = None) -> Response:
 
         headers = self._get_user_agent_headers()
         if additional_headers:
@@ -144,7 +184,7 @@ class Proxy:
         return cls._handle_response(response)
 
     @staticmethod
-    def to_params(*args: dataclass) -> dict:
+    def to_params(*args: Any) -> dict[str, str]:
         params = {}
 
         for arg in args:
@@ -189,7 +229,7 @@ class Proxy:
         return res
 
     @staticmethod
-    def _raise_for_status(response: Response, max_text_length=500):
+    def _raise_for_status(response: Response, max_text_length: int = 500) -> None:
         """Raises stored :class:`HTTPError`, if one occurred."""
 
         http_error_msg = ''
