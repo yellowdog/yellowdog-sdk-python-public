@@ -57,16 +57,10 @@ templates_path = ['_templates']
 
 # Options for HTML output
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-html_css_files = [
-    'css/yellowdog.css',
-    'https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;600;700&family=Roboto:wght@300;400;500;700&display=swap'
-]
-html_logo = '_static/yellowdog.svg'
-html_static_path = ['_static']
-html_theme = 'sphinx_rtd_theme'
-html_theme_options = {
-    'style_nav_header_background': '#FAB842',
-}
+html_theme = "sphinx_rtd_theme"
+html_logo = "_static/yellowdog-wordmark.svg"
+html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 
 # Options for HTMLHelp output
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-help-output

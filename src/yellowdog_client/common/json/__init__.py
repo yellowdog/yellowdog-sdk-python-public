@@ -134,6 +134,29 @@ def object_deserializer(value: dict[str, Type[Any]], cls: type[Any], **kwargs: A
     return instance
 
 
+def object_serializer(obj: Any, **kwargs: Any) -> Any:
+    class_var_names = _get_class_var_field_names(obj)
+    strip_attr = _merge_strip_attrs(class_var_names, kwargs)
+    return default_object_serializer(obj, strip_attr=strip_attr, **kwargs)
+
+
+def _merge_strip_attrs(class_var_names: tuple[Any, ...], kwargs: dict[str, Any]) -> Any:
+    inherited_strip = kwargs.pop('strip_attr', ()) or ()
+    if isinstance(inherited_strip, str):
+        inherited_strip = (inherited_strip,)
+    strip_attr = tuple(inherited_strip) + class_var_names
+    return strip_attr
+
+
+def _get_class_var_field_names(obj: Any) -> tuple[Any, ...]:
+    type_hints = typing.get_type_hints(type(obj))
+    class_var_names = tuple(
+        name for name, hint in type_hints.items()
+        if typing.get_origin(hint) is ClassVar
+    )
+    return class_var_names
+
+
 def dict_serializer(
         obj: dict[str, Any],
         cls: Optional[type] = None,
@@ -167,6 +190,7 @@ jsons.set_serializer(
     lambda value, **kwargs: default_object_serializer(value, strip_attr=("args", "with_traceback")),
     BaseCustomException
 )
+jsons.set_serializer(object_serializer, object, False)
 jsons.set_serializer(dict_serializer, typing.Mapping, True)
 jsons.set_deserializer(lambda value, cls=datetime, **kwargs: iso_parse(value), datetime)
 jsons.set_deserializer(lambda value, cls=datetime, **kwargs: iso_timedelta_parse(value), timedelta)

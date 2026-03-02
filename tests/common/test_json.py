@@ -1,8 +1,9 @@
 import dataclasses
+from abc import ABC
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from enum import Enum
-from typing import Type, TypeVar, Optional, List, Generic, Any
+from typing import Type, TypeVar, Optional, List, Generic, Any, ClassVar
 
 import pytest
 from yellowdog_client.common.json import Json
@@ -76,8 +77,8 @@ class ExampleWithEnum:
     field: ExampleEnum
 
 
-@dataclass
-class ExampleBaseClass:
+class ExampleBaseClass(ABC):
+    classField: ClassVar[str] = "foo"
     type: str = dataclasses.field(default=None, init=False)
 
 
@@ -109,9 +110,8 @@ class ExampleGeneric(Generic[ET]):
 EU = TypeVar('EU')
 
 
-@dataclass
-class ExampleGenericBaseClass(Generic[EU]):
-    type: str = dataclasses.field(default=None, init=False)
+class ExampleGenericBaseClass(ABC, Generic[EU]):
+    type: str
 
 
 @dataclass

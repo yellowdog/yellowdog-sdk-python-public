@@ -1,5 +1,6 @@
-FROM yellowdogco/static-site-server:1.0.4
+FROM yellowdogco/static-site-server:1.6.2-66
 
 COPY docs/build/html /static
 
 ENV STATIC_ASSET_CACHE_CONTROL_HEADER_VALUE="no-cache"
+ENV ENABLE_DOCS_HEADER="true"
