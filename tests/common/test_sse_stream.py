@@ -1,12 +1,11 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
+from util.sse.sse_server import SseServer
+from util.waiter import wait_until
 from yellowdog_client.common.server_sent_events.sse4python import ServerSentEvent
 from yellowdog_client.common.server_sent_events.sse4python.sse_stream import RequestsSseClient, \
     SseStream
-
-from util.sse.sse_server import SseServer
-from util.waiter import wait_until
 
 
 def connect_client(server: SseServer) -> SseStream:

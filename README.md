@@ -38,9 +38,11 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 # Update package indexes
 sudo apt-get update
 # Install all supported versions of Python                                              
-sudo apt-get install python3.9 python3.9-distutils python3.10 python3.10-distutils python3.11 python3.11-distutils python3.12 python3.12-distutils python3.13
-# Install tox
-python3 -m pip install tox  
-# Run tests for each Python version                                             
-python3 -m tox                                                           
+sudo apt-get install python3.9 python3.10 python3.11 python3.12 python3.13 python3.14                                                 
+```
+
+Assuming you have already run the setup script and installed tox, you can then run all tests:
+
+```shell
+./scripts/test
 ```
