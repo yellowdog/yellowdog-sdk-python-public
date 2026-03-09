@@ -6,6 +6,8 @@ from yellowdog_client.model import Keyring
 from yellowdog_client.model import CreateKeyringRequest
 from yellowdog_client.model import CreateKeyringResponse
 from yellowdog_client.model import Credential
+from yellowdog_client.model import GrantApplicationAccessRequest
+from yellowdog_client.model import ApiKey
 
 
 class KeyringServiceProxy:
@@ -23,6 +25,10 @@ class KeyringServiceProxy:
 
     def delete_keyring(self, keyring_name: str) -> None:
         self._proxy.delete(keyring_name)
+
+    def grant_application_access_to_keyring(self, keyring_name: str, application_id: str, application_api_key: ApiKey) -> Keyring:
+        request = GrantApplicationAccessRequest(applicationApiKey=application_api_key)
+        return self._proxy.put(Keyring, request, "%s/access/applications/%s" % (keyring_name, application_id))
 
     def put_credential(self, keyring_name: str, credential: Credential) -> Keyring:
         return self._proxy.put(Keyring, credential, "%s/credentials" % keyring_name)

@@ -5,6 +5,7 @@ from .keyring_client import KeyringClient
 from yellowdog_client.model import Credential, CreateKeyringResponse
 from yellowdog_client.model import KeyringSummary
 from yellowdog_client.model import Keyring
+from yellowdog_client.model import ApiKey
 from ..common import check
 
 
@@ -29,6 +30,9 @@ class KeyringClientImpl(KeyringClient):
 
     def find_all_keyrings(self) -> List[KeyringSummary]:
         return self.__service_proxy.find_all_keyrings()
+
+    def grant_application_access_to_keyring(self, keyring_name: str, application_id: str, application_api_key: ApiKey) -> Keyring:
+        return self.__service_proxy.grant_application_access_to_keyring(keyring_name, application_id, application_api_key)
 
     def put_credential(self, keyring: Keyring, credential: Credential) -> Keyring:
         name = check.not_none(keyring.name, "keyring.name")

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from yellowdog_client.common import Closeable
-from yellowdog_client.model import CreateKeyringResponse, Credential, Keyring, KeyringSummary
+from yellowdog_client.model import ApiKey, CreateKeyringResponse, Credential, Keyring, KeyringSummary
 
 
 class KeyringClient(ABC, Closeable):
@@ -27,6 +27,10 @@ class KeyringClient(ABC, Closeable):
 
     @abstractmethod
     def find_all_keyrings(self) -> List[KeyringSummary]:
+        pass
+
+    @abstractmethod
+    def grant_application_access_to_keyring(self, keyring_name: str, application_id: str, application_api_key: ApiKey) -> Keyring:
         pass
 
     @abstractmethod
