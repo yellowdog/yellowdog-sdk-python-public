@@ -2,7 +2,7 @@ from typing import List
 
 from .keyring_service_proxy import KeyringServiceProxy
 from .keyring_client import KeyringClient
-from yellowdog_client.model import Credential
+from yellowdog_client.model import Credential, CreateKeyringResponse
 from yellowdog_client.model import KeyringSummary
 from yellowdog_client.model import Keyring
 from ..common import check
@@ -16,6 +16,9 @@ class KeyringClientImpl(KeyringClient):
         keyring = self.__service_proxy.create_keyring(name, description).keyring
         assert keyring is not None
         return keyring
+
+    def add_keyring(self, name: str, description: str) -> CreateKeyringResponse:
+        return self.__service_proxy.create_keyring(name, description)
 
     def delete_keyring(self, keyring: Keyring) -> None:
         name = check.not_none(keyring.name, "keyring.name")
