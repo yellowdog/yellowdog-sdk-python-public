@@ -90,6 +90,14 @@ class PlatformClient(Closeable):
             user_agent=user_agent
         )
 
+        work_proxy = Proxy(
+            authentication_headers_provider=api_key_authentication_headers_provider,
+            retry_count=services_schema.retry.maxAttempts,
+            max_retry_interval_seconds=int(services_schema.retry.maxInterval.total_seconds()),
+            user_agent=user_agent,
+            compress_requests=True
+        )
+
         compute_url = services_schema.defaultUrl if services_schema.computeServiceUrl is None else services_schema.computeServiceUrl
         account_url = services_schema.defaultUrl if services_schema.accountServiceUrl is None else services_schema.accountServiceUrl
         images_url = services_schema.defaultUrl if services_schema.imagesServiceUrl is None else services_schema.imagesServiceUrl
@@ -103,7 +111,7 @@ class PlatformClient(Closeable):
         compute_client = ComputeClientImpl(ComputeServiceProxy(proxy.append_base_url(compute_url)))
         images_client = ImagesClientImpl(ImagesServiceProxy(proxy.append_base_url(images_url)))
         namespaces_client = NamespacesClientImpl(NamespacesServiceProxy(proxy.append_base_url(scheduler_url)))
-        work_client = WorkClientImpl(WorkServiceProxy(proxy.append_base_url(scheduler_url)))
+        work_client = WorkClientImpl(WorkServiceProxy(work_proxy.append_base_url(scheduler_url)))
         worker_pool_client = WorkerPoolClientImpl(WorkerPoolServiceProxy(proxy.append_base_url(scheduler_url)))
         object_store_client = ObjectStoreClient(ObjectStoreServiceProxy(proxy.append_base_url(object_store_url)))
         allowances_client = AllowancesClientImpl(AllowancesServiceProxy(proxy.append_base_url(usage_url)))

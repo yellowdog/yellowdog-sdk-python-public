@@ -1,4 +1,6 @@
 import datetime
+import gzip
+import json
 import traceback
 from dataclasses import dataclass
 from http import HTTPStatus
@@ -6,6 +8,7 @@ from typing import List
 
 import pytest
 from requests import HTTPError
+from werkzeug.wrappers import Response as WerkzeugResponse
 
 from util.api import MockApi, HttpMethod
 from util.data import make
@@ -13,19 +16,21 @@ from util.sse.sse_server import SseServer
 from util.waiter import wait_until
 from yellowdog_client.common import Proxy, UserAgent
 from yellowdog_client.common.credentials import ApiKeyAuthenticationHeadersProvider
+from yellowdog_client.common.json import Json
 from yellowdog_client.common.server_sent_events import SubscriptionManager, SubscriptionEventListener
 from yellowdog_client.model import ApiKey
 
 TEST_ENDPOINT = "/test"
 
 
-def build_proxy(base_url: str, retry_count: int = 0, max_retry_interval_seconds: int = 0) -> Proxy:
+def build_proxy(base_url: str, retry_count: int = 0, max_retry_interval_seconds: int = 0, compress_requests: bool = False) -> Proxy:
     return Proxy(
         authentication_headers_provider=ApiKeyAuthenticationHeadersProvider(make(ApiKey)),
         retry_count=retry_count,
         max_retry_interval_seconds=max_retry_interval_seconds,
         base_url=base_url,
-        user_agent=UserAgent("test", "1.0", "3.8")
+        user_agent=UserAgent("test", "1.0", "3.8"),
+        compress_requests=compress_requests
     )
 
 
@@ -153,4 +158,46 @@ def test_serializes_duration_params_in_iso_format(mock_api: MockApi):
 
     proxy.get(None, TEST_ENDPOINT, params={"foo": datetime.timedelta(days=1, hours=2, seconds=30)})
 
+    mock_api.verify_all_requests_called()
+
+
+def test_large_request_body_is_gzip_compressed(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url(), compress_requests=True)
+    data = Example(field="x" * Proxy.GZIP_THRESHOLD_BYTES)  # Exceeds threshold
+
+    captured = {}
+
+    def handler(request):
+        captured["content_encoding"] = request.headers.get("Content-Encoding")
+        captured["body"] = request.data
+        return WerkzeugResponse(Json.dumps(data), content_type="application/json", status=200)
+
+    mock_api.httpserver.expect_oneshot_request(TEST_ENDPOINT, method="POST").respond_with_handler(handler)
+
+    proxy.post(Example, data, TEST_ENDPOINT)
+
+    assert captured["content_encoding"] == "gzip"
+    actual = Json.load(json.loads(gzip.decompress(captured["body"])), Example)
+    assert actual == data
+    mock_api.verify_all_requests_called()
+
+
+def test_small_request_body_is_not_compressed(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url(), compress_requests=True)
+    data = Example(field="small")
+
+    captured = {}
+
+    def handler(request):
+        captured["content_encoding"] = request.headers.get("Content-Encoding")
+        captured["body"] = request.data
+        return WerkzeugResponse(Json.dumps(data), content_type="application/json", status=200)
+
+    mock_api.httpserver.expect_oneshot_request(TEST_ENDPOINT, method="POST").respond_with_handler(handler)
+
+    proxy.post(Example, data, TEST_ENDPOINT)
+
+    assert captured["content_encoding"] is None
+    actual = Json.load(json.loads(captured["body"]), Example)
+    assert actual == data
     mock_api.verify_all_requests_called()

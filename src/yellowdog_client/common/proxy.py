@@ -1,3 +1,5 @@
+import gzip
+import json as json_module
 from dataclasses import asdict
 from datetime import datetime, timedelta
 from typing import TypeVar, Type, Dict, Optional, overload, Any
@@ -17,19 +19,23 @@ T = TypeVar('T')
 
 
 class Proxy:
+    GZIP_THRESHOLD_BYTES = 2048
+
     def __init__(
             self,
             authentication_headers_provider: ApiKeyAuthenticationHeadersProvider,
             retry_count: int,
             max_retry_interval_seconds: int,
             user_agent: UserAgent,
-            base_url: str = ""
+            base_url: str = "",
+            compress_requests: bool = False
     ) -> None:
         self._authentication_headers_provider: ApiKeyAuthenticationHeadersProvider = authentication_headers_provider
         self._user_agent: UserAgent = user_agent
         self._base_url: str = base_url
         self._retry_count: int = retry_count
         self._max_retry_interval_seconds: int = max_retry_interval_seconds
+        self._compress_requests: bool = compress_requests
 
     @staticmethod
     def _format_params(params: Optional[dict[str, object]]) -> None:
@@ -49,7 +55,8 @@ class Proxy:
             self._retry_count,
             self._max_retry_interval_seconds,
             self._user_agent,
-            self._base_url + base_url
+            self._base_url + base_url,
+            self._compress_requests
         )
 
     def get(self, return_type: Type[T], url: str = "", params: Optional[Dict[str, Any]] = None) -> T:
@@ -108,14 +115,27 @@ class Proxy:
         return Json.load(response.json(), return_type) if return_type else None
 
     def raw_execute(self, method: str, url: str = "", json: Optional[object] = None, params: Optional[Dict[str, object]] = None) -> Response:
+        headers = self._get_user_agent_headers()
+
+        if self._compress_requests and json is not None:
+            body_bytes = json_module.dumps(json).encode("utf-8")
+            if len(body_bytes) > self.GZIP_THRESHOLD_BYTES:
+                headers["Content-Encoding"] = "gzip"
+                headers["Content-Type"] = "application/json"
+                request_kwargs: Dict[str, Any] = dict(data=gzip.compress(body_bytes))
+            else:
+                request_kwargs = dict(json=json)
+        else:
+            request_kwargs = dict(json=json)
+
         return self.execute_session_with_retries(
             request=Request(
                 method=method,
                 url=self._base_url + url,
                 auth=self._authentication_headers_provider,
-                json=json,
                 params=params,
-                headers=self._get_user_agent_headers()
+                headers=headers,
+                **request_kwargs
             ),
             prefix_url=self._base_url,
             retry_count=self._retry_count,
