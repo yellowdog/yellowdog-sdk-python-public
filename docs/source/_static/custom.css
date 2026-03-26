@@ -61,6 +61,16 @@ a {
   font-size: 0.875rem;
 }
 
+.wy-menu-vertical a {
+  font-size: 0.75rem;
+}
+
+.rst-content code,
+.rst-content tt,
+code {
+  font-size: 1em;
+}
+
 .wy-nav-content {
   max-width: 100% !important;
 }
