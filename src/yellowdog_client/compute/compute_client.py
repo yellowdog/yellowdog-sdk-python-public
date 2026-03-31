@@ -172,7 +172,7 @@ class ComputeClient(ABC, Closeable):
     def stop_instances(self, compute_requirement: ComputeRequirement, instances: List[Instance]) -> None:
         """
         Instructs YellowDog Compute to stop the specified instances provisioned for the specified requirement.
-        YellowDog Compute will only attempt to stop instances that are InstanceStatus#RUNNING or InstanceStatus#UNKNOWN.
+        YellowDog Compute will only attempt to stop instances that are :attr:`yellowdog_client.model.InstanceStatus.RUNNING` or :attr:`yellowdog_client.model.InstanceStatus.UNKNOWN`.
 
         :param compute_requirement: the requirement containing the instances
         :param instances:          The instances to stop
@@ -184,7 +184,7 @@ class ComputeClient(ABC, Closeable):
     def stop_instances_by_id(self, compute_requirement: ComputeRequirement, instance_ids: List[InstanceId]) -> None:
         """
         Instructs YellowDog Compute to stop the specified instances provisioned for the specified requirement.
-        YellowDog Compute will only attempt to stop instances that are InstanceStatus#RUNNING or InstanceStatus#UNKNOWN.
+        YellowDog Compute will only attempt to stop instances that are :attr:`yellowdog_client.model.InstanceStatus.RUNNING` or :attr:`yellowdog_client.model.InstanceStatus.UNKNOWN`.
 
         :param compute_requirement: the requirement containing the instances
         :param instance_ids:        the ids of instances to stop
@@ -196,7 +196,7 @@ class ComputeClient(ABC, Closeable):
     def start_instances(self, compute_requirement: ComputeRequirement, instances: List[Instance]) -> None:
         """
         Instructs YellowDog Compute to start the specified instances provisioned for the specified requirement.
-        YellowDog Compute will only attempt to start instances that are InstanceStatus#STOPPED or InstanceStatus#UNKNOWN.
+        YellowDog Compute will only attempt to start instances that are :attr:`yellowdog_client.model.InstanceStatus.STOPPED` or :attr:`yellowdog_client.model.InstanceStatus.UNKNOWN`.
 
         :param compute_requirement: the requirement containing the instances
         :param instances:          the instances to start
@@ -208,7 +208,7 @@ class ComputeClient(ABC, Closeable):
     def start_instances_by_id(self, compute_requirement: ComputeRequirement, instance_ids: List[InstanceId]) -> None:
         """
         Instructs YellowDog Compute to start the specified instances provisioned for the specified requirement.
-        YellowDog Compute will only attempt to start instances that are InstanceStatus#STOPPED or InstanceStatus#UNKNOWN.
+        YellowDog Compute will only attempt to start instances that are :attr:`yellowdog_client.model.InstanceStatus.STOPPED` or :attr:`yellowdog_client.model.InstanceStatus.UNKNOWN`.
 
         :param compute_requirement: the requirement containing the instances
         :param instance_ids:        the ids of instances to start
@@ -220,7 +220,7 @@ class ComputeClient(ABC, Closeable):
     def terminate_instances(self, compute_requirement: ComputeRequirement, instances: List[Instance]) -> None:
         """
         Instructs YellowDog Compute to terminate the specified instances provisioned for the specified requirement.
-        YellowDog Compute will not attempt to terminate instances that are already InstanceStatus#TERMINATING.
+        YellowDog Compute will not attempt to terminate instances that are already :attr:`yellowdog_client.model.InstanceStatus.TERMINATING`.
 
         :param compute_requirement: the requirement containing the instances
         :param instances:          the instances to terminate
@@ -232,7 +232,7 @@ class ComputeClient(ABC, Closeable):
     def terminate_instances_by_id(self, compute_requirement: ComputeRequirement, instance_ids: List[InstanceId]) -> None:
         """
         Instructs YellowDog Compute to terminate the specified instances provisioned for the specified requirement.
-        YellowDog Compute will not attempt to terminate instances that are already InstanceStatus#TERMINATING.
+        YellowDog Compute will not attempt to terminate instances that are already :attr:`yellowdog_client.model.InstanceStatus.TERMINATING`.
 
         :param compute_requirement: the requirement containing the instances
         :param instance_ids:        the ids of instances to terminate
@@ -244,7 +244,7 @@ class ComputeClient(ABC, Closeable):
     def restart_instances(self, compute_requirement: ComputeRequirement, instances: List[Instance]) -> None:
         """
         Instructs YellowDog Compute to restart (reboot) the specified instances provisioned for the specified requirement.
-        YellowDog Compute will only attempt to restart instances that are InstanceStatus#RUNNING, InstanceStatus#STOPPED or InstanceStatus#UNKNOWN.
+        YellowDog Compute will only attempt to restart instances that are :attr:`yellowdog_client.model.InstanceStatus.RUNNING`, :attr:`yellowdog_client.model.InstanceStatus.STOPPED` or :attr:`yellowdog_client.model.InstanceStatus.UNKNOWN`.
 
         :param compute_requirement: the requirement containing the instances
         :param instances:          the instances to restart
@@ -256,7 +256,7 @@ class ComputeClient(ABC, Closeable):
     def restart_instances_by_id(self, compute_requirement: ComputeRequirement, instance_ids: List[InstanceId]) -> None:
         """
         Instructs YellowDog Compute to restart (reboot) the specified instances provisioned for the specified requirement.
-        YellowDog Compute will only attempt to restart instances that are InstanceStatus#RUNNING, InstanceStatus#STOPPED or InstanceStatus#UNKNOWN.
+        YellowDog Compute will only attempt to restart instances that are :attr:`yellowdog_client.model.InstanceStatus.RUNNING`, :attr:`yellowdog_client.model.InstanceStatus.STOPPED` or :attr:`yellowdog_client.model.InstanceStatus.UNKNOWN`.
 
         :param compute_requirement: the requirement containing the instances
         :param instance_ids:        the instances to restart
@@ -268,7 +268,7 @@ class ComputeClient(ABC, Closeable):
     def deprovision_instances(self, compute_requirement: ComputeRequirement, instances: List[Instance]) -> None:
         """
         Instructs YellowDog Compute to terminate the specified instances provisioned for the specified requirement and reduce the requirement's instance count accordingly.
-        YellowDog Compute will not attempt to deprovision instances that are already InstanceStatus#TERMINATING.
+        YellowDog Compute will not attempt to deprovision instances that are already :attr:`yellowdog_client.model.InstanceStatus.TERMINATING`.
 
         :param compute_requirement: the requirement containing the instances
         :param instances:          the instances to deprovision
@@ -280,7 +280,7 @@ class ComputeClient(ABC, Closeable):
     def deprovision_instances_by_id(self, compute_requirement: ComputeRequirement, instance_ids: List[InstanceId]) -> None:
         """
         Instructs YellowDog Compute to terminate the specified instances provisioned for the specified requirement and reduce the requirement's instance count accordingly.
-        YellowDog Compute will not attempt to deprovision instances that are already InstanceStatus#TERMINATING.
+        YellowDog Compute will not attempt to deprovision instances that are already :attr:`yellowdog_client.model.InstanceStatus.TERMINATING`.
 
         :param compute_requirement: the requirement containing the instances
         :param instance_ids:        the ids of instances to deprovision
@@ -372,9 +372,11 @@ class ComputeClient(ABC, Closeable):
         """
         Returns a search client for searching compute requirements.
 
+        .. deprecated:: (unknown)
+            use :meth:`get_compute_requirement_summaries(compute_requirement_summary_search)` instead.
+
         :param compute_requirement_search: the search criteria
         :return: a search client for searching compute requirements
-        @deprecated use #getComputeRequirementSummaries(ComputeRequirementSummarySearch) instead.
         """
 
         pass
@@ -409,7 +411,11 @@ class ComputeClient(ABC, Closeable):
 
     @abstractmethod
     def find_all_compute_source_templates(self) -> List[ComputeSourceTemplateSummary]:
-        """@deprecated use #getComputeSourceTemplates(ComputeSourceTemplateSearch) instead."""
+        """
+        .. deprecated:: (unknown)
+            use :meth:`get_compute_source_templates(compute_source_template_search)` instead.
+        """
+
         pass
 
     @abstractmethod
@@ -452,7 +458,9 @@ class ComputeClient(ABC, Closeable):
         """
         Returns summaries of all existing compute requirement templates within the system for the requesting user.
 
-        @deprecated use #getComputeRequirementTemplates(ComputeRequirementTemplateSearch) instead.
+        .. deprecated:: (unknown)
+            use :meth:`get_compute_requirement_templates(compute_requirement_template_search)` instead.
+
         :return: a list of compute requirement template summaries
         """
 

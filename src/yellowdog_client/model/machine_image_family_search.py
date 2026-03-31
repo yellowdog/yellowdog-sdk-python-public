@@ -14,6 +14,10 @@ class MachineImageFamilySearch:
     sortDirection: Optional[SortDirection] = None
     includePublic: bool = False
     namespace: Optional[str] = None
+    """
+    .. deprecated:: (unknown)
+    """
+
     namespaces: Optional[List[str]] = None
     familyName: Optional[str] = None
     groupName: Optional[str] = None

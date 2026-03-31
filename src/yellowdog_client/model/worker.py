@@ -13,9 +13,21 @@ class Worker(Identified):
     status: Optional[WorkerStatus] = None
     """The status of the worker."""
     taskGroupIds: Optional[List[str]] = None
-    """The IDs of the task groups which have claims on the worker."""
+    """
+    The IDs of the task groups which have claims on the worker.
+
+    .. deprecated:: (unknown)
+        will be removed as part of remove single allocation
+    """
+
+    taskGroupId: Optional[str] = None
+    """
+    The ID of the task group that has a claim on the worker.
+    Should only be set if the :class:`Worker` is exclusively claimed by a single :class:`TaskGroup`.
+    """
+
     claimCount: int = 0
-    """A count of the tasks groups which have claims on the worker. Always identical to the size of #taskGroupIds."""
+    """A count of the tasks groups which have claims on the worker. Always identical to the size of :attr:`task_group_ids`."""
     exclusive: bool = False
     """Indicates if the worker is exclusively claimed by a single task group."""
     batchAllocation: bool = False

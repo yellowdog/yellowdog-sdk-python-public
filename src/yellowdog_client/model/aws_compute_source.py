@@ -15,7 +15,7 @@ from .instance_summary import InstanceSummary
 
 
 class AwsComputeSource(ComputeSource, ABC):
-    """Derives from ComputeSource to provide the interface for all AWS compute source model objects."""
+    """Derives from :class:`ComputeSource` to provide the interface for all AWS compute source model objects."""
     type: str
     provider: Optional[CloudProvider]
     credential: Optional[str]

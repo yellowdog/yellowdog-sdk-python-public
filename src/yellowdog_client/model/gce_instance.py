@@ -10,7 +10,7 @@ from .instance_status import InstanceStatus
 
 @dataclass
 class GceInstance(Instance):
-    """Extends Instance to add fields specific to the Google Compute Engine (GCE) compute source."""
+    """Extends :class:`Instance` to add fields specific to the Google Compute Engine (GCE) compute source."""
     type: str = field(default="co.yellowdog.platform.model.GceInstance", init=False)
     preemptible: bool = False
     confidential: bool = False

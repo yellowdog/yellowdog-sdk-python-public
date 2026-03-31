@@ -11,4 +11,8 @@ class ComputeSourceTemplateSearch:
     sortDirection: Optional[SortDirection] = None
     namespaces: Optional[List[str]] = None
     sourceType: Optional[str] = None
+    """
+    .. deprecated:: (unknown)
+    """
+
     sourceTypes: Optional[List[str]] = None

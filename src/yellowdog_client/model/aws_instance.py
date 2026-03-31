@@ -10,7 +10,7 @@ from .instance_status import InstanceStatus
 
 @dataclass
 class AwsInstance(Instance):
-    """Extends Instance to add fields specific to the AWS compute sources."""
+    """Extends :class:`Instance` to add fields specific to the AWS compute sources."""
     type: str = field(default="co.yellowdog.platform.model.AwsInstance", init=False)
     instanceLifecycle: Optional[str] = None
     """The AWS EC2 instance lifecycle value for this instance."""

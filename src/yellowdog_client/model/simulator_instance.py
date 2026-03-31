@@ -10,7 +10,7 @@ from .instance_status import InstanceStatus
 
 @dataclass
 class SimulatorInstance(Instance):
-    """Extends Instance to add fields specific to the Simulator compute source."""
+    """Extends :class:`Instance` to add fields specific to the Simulator compute source."""
     type: str = field(default="co.yellowdog.platform.model.SimulatorInstance", init=False)
     id: Optional[InstanceId] = None
     """The unique identifier for this instance formed from the YellowDog Compute Source ID and the provider supplied instance ID"""

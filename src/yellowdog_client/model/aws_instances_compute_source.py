@@ -20,7 +20,7 @@ class AwsInstancesComputeSource(AwsComputeSource):
     """
     The maximum number of instances that can be requested in a single API call due to maximum number of EBS volumes
     Set to the lowest constraint across all regions.
-    The validation message in @AwsInstancesComputeSourceValidator should be aligned if changed
+    The validation message in @:class:`AwsInstancesComputeSourceValidator` should be aligned if changed
     """
 
     type: str = field(default="co.yellowdog.platform.model.AwsInstancesComputeSource", init=False)

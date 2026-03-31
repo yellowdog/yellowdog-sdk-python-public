@@ -10,7 +10,7 @@ from .instance_status import InstanceStatus
 
 @dataclass
 class AzureInstance(Instance):
-    """Extends Instance to add fields specific to the Azure compute source."""
+    """Extends :class:`Instance` to add fields specific to the Azure compute source."""
     type: str = field(default="co.yellowdog.platform.model.AzureInstance", init=False)
     resourceId: Optional[str] = None
     id: Optional[InstanceId] = None

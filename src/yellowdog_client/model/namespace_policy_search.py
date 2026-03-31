@@ -9,4 +9,8 @@ class NamespacePolicySearch:
     sortField: Optional[str] = None
     sortDirection: Optional[SortDirection] = None
     namespace: Optional[str] = None
+    """
+    .. deprecated:: (unknown)
+    """
+
     namespaces: Optional[List[str]] = None

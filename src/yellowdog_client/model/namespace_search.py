@@ -7,6 +7,10 @@ from .sort_direction import SortDirection
 @dataclass
 class NamespaceSearch:
     namespace: Optional[str] = None
+    """
+    .. deprecated:: (unknown)
+    """
+
     namespaces: Optional[List[str]] = None
     namespaceContains: Optional[str] = None
     deletable: Optional[bool] = None

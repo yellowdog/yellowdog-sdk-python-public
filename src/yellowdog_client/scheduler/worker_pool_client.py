@@ -248,8 +248,10 @@ class WorkerPoolClient(ABC, Closeable):
         """
         Returns summaries of all existing worker pools within the system for the requesting user.
 
+        .. deprecated:: (unknown)
+            use :meth:`get_worker_pools(worker_pool_search)` instead to search worker pools.
+
         :return: a list of worker pool summaries
-        @deprecated use #getWorkerPools(WorkerPoolSearch) instead to search worker pools.
         """
 
         pass
@@ -257,7 +259,7 @@ class WorkerPoolClient(ABC, Closeable):
     @abstractmethod
     def get_worker_pools(self, search: WorkerPoolSearch) -> SearchClient[WorkerPoolSummary]:
         """
-        Returns a SearchClient that offers the ability to search worker pools.
+        Returns a :class:`SearchClient` that offers the ability to search worker pools.
 
         :param search: the search
         :return: the search client
@@ -270,11 +272,13 @@ class WorkerPoolClient(ABC, Closeable):
         """
         Returns worker pool nodes within the system that match the specified search.
         WARNING: If your search matches too many workers to fit into your application's memory limits, consider using
-        #streamNodes(NodeSearch) or #findNodes(NodeSearch, SliceReference).
+        :meth:`stream_nodes(node_search)` or :meth:`find_nodes(node_search, slice_reference)`.
+
+        .. deprecated:: (unknown)
+            use :meth:`get_nodes(node_search)` instead to search nodes.
 
         :param search: the search
         :return: a list of nodes
-        @deprecated use #getNodes(NodeSearch) instead to search nodes.
         """
 
         pass
@@ -284,10 +288,12 @@ class WorkerPoolClient(ABC, Closeable):
         """
         Returns a slice of nodes that match the specified search and slice reference.
 
+        .. deprecated:: (unknown)
+            use :meth:`get_nodes(node_search)` instead to search nodes.
+
         :param search:         the search
         :param slice_reference: the slice reference
         :return: a slice of nodes
-        @deprecated use #getNodes(NodeSearch) instead to search nodes.
         """
 
         pass
@@ -441,7 +447,7 @@ class WorkerPoolClient(ABC, Closeable):
     @abstractmethod
     def get_nodes(self, search: NodeSearch) -> SearchClient[Node]:
         """
-        Returns a SearchClient that offers the ability to search nodes.
+        Returns a :class:`SearchClient` that offers the ability to search nodes.
 
         :param search: the search
         :return: the search client

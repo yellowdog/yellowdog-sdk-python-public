@@ -13,7 +13,7 @@ from .instance_summary import InstanceSummary
 
 
 class GceComputeSource(ComputeSource, ABC):
-    """Derives from ComputeSource to provide the interface for all Google Compute Engine (GCE) compute source model objects."""
+    """Derives from :class:`ComputeSource` to provide the interface for all Google Compute Engine (GCE) compute source model objects."""
     type: str
     provider: Optional[CloudProvider]
     instancePricing: Optional[InstancePricing]

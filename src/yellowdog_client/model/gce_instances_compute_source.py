@@ -17,7 +17,7 @@ class GceInstancesComputeSource(GceComputeSource):
     BULK_INSERT_SINGLE_REQUEST_MAX: ClassVar[int] = 1000
     """
     The maximum number of instances that can be requested in a single API call to GCE
-    The validation message in @GceInstancesComputeSourceValidator should be aligned if changed
+    The validation message in @:class:`GceInstancesComputeSourceValidator` should be aligned if changed
     """
 
     type: str = field(default="co.yellowdog.platform.model.GceInstancesComputeSource", init=False)

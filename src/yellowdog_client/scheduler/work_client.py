@@ -220,8 +220,10 @@ class WorkClient(ABC, Closeable):
         """
         Returns summaries of all existing work requirements within the system for the requesting user.
 
+        .. deprecated:: (unknown)
+            use :meth:`get_work_requirements(work_requirement_search)` instead to search tasks.
+
         :return: a list of work requirement summaries
-        @deprecated use #getWorkRequirements(WorkRequirementSearch) instead to search tasks.
         """
 
         pass
@@ -229,7 +231,7 @@ class WorkClient(ABC, Closeable):
     @abstractmethod
     def get_work_requirements(self, search: WorkRequirementSearch) -> SearchClient[WorkRequirementSummary]:
         """
-        Returns a SearchClient that offers the ability to search work requirements.
+        Returns a :class:`SearchClient` that offers the ability to search work requirements.
 
         :param search: the search
         :return: the search client
@@ -326,11 +328,13 @@ class WorkClient(ABC, Closeable):
         """
         Returns tasks within the system that match the specified search.
         WARNING: If your search matches too many tasks to fit into your application's memory limits, consider using
-        #streamTasks(TaskSearch) or #findTasks(TaskSearch, SliceReference).
+        :meth:`stream_tasks(task_search)` or :meth:`find_tasks(task_search, slice_reference)`.
+
+        .. deprecated:: (unknown)
+            use :meth:`get_tasks(task_search)` instead to search tasks.
 
         :param search: the search
         :return: a list of tasks
-        @deprecated use #getTasks(TaskSearch) instead to search tasks.
         """
 
         pass
@@ -340,10 +344,12 @@ class WorkClient(ABC, Closeable):
         """
         Returns a slice of tasks that match the specified search and slice reference.
 
+        .. deprecated:: (unknown)
+            use :meth:`get_tasks(task_search)` instead to search tasks.
+
         :param search:         the search
         :param slice_reference: the slice reference
         :return: a slice of tasks
-        @deprecated use #getTasks(TaskSearch) instead to search tasks.
         """
 
         pass
@@ -351,7 +357,7 @@ class WorkClient(ABC, Closeable):
     @abstractmethod
     def get_tasks(self, search: TaskSearch) -> SearchClient[Task]:
         """
-        Returns a SearchClient that offers the ability to search tasks.
+        Returns a :class:`SearchClient` that offers the ability to search tasks.
 
         :param search: the search
         :return: the search client

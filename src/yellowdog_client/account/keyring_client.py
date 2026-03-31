@@ -11,6 +11,10 @@ class KeyringClient(ABC, Closeable):
 
     @abstractmethod
     def create_keyring(self, name: str, description: str) -> Keyring:
+        """
+        .. deprecated:: (unknown)
+        """
+
         pass
 
     @abstractmethod

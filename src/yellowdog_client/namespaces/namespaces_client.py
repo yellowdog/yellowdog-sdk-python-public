@@ -23,7 +23,7 @@ class NamespacesClient(ABC, Closeable):
     @abstractmethod
     def get_namespaces(self, search: NamespaceSearch) -> SearchClient[Namespace]:
         """
-        Returns a search client for namespaces that match the NamespaceSearch parameter.
+        Returns a search client for namespaces that match the :class:`yellowdog_client.model.NamespaceSearch` parameter.
 
         :param search: the search object to filter and sort results
         :return: a search client for matching namespaces

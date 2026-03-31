@@ -10,7 +10,7 @@ from .instance_status import InstanceStatus
 
 @dataclass
 class OciInstance(Instance):
-    """Extends Instance to add fields specific to the OCI compute sources."""
+    """Extends :class:`Instance` to add fields specific to the OCI compute sources."""
     type: str = field(default="co.yellowdog.platform.model.OciInstance", init=False)
     compartmentId: Optional[str] = None
     """The OCID of the compartment containing this instance."""

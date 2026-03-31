@@ -30,7 +30,8 @@ class TaskGroup(Identified, Named, Tagged):
     """
     The name of another task group within the same WorkRequirement that must be successfully completed before the task group is started.
 
-    @deprecated use #dependencies instead
+    .. deprecated:: (unknown)
+        use :attr:`dependencies` instead
     """
 
     dependencies: Optional[List[str]] = None

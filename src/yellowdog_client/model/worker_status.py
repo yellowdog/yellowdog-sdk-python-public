@@ -27,7 +27,9 @@ class WorkerStatus(Enum):
     FOUND = "FOUND", True, True
     """
     The Worker was considered to be lost but its heartbeat has returned, however it has not yet requested instruction.
-    @deprecated Workers can no longer be FOUND once LOST. Status can be removed when all clients >= v9.3.0
+
+    .. deprecated:: (unknown)
+        Workers can no longer be FOUND once LOST. Status can be removed when all clients >= v9.3.0
     """
 
     SHUTDOWN = "SHUTDOWN", False, False
