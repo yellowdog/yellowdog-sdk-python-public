@@ -5,9 +5,13 @@ import traceback
 from dataclasses import dataclass
 from http import HTTPStatus
 from typing import List
+from unittest import mock
 
 import pytest
 from requests import HTTPError
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from werkzeug.wrappers import Response as WerkzeugResponse
 
 from util.api import MockApi, HttpMethod
@@ -23,11 +27,20 @@ from yellowdog_client.model import ApiKey
 TEST_ENDPOINT = "/test"
 
 
-def build_proxy(base_url: str, retry_count: int = 0, max_retry_interval_seconds: int = 0, compress_requests: bool = False) -> Proxy:
+def build_proxy(base_url: str, retry_count: int = 0, compress_requests: bool = False) -> Proxy:
+    session = Session()
+    adapter = HTTPAdapter(max_retries=Retry(
+        total=retry_count,
+        backoff_factor=2,
+        allowed_methods=frozenset(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']),
+        status_forcelist=[429, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],
+        raise_on_status=False
+    ))
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
     return Proxy(
         authentication_headers_provider=ApiKeyAuthenticationHeadersProvider(make(ApiKey)),
-        retry_count=retry_count,
-        max_retry_interval_seconds=max_retry_interval_seconds,
+        session=session,
         base_url=base_url,
         user_agent=UserAgent("test", "1.0", "3.8"),
         compress_requests=compress_requests
@@ -201,3 +214,24 @@ def test_small_request_body_is_not_compressed(mock_api: MockApi):
     actual = Json.load(json.loads(captured["body"]), Example)
     assert actual == data
     mock_api.verify_all_requests_called()
+
+
+def test_session_is_reused_across_requests(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url())
+
+    mock_api.mock(TEST_ENDPOINT, HttpMethod.GET, response=Example(field="first"))
+    mock_api.mock(TEST_ENDPOINT, HttpMethod.GET, response=Example(field="second"))
+
+    initial_session = proxy._session
+    proxy.get(Example, TEST_ENDPOINT)
+    proxy.get(Example, TEST_ENDPOINT)
+
+    assert proxy._session is initial_session
+
+
+def test_sub_proxy_shares_session_with_parent():
+    proxy = build_proxy("http://example.com")
+    sub_proxy = proxy.append_base_url("/api")
+
+    assert sub_proxy._session is proxy._session
+

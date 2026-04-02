@@ -1,5 +1,9 @@
 import sys
 
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
 from ._version import __version__
 from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy, AccountClientImpl, AccountServiceProxy, \
     ApplicationClient, ApplicationServiceProxy, ApplicationClientImpl
@@ -38,9 +42,11 @@ class PlatformClient(Closeable):
             object_store_client: ObjectStoreClient,
             allowances_client: AllowancesClient,
             cloud_info_client: CloudInfoClient,
-            application_client: ApplicationClient
+            application_client: ApplicationClient,
+            session: Session
     ) -> None:
         self.__clients = ClientCollection()
+        self.__session = session
         self.account_client: AccountClient = self.__clients.add(account_client)
         """Account service client. Used for controlling accounts"""
         self.compute_client: ComputeClient = self.__clients.add(compute_client)
@@ -65,6 +71,20 @@ class PlatformClient(Closeable):
         """Application client. Used to controlling applications """
 
     @staticmethod
+    def _build_session(retry_count: int) -> Session:
+        session = Session()
+        adapter = HTTPAdapter(max_retries=Retry(
+            total=retry_count,
+            backoff_factor=2,
+            allowed_methods=frozenset(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']),
+            status_forcelist=[429, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],
+            raise_on_status=False
+        ))
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+        return session
+
+    @staticmethod
     def create(services_schema: ServicesSchema, api_key: ApiKey) -> "PlatformClient":
         """
         Construct :class:`PlatformClient` object.
@@ -83,17 +103,17 @@ class PlatformClient(Closeable):
             python_version=f"{python_version.major}.{python_version.minor}"
         )
 
+        session = PlatformClient._build_session(services_schema.retry.maxAttempts)
+
         proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
-            retry_count=services_schema.retry.maxAttempts,
-            max_retry_interval_seconds=int(services_schema.retry.maxInterval.total_seconds()),
+            session=session,
             user_agent=user_agent
         )
 
         work_proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
-            retry_count=services_schema.retry.maxAttempts,
-            max_retry_interval_seconds=int(services_schema.retry.maxInterval.total_seconds()),
+            session=session,
             user_agent=user_agent,
             compress_requests=True
         )
@@ -129,7 +149,8 @@ class PlatformClient(Closeable):
             object_store_client=object_store_client,
             allowances_client=allowances_client,
             cloud_info_client=cloud_info_client,
-            application_client=application_client
+            application_client=application_client,
+            session=session
         )
 
     def close(self) -> None:
@@ -147,3 +168,4 @@ class PlatformClient(Closeable):
                     # Stuff goes here...
         """
         self.__clients.close()
+        self.__session.close()
