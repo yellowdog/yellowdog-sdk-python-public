@@ -17,6 +17,7 @@ class TaskSearch:
     hasOutputs: Optional[bool] = None
     hasErrors: Optional[bool] = None
     tag: Optional[str] = None
+    tagStartsWith: Optional[str] = None
     statuses: Optional[List[TaskStatus]] = None
     sortField: Optional[str] = None
     sortDirection: Optional[SortDirection] = None
