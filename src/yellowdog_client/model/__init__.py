@@ -146,6 +146,7 @@ from .image_os_type import ImageOsType
 from .instance import Instance
 from .instance_id import InstanceId
 from .instance_pricing import InstancePricing
+from .instance_pricing_preference import InstancePricingPreference
 from .instance_search import InstanceSearch
 from .instance_status import InstanceStatus
 from .instance_summary import InstanceSummary
@@ -471,6 +472,7 @@ __all__ = [
     "Instance",
     "InstanceId",
     "InstancePricing",
+    "InstancePricingPreference",
     "InstanceSearch",
     "InstanceStatus",
     "InstanceSummary",

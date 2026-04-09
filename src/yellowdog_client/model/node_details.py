@@ -37,3 +37,9 @@ class NodeDetails:
     """The node type of this node if node types have been configured."""
     nodeSlot: Optional[int] = None
     """The slot number of this node within its node type if slot numbering has been configured."""
+    spot: Optional[bool] = None
+    """
+    Whether this Node is running on Spot compute. If it has not been possible to determine if the Node is running on
+    Spot, this will be null.
+    """
+

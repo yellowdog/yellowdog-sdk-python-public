@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from .cloud_provider import CloudProvider
 from .double_range import DoubleRange
+from .instance_pricing_preference import InstancePricingPreference
 from .task_error_matcher import TaskErrorMatcher
 
 
@@ -14,6 +15,8 @@ class RunSpecification:
     """The task types that will be used in the associated TaskGroup."""
     instanceTypes: Optional[List[str]] = None
     """The machine instance types that can be used to execute tasks"""
+    instancePricingPreference: Optional[InstancePricingPreference] = None
+    """The preferred :class:`InstancePricing` of the machine instances to use."""
     vcpus: Optional[DoubleRange] = None
     """Range constraint on number of vCPUs that are required to execute tasks"""
     ram: Optional[DoubleRange] = None
