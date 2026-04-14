@@ -28,3 +28,5 @@ class ServicesSchema:
     """The base URL where the Cloud Info service is located. This is the YellowDog Cell URL rather than a service specific path."""
     metricsServiceUrl: Optional[str] = None
     """The base URL where the Metrics service is located. This is the YellowDog Cell URL rather than a service specific path."""
+    connectionTimeout: Optional[float] = 90.0
+    """The timeout in seconds for establishing a TCP connection. Defaults to 90 seconds. Set to None to disable."""

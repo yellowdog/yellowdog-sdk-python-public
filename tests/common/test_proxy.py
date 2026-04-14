@@ -4,13 +4,14 @@ import json
 import traceback
 from dataclasses import dataclass
 from http import HTTPStatus
-from typing import List
+from typing import List, Optional
 from unittest import mock
 
 import pytest
 from requests import HTTPError
 from requests import Session
 from requests.adapters import HTTPAdapter
+from requests.exceptions import ConnectTimeout
 from urllib3.util.retry import Retry
 from werkzeug.wrappers import Response as WerkzeugResponse
 
@@ -22,15 +23,19 @@ from yellowdog_client.common import Proxy, UserAgent
 from yellowdog_client.common.credentials import ApiKeyAuthenticationHeadersProvider
 from yellowdog_client.common.json import Json
 from yellowdog_client.common.server_sent_events import SubscriptionManager, SubscriptionEventListener
-from yellowdog_client.model import ApiKey
+from yellowdog_client.model import ApiKey, ServicesSchema
+from yellowdog_client.platform_client import PlatformClient
 
 TEST_ENDPOINT = "/test"
 
 
-def build_proxy(base_url: str, retry_count: int = 0, compress_requests: bool = False) -> Proxy:
+def build_proxy(base_url: str, retry_count: int = 0, compress_requests: bool = False,
+                connection_timeout: Optional[float] = 90.0) -> Proxy:
     session = Session()
     adapter = HTTPAdapter(max_retries=Retry(
         total=retry_count,
+        connect=retry_count,
+        read=retry_count,
         backoff_factor=2,
         allowed_methods=frozenset(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']),
         status_forcelist=[429, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],
@@ -43,7 +48,8 @@ def build_proxy(base_url: str, retry_count: int = 0, compress_requests: bool = F
         session=session,
         base_url=base_url,
         user_agent=UserAgent("test", "1.0", "3.8"),
-        compress_requests=compress_requests
+        compress_requests=compress_requests,
+        connection_timeout=connection_timeout
     )
 
 
@@ -235,3 +241,32 @@ def test_sub_proxy_shares_session_with_parent():
 
     assert sub_proxy._session is proxy._session
 
+
+def test_connect_timeout_passed_as_connect_only_tuple(mock_api: MockApi):
+    """The connect timeout must be sent as (connect, None) so only the connect phase is applied."""
+    proxy = build_proxy(mock_api.url(), connection_timeout=5.0)
+
+    mock_api.mock(TEST_ENDPOINT, HttpMethod.GET, response=Example(field="foo"))
+
+    with mock.patch.object(proxy._session, "send", wraps=proxy._session.send) as mock_send:
+        proxy.get(Example, TEST_ENDPOINT)
+
+    assert mock_send.call_args[1]["timeout"] == (5.0, None)
+
+
+def test_connection_timeout_is_propagated_to_sub_proxy():
+    proxy = build_proxy("http://example.com", connection_timeout=10.0)
+    sub_proxy = proxy.append_base_url("/api")
+
+    assert sub_proxy._connection_timeout == 10.0
+
+
+def test_request_raises_connect_timeout(mock_api: MockApi):
+
+    proxy = build_proxy(mock_api.url(), connection_timeout=0.0001)
+
+    with mock.patch.object(
+        proxy._session, "send", side_effect=ConnectTimeout("Connection timed out")
+    ):
+        with pytest.raises(ConnectTimeout):
+            proxy.get(Example, TEST_ENDPOINT)

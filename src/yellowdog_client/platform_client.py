@@ -75,6 +75,7 @@ class PlatformClient(Closeable):
         session = Session()
         adapter = HTTPAdapter(max_retries=Retry(
             total=retry_count,
+            connect=retry_count,
             backoff_factor=2,
             allowed_methods=frozenset(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']),
             status_forcelist=[429, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],
@@ -108,14 +109,16 @@ class PlatformClient(Closeable):
         proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
             session=session,
-            user_agent=user_agent
+            user_agent=user_agent,
+            connection_timeout=services_schema.connectionTimeout
         )
 
         work_proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
             session=session,
             user_agent=user_agent,
-            compress_requests=True
+            compress_requests=True,
+            connection_timeout=services_schema.connectionTimeout
         )
 
         compute_url = services_schema.defaultUrl if services_schema.computeServiceUrl is None else services_schema.computeServiceUrl
