@@ -4,7 +4,6 @@ from typing import List, Optional
 from .cloud_provider import CloudProvider
 from .double_range import DoubleRange
 from .instant_range import InstantRange
-from .long_range import LongRange
 from .node_status import NodeStatus
 from .sort_direction import SortDirection
 from .worker_status import WorkerStatus
@@ -20,7 +19,6 @@ class NodeSearch:
     instanceType: Optional[str] = None
     ram: Optional[DoubleRange] = None
     vcpus: Optional[DoubleRange] = None
-    workerClaimCount: Optional[LongRange] = None
     workerRegisteredTime: Optional[InstantRange] = None
     registeredTime: Optional[InstantRange] = None
     deregisteredTime: Optional[InstantRange] = None

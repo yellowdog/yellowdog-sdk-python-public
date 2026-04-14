@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from .identified import Identified
 from .worker_status import WorkerStatus
@@ -12,31 +12,11 @@ class Worker(Identified):
     id: Optional[str] = None
     status: Optional[WorkerStatus] = None
     """The status of the worker."""
-    taskGroupIds: Optional[List[str]] = None
-    """
-    The IDs of the task groups which have claims on the worker.
-
-    .. deprecated:: (unknown)
-        will be removed as part of remove single allocation
-    """
-
     taskGroupId: Optional[str] = None
     """
     The ID of the task group that has a claim on the worker.
     Should only be set if the :class:`Worker` is exclusively claimed by a single :class:`TaskGroup`.
     """
 
-    claimCount: int = 0
-    """A count of the tasks groups which have claims on the worker. Always identical to the size of :attr:`task_group_ids`."""
-    exclusive: bool = False
-    """Indicates if the worker is exclusively claimed by a single task group."""
-    batchAllocation: bool = False
-    """
-    Indicates if the worker has been claimed by a task group for batch allocation. Tasks will be allocated to the
-    worker's node in batches before being distributed to the worker.
-    """
-
-    currentTaskId: Optional[str] = None
-    """The ID of the task currently allocated to the worker."""
     registeredTime: Optional[datetime] = None
     """The time at which the worker was registered."""

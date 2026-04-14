@@ -290,6 +290,7 @@ from .task_output_source import TaskOutputSource
 from .task_search import TaskSearch
 from .task_status import TaskStatus
 from .task_summary import TaskSummary
+from .task_template import TaskTemplate
 from .task_working_time import TaskWorkingTime
 from .track import Track
 from .track_search import TrackSearch
@@ -616,6 +617,7 @@ __all__ = [
     "TaskSearch",
     "TaskStatus",
     "TaskSummary",
+    "TaskTemplate",
     "TaskWorkingTime",
     "Track",
     "TrackSearch",

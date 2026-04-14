@@ -37,7 +37,6 @@ def work_requirement() -> WorkRequirement:
             minWorkers=1,
             maxWorkers=10,
             tasksPerWorker=1,
-            exclusiveWorkers=True,
             maximumTaskRetries=1,
             taskTimeout=datetime.timedelta(minutes=30),
             providers=[CloudProvider.AWS, CloudProvider.AZURE],
@@ -48,8 +47,7 @@ def work_requirement() -> WorkRequirement:
                 errorTypes=["foo"],
                 statusesAtFailure=[TaskStatus.EXECUTING, TaskStatus.READY],
                 processExitCodes=[1, 2, 3]
-            )],
-            batchAllocation=True
+            )]
         ),
         tag="group-tag",
         priority=1.0,

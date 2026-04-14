@@ -27,8 +27,6 @@ class RunSpecification:
     """The maximum number of Workers that can be claimed for the associated TaskGroup."""
     tasksPerWorker: Optional[int] = None
     """Determines the number of worker claims based on splitting the number of unfinished tasks across workers."""
-    exclusiveWorkers: Optional[bool] = None
-    """If true, then do not allow claimed Workers to be shared with other task groups; otherwise, Workers can be shared."""
     maximumTaskRetries: int = 0
     """The maximum number of times a task can be retried after it has failed."""
     taskTimeout: Optional[timedelta] = None
@@ -51,13 +49,5 @@ class RunSpecification:
 
     retryableErrors: Optional[List[TaskErrorMatcher]] = None
     """Defines the errors that should result in a task retrying if encountered."""
-    batchAllocation: Optional[bool] = None
-    """
-    Enables the batch allocation of tasks to nodes. Nodes will maintain local task queues and request batches of
-    tasks as these queues are drained by workers. This can increase throughput for short-running tasks by reducing
-    the latency between a worker completing a task and starting the next one. It can also enable larger numbers of
-    workers to be efficiently utilised by reducing overall load on the YellowDog Scheduler service.
-    """
-
     disablePreallocation: Optional[bool] = None
     """If true, tasks are only allocated to nodes as workers become idle and are not queued on the node."""

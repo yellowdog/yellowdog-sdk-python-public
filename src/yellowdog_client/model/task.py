@@ -2,14 +2,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
-from .flatten_path import FlattenPath
 from .identified import Identified
 from .named import Named
 from .tagged import Tagged
 from .task_data import TaskData
 from .task_error import TaskError
-from .task_input import TaskInput
-from .task_output import TaskOutput
 from .task_status import TaskStatus
 from .task_working_time import TaskWorkingTime
 
@@ -18,8 +15,6 @@ from .task_working_time import TaskWorkingTime
 class Task(Identified, Named, Tagged):
     """Defines a task to be executed as part of a WorkRequirement."""
     id: Optional[str] = field(default=None, init=False)
-    fullyQualifiedName: Optional[str] = field(default=None, init=False)
-    """The system generated fully qualified name of the task in the form {namespace}/{workRequirementName}/{taskGroupName}/{taskName}. This is only generated if all ancestor entities are named."""
     status: Optional[TaskStatus] = field(default=None, init=False)
     """The task status."""
     retryCount: Optional[int] = field(default=None, init=False)
@@ -28,11 +23,11 @@ class Task(Identified, Named, Tagged):
     nodeId: Optional[str] = field(default=None, init=False)
     workerId: Optional[str] = field(default=None, init=False)
     errors: Optional[List[TaskError]] = field(default=None, init=False)
-    taskType: str
-    """The type of the task, used to identify the program to use to execute the task."""
     name: Optional[str] = None
     """The user allocated name used to uniquely identify the task within its task group."""
     tag: Optional[str] = None
+    taskType: Optional[str] = None
+    """The type of the task, used to identify the program to use to execute the task."""
     arguments: Optional[List[str]] = None
     """A list of arguments that will be passed to the task type run command when the task is executed."""
     taskData: Optional[str] = None
@@ -47,12 +42,6 @@ class Task(Identified, Named, Tagged):
     """The times taken to do the task measured from the worker."""
     abortRequestedTime: Optional[datetime] = None
     """The time when task abort was requested."""
-    inputs: Optional[List[TaskInput]] = None
-    """Input object specifications that determine objects to be downloaded prior to running the task."""
-    flattenInputPaths: Optional[FlattenPath] = None
-    """Indicates if the input objects' paths should be flattened when they are downloaded."""
-    outputs: Optional[List[TaskOutput]] = None
-    """Output object specifications that determine objects to be uploaded after running the task."""
     data: Optional[TaskData] = None
     """Task data requirement specifications."""
     timeout: Optional[timedelta] = None

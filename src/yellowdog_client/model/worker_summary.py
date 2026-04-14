@@ -10,8 +10,6 @@ class WorkerSummary:
     """A summary of a group of workers."""
     statusCounts: Optional[Dict[WorkerStatus, int]] = None
     """The number of workers in each status."""
-    allWorkerClaimsCount: int = 0
-    """The number of claims across all workers in this worker pool."""
     claimedWorkerCount: int = 0
     """The number of workers that are claimed."""
     lastClaimedTime: Optional[datetime] = None

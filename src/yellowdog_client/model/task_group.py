@@ -8,6 +8,7 @@ from .run_specification import RunSpecification
 from .tagged import Tagged
 from .task_group_status import TaskGroupStatus
 from .task_summary import TaskSummary
+from .task_template import TaskTemplate
 
 
 @dataclass
@@ -46,3 +47,4 @@ class TaskGroup(Identified, Named, Tagged):
     """If true, the task group will finish automatically if any contained tasks fail."""
     completedTaskTtl: Optional[timedelta] = None
     """The time to live for completed tasks. If set, tasks that have been completed for longer than this period will be deleted."""
+    taskTemplate: Optional[TaskTemplate] = None
