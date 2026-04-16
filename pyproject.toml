@@ -58,6 +58,9 @@ docs = [
 deploy = [
     "twine==6.2.0"
 ]
+dev = [
+    "tox"
+]
 
 [project.urls]
 "Homepage" = "https://yellowdog.co"
@@ -74,10 +77,6 @@ python_version = "3.9"
 strict = true
 mypy_path = "src:stubs"
 packages = ["yellowdog_client"]
-
-[[tool.mypy.overrides]]
-module = "yellowdog_client.object_store.*"
-ignore_errors = true
 
 [[tool.mypy.overrides]]
 # These old abandoned dependencies are not typed. They need to be replaced but until then, we need tell mypy to ignore them.

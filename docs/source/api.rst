@@ -29,7 +29,6 @@ YellowDog services
    account
    namespace
    images
-   object_store
    usage
    cloud_info
    model

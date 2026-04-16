@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from unittest import mock
 from yellowdog_client import PlatformClient
@@ -33,12 +35,12 @@ def test_close_closes_session(mock_api: MockApi, platform_client: PlatformClient
 def test_default_services_schema_applies_90s_connection_timeout(mock_api: MockApi):
 
     schema = ServicesSchema(defaultUrl=mock_api.url())
-    assert schema.connectionTimeout == 90.0
+    assert schema.connectionTimeout == timedelta(seconds=90)
 
 
 def test_services_schema_connection_timeout_can_be_overridden(mock_api: MockApi):
 
-    schema = ServicesSchema(defaultUrl=mock_api.url(), connectionTimeout=60.0)
+    schema = ServicesSchema(defaultUrl=mock_api.url(), connectionTimeout=timedelta(seconds=60))
     client = PlatformClient.create(schema, make(ApiKey))
     client.close()
 

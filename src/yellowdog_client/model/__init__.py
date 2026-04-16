@@ -53,7 +53,6 @@ from .azure_compute_source import AzureComputeSource
 from .azure_instance import AzureInstance
 from .azure_instance_credential import AzureInstanceCredential
 from .azure_instances_compute_source import AzureInstancesComputeSource
-from .azure_namespace_storage_configuration import AzureNamespaceStorageConfiguration
 from .azure_scale_set_compute_source import AzureScaleSetComputeSource
 from .azure_storage_credential import AzureStorageCredential
 from .best_compute_source_report import BestComputeSourceReport
@@ -129,7 +128,6 @@ from .gce_instance import GceInstance
 from .gce_instance_group_compute_source import GceInstanceGroupComputeSource
 from .gce_instances_compute_source import GceInstancesComputeSource
 from .gce_target_distribution_shape import GceTargetDistributionShape
-from .gcs_namespace_storage_configuration import GcsNamespaceStorageConfiguration
 from .get_logs_request import GetLogsRequest
 from .google_cloud_credential import GoogleCloudCredential
 from .grant_application_access_request import GrantApplicationAccessRequest
@@ -183,12 +181,10 @@ from .model_exception import ModelException
 from .named import Named
 from .namespace import Namespace
 from .namespace_autoscaling_capacity_response import NamespaceAutoscalingCapacityResponse
-from .namespace_objects_response import NamespaceObjectsResponse
 from .namespace_policy import NamespacePolicy
 from .namespace_policy_search import NamespacePolicySearch
 from .namespace_ref import NamespaceRef
 from .namespace_search import NamespaceSearch
-from .namespace_storage_configuration import NamespaceStorageConfiguration
 from .new_password_request import NewPasswordRequest
 from .node import Node
 from .node_action import NodeAction
@@ -216,19 +212,11 @@ from .numeric_attribute_range import NumericAttributeRange
 from .numeric_attribute_rank_order import NumericAttributeRankOrder
 from .numeric_attribute_value import NumericAttributeValue
 from .o_auth2_authentication_properties import OAuth2AuthenticationProperties
-from .object_detail import ObjectDetail
-from .object_download_request import ObjectDownloadRequest
-from .object_download_response import ObjectDownloadResponse
-from .object_path import ObjectPath
-from .object_paths_request import ObjectPathsRequest
-from .object_paths_slice_request import ObjectPathsSliceRequest
-from .object_upload_request import ObjectUploadRequest
 from .oci_compute_source import OciComputeSource
 from .oci_credential import OciCredential
 from .oci_instance import OciInstance
 from .oci_instance_pool_compute_source import OciInstancePoolComputeSource
 from .oci_instances_compute_source import OciInstancesComputeSource
-from .oci_namespace_storage_configuration import OciNamespaceStorageConfiguration
 from .okta_account_authentication_properties import OktaAccountAuthenticationProperties
 from .operating_system_licence import OperatingSystemLicence
 from .permission import Permission
@@ -252,7 +240,6 @@ from .role_scope import RoleScope
 from .role_search import RoleSearch
 from .role_summary import RoleSummary
 from .run_specification import RunSpecification
-from .s3_namespace_storage_configuration import S3NamespaceStorageConfiguration
 from .services_schema import ServicesSchema
 from .set_password_request import SetPasswordRequest
 from .simulator_compute_source import SimulatorComputeSource
@@ -281,12 +268,6 @@ from .task_error_matcher import TaskErrorMatcher
 from .task_error_type import TaskErrorType
 from .task_group import TaskGroup
 from .task_group_status import TaskGroupStatus
-from .task_input import TaskInput
-from .task_input_source import TaskInputSource
-from .task_input_verification import TaskInputVerification
-from .task_input_verification_status import TaskInputVerificationStatus
-from .task_output import TaskOutput
-from .task_output_source import TaskOutputSource
 from .task_search import TaskSearch
 from .task_status import TaskStatus
 from .task_summary import TaskSummary
@@ -294,8 +275,6 @@ from .task_template import TaskTemplate
 from .task_working_time import TaskWorkingTime
 from .track import Track
 from .track_search import TrackSearch
-from .transfer_status_response import TransferStatusResponse
-from .transfer_summary_response import TransferSummaryResponse
 from .update_application_request import UpdateApplicationRequest
 from .update_group_request import UpdateGroupRequest
 from .update_keyring_request import UpdateKeyringRequest
@@ -380,7 +359,6 @@ __all__ = [
     "AzureInstance",
     "AzureInstanceCredential",
     "AzureInstancesComputeSource",
-    "AzureNamespaceStorageConfiguration",
     "AzureScaleSetComputeSource",
     "AzureStorageCredential",
     "BestComputeSourceReport",
@@ -456,7 +434,6 @@ __all__ = [
     "GceInstanceGroupComputeSource",
     "GceInstancesComputeSource",
     "GceTargetDistributionShape",
-    "GcsNamespaceStorageConfiguration",
     "GetLogsRequest",
     "GoogleCloudCredential",
     "GrantApplicationAccessRequest",
@@ -510,12 +487,10 @@ __all__ = [
     "Named",
     "Namespace",
     "NamespaceAutoscalingCapacityResponse",
-    "NamespaceObjectsResponse",
     "NamespacePolicy",
     "NamespacePolicySearch",
     "NamespaceRef",
     "NamespaceSearch",
-    "NamespaceStorageConfiguration",
     "NewPasswordRequest",
     "Node",
     "NodeAction",
@@ -543,19 +518,11 @@ __all__ = [
     "NumericAttributeRankOrder",
     "NumericAttributeValue",
     "OAuth2AuthenticationProperties",
-    "ObjectDetail",
-    "ObjectDownloadRequest",
-    "ObjectDownloadResponse",
-    "ObjectPath",
-    "ObjectPathsRequest",
-    "ObjectPathsSliceRequest",
-    "ObjectUploadRequest",
     "OciComputeSource",
     "OciCredential",
     "OciInstance",
     "OciInstancePoolComputeSource",
     "OciInstancesComputeSource",
-    "OciNamespaceStorageConfiguration",
     "OktaAccountAuthenticationProperties",
     "OperatingSystemLicence",
     "Permission",
@@ -579,7 +546,6 @@ __all__ = [
     "RoleSearch",
     "RoleSummary",
     "RunSpecification",
-    "S3NamespaceStorageConfiguration",
     "ServicesSchema",
     "SetPasswordRequest",
     "SimulatorComputeSource",
@@ -608,12 +574,6 @@ __all__ = [
     "TaskErrorType",
     "TaskGroup",
     "TaskGroupStatus",
-    "TaskInput",
-    "TaskInputSource",
-    "TaskInputVerification",
-    "TaskInputVerificationStatus",
-    "TaskOutput",
-    "TaskOutputSource",
     "TaskSearch",
     "TaskStatus",
     "TaskSummary",
@@ -621,8 +581,6 @@ __all__ = [
     "TaskWorkingTime",
     "Track",
     "TrackSearch",
-    "TransferStatusResponse",
-    "TransferSummaryResponse",
     "UpdateApplicationRequest",
     "UpdateGroupRequest",
     "UpdateKeyringRequest",

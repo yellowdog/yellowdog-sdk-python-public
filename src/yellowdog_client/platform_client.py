@@ -16,7 +16,6 @@ from .compute import ComputeClient, ComputeClientImpl, ComputeServiceProxy
 from .images import ImagesClient, ImagesClientImpl, ImagesServiceProxy
 from .model import ServicesSchema, ApiKey
 from .namespaces import NamespacesClient, NamespacesClientImpl, NamespacesServiceProxy
-from .object_store import ObjectStoreClient, ObjectStoreServiceProxy
 from .scheduler import WorkClient, WorkClientImpl, WorkServiceProxy, WorkerPoolClient, WorkerPoolClientImpl, \
     WorkerPoolServiceProxy
 from .usage import AllowancesClient, AllowancesClientImpl, AllowancesServiceProxy
@@ -39,7 +38,6 @@ class PlatformClient(Closeable):
             namespaces_client: NamespacesClient,
             work_client: WorkClient,
             worker_pool_client: WorkerPoolClient,
-            object_store_client: ObjectStoreClient,
             allowances_client: AllowancesClient,
             cloud_info_client: CloudInfoClient,
             application_client: ApplicationClient,
@@ -61,8 +59,6 @@ class PlatformClient(Closeable):
         """Work client. Used for controlling work requirements"""
         self.worker_pool_client: WorkerPoolClient = self.__clients.add(worker_pool_client)
         """Worker Pool client. Used for controlling worker pools"""
-        self.object_store_client: ObjectStoreClient = self.__clients.add(object_store_client)
-        """Object store client. Used for file upload and download"""
         self.allowances_client: AllowancesClient = self.__clients.add(allowances_client)
         """Allowances client. Used to constrain how much compute can be used"""
         self.cloud_info_client: CloudInfoClient = self.__clients.add(cloud_info_client)
@@ -106,11 +102,15 @@ class PlatformClient(Closeable):
 
         session = PlatformClient._build_session(services_schema.retry.maxAttempts)
 
+        connection_timeout = None
+        if services_schema.connectionTimeout is not None:
+            connection_timeout = services_schema.connectionTimeout.total_seconds()
+
         proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
             session=session,
             user_agent=user_agent,
-            connection_timeout=services_schema.connectionTimeout
+            connection_timeout=connection_timeout
         )
 
         work_proxy = Proxy(
@@ -118,14 +118,13 @@ class PlatformClient(Closeable):
             session=session,
             user_agent=user_agent,
             compress_requests=True,
-            connection_timeout=services_schema.connectionTimeout
+            connection_timeout=connection_timeout
         )
 
         compute_url = services_schema.defaultUrl if services_schema.computeServiceUrl is None else services_schema.computeServiceUrl
         account_url = services_schema.defaultUrl if services_schema.accountServiceUrl is None else services_schema.accountServiceUrl
         images_url = services_schema.defaultUrl if services_schema.imagesServiceUrl is None else services_schema.imagesServiceUrl
         scheduler_url = services_schema.defaultUrl if services_schema.schedulerServiceUrl is None else services_schema.schedulerServiceUrl
-        object_store_url = services_schema.defaultUrl if services_schema.objectStoreServiceUrl is None else services_schema.objectStoreServiceUrl
         usage_url = services_schema.defaultUrl if services_schema.usageServiceUrl is None else services_schema.usageServiceUrl
         cloud_info_url = services_schema.defaultUrl if services_schema.cloudInfoServiceUrl is None else services_schema.cloudInfoServiceUrl
 
@@ -136,7 +135,6 @@ class PlatformClient(Closeable):
         namespaces_client = NamespacesClientImpl(NamespacesServiceProxy(proxy.append_base_url(scheduler_url)))
         work_client = WorkClientImpl(WorkServiceProxy(work_proxy.append_base_url(scheduler_url)))
         worker_pool_client = WorkerPoolClientImpl(WorkerPoolServiceProxy(proxy.append_base_url(scheduler_url)))
-        object_store_client = ObjectStoreClient(ObjectStoreServiceProxy(proxy.append_base_url(object_store_url)))
         allowances_client = AllowancesClientImpl(AllowancesServiceProxy(proxy.append_base_url(usage_url)))
         cloud_info_client = CloudInfoClientImpl(CloudInfoProxy(proxy.append_base_url(cloud_info_url)))
         application_client = ApplicationClientImpl(ApplicationServiceProxy(proxy.append_base_url(account_url)))
@@ -149,7 +147,6 @@ class PlatformClient(Closeable):
             namespaces_client=namespaces_client,
             work_client=work_client,
             worker_pool_client=worker_pool_client,
-            object_store_client=object_store_client,
             allowances_client=allowances_client,
             cloud_info_client=cloud_info_client,
             application_client=application_client,

@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
-python3 -m venv .venv              # Create a new virtual environment
-. .venv/bin/activate               # Activate the virtual environment
+python3 -m venv .venv.bootstrap    # Create a temporary bootstrap venv
+. .venv.bootstrap/bin/activate     # Activate the bootstrap venv
 pip install pip -U                 # Upgrade pip
 pip install tox                    # Install tox
-tox -e dev                         # Create a development environment
+tox --devenv .venv -e dev          # Create .venv with all dev dependencies (uses py314)
+deactivate
+rm -rf .venv.bootstrap             # Remove the bootstrap venv
