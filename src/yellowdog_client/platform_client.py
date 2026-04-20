@@ -1,16 +1,15 @@
 import sys
+from datetime import timedelta
 
 from requests import Session
 from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-
 from ._version import __version__
 from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy, AccountClientImpl, AccountServiceProxy, \
     ApplicationClient, ApplicationServiceProxy, ApplicationClientImpl
 from .account.account_client import AccountClient
 from .client_collection import ClientCollection
 from .cloud_info import CloudInfoClient, CloudInfoClientImpl, CloudInfoProxy
-from .common import Proxy, Closeable, UserAgent
+from .common import Proxy, Closeable, UserAgent, FullJitterRetry
 from .common.credentials import ApiKeyAuthenticationHeadersProvider
 from .compute import ComputeClient, ComputeClientImpl, ComputeServiceProxy
 from .images import ImagesClient, ImagesClientImpl, ImagesServiceProxy
@@ -67,16 +66,25 @@ class PlatformClient(Closeable):
         """Application client. Used to controlling applications """
 
     @staticmethod
-    def _build_session(retry_count: int) -> Session:
+    def _build_session(
+            retry_count: int,
+            retry_max_interval: timedelta,
+            retry_initial_interval: timedelta
+    ) -> Session:
         session = Session()
-        adapter = HTTPAdapter(max_retries=Retry(
-            total=retry_count,
-            connect=retry_count,
-            backoff_factor=2,
-            allowed_methods=frozenset(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']),
-            status_forcelist=[429, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],
-            raise_on_status=False
-        ))
+
+        adapter = HTTPAdapter(
+            max_retries=FullJitterRetry(
+                total=retry_count,
+                connect=retry_count,
+                read=retry_count,
+                allowed_methods=frozenset(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']),
+                status_forcelist=[429, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],
+                raise_on_status=False,
+                retry_max_interval=retry_max_interval,
+                retry_initial_interval=retry_initial_interval,
+            )
+        )
         session.mount("https://", adapter)
         session.mount("http://", adapter)
         return session
@@ -100,7 +108,11 @@ class PlatformClient(Closeable):
             python_version=f"{python_version.major}.{python_version.minor}"
         )
 
-        session = PlatformClient._build_session(services_schema.retry.maxAttempts)
+        session = PlatformClient._build_session(
+            services_schema.retry.maxAttempts,
+            services_schema.retry.maxInterval,
+            services_schema.retry.initialInterval,
+        )
 
         connection_timeout = None
         if services_schema.connectionTimeout is not None:
@@ -169,3 +181,5 @@ class PlatformClient(Closeable):
         """
         self.__clients.close()
         self.__session.close()
+
+

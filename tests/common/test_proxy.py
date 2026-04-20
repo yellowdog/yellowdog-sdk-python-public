@@ -1,4 +1,5 @@
 import datetime
+from datetime import timedelta
 import gzip
 import json
 import traceback
@@ -9,10 +10,7 @@ from unittest import mock
 
 import pytest
 from requests import HTTPError
-from requests import Session
-from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectTimeout
-from urllib3.util.retry import Retry
 from werkzeug.wrappers import Response as WerkzeugResponse
 
 from util.api import MockApi, HttpMethod
@@ -29,20 +27,14 @@ from yellowdog_client.platform_client import PlatformClient
 TEST_ENDPOINT = "/test"
 
 
-def build_proxy(base_url: str, retry_count: int = 0, compress_requests: bool = False,
-                connection_timeout: Optional[float] = 90.0) -> Proxy:
-    session = Session()
-    adapter = HTTPAdapter(max_retries=Retry(
-        total=retry_count,
-        connect=retry_count,
-        read=retry_count,
-        backoff_factor=2,
-        allowed_methods=frozenset(['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']),
-        status_forcelist=[429, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511],
-        raise_on_status=False
-    ))
-    session.mount("https://", adapter)
-    session.mount("http://", adapter)
+def build_proxy(
+        base_url: str,
+        retry_count: int = 0,
+        max_retry_interval_seconds: int = 1,
+        compress_requests: bool = False,
+        connection_timeout: Optional[float] = 90.0
+    ) -> Proxy:
+    session = PlatformClient._build_session(retry_count, timedelta(seconds=max_retry_interval_seconds), timedelta(seconds=1))
     return Proxy(
         authentication_headers_provider=ApiKeyAuthenticationHeadersProvider(make(ApiKey)),
         session=session,

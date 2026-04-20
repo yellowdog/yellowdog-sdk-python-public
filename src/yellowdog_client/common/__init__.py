@@ -3,6 +3,7 @@ from .slice_iterator import SliceIterator
 from .search_client import SearchClient
 from .countdown_event import CountdownEvent
 from .closeable import Closeable
+from .full_jitter_retry import FullJitterRetry
 from .proxy import Proxy
 from .user_agent import UserAgent
 
@@ -13,6 +14,7 @@ __all__ = [
     "CountdownEvent",
     "Proxy",
     "Closeable",
+    "FullJitterRetry",
     "UserAgent",
     "check"
 ]
