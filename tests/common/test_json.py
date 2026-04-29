@@ -1,130 +1,21 @@
-import dataclasses
-from abc import ABC
-from dataclasses import dataclass
+import json
 from datetime import datetime, timezone, timedelta
-from enum import Enum
-from typing import Type, TypeVar, Optional, List, Generic, Any, ClassVar
+from typing import Type, TypeVar, List, Any
 
 import pytest
 from yellowdog_client.common.json import Json
+from yellowdog_client.model.exceptions import BaseCustomException, InvalidRequestException
+from yellowdog_client_test.fixtures import (
+    ExampleWithString, ExampleWithBool, ExampleWithFloat,
+    ExampleWithDateTime, ExampleWithTimeDelta, ExampleWithOptional,
+    ExampleWithList, ExampleWithSet, ExampleWithDefaultValue, ExampleWithFieldNotInInit,
+    ExampleWithNested, ExampleEnum, ExampleWithEnum,
+    ExampleBaseClass, FirstExampleSubclass, SecondExampleSubclass,
+    ExampleWithKeyword, ExampleGeneric, ExampleSlice,
+    ExampleGenericBaseClass, ExampleFirstSubclassOfGeneric, ExampleSecondSubclassOfGeneric, ExampleWithClassVar,
+)
 
 T = TypeVar('T')
-
-
-@dataclass
-class ExampleWithString:
-    field: str
-
-
-@dataclass
-class ExampleWithBool:
-    field: bool
-
-
-@dataclass
-class ExampleWithFloat:
-    field: float
-
-
-@dataclass
-class ExampleWithDateTime:
-    field: datetime
-
-
-@dataclass
-class ExampleWithTimeDelta:
-    field: timedelta
-
-
-@dataclass
-class ExampleWithOptional:
-    field: Optional[str]
-
-
-@dataclass
-class ExampleWithList:
-    field: List[str]
-
-
-@dataclass
-class ExampleWithDefaultValue:
-    field: Optional[str]
-    fieldWithDefault: str = "some default"
-
-
-@dataclass
-class ExampleWithFieldNotInInit:
-    field: str = dataclasses.field(init=False)
-
-    @staticmethod
-    def create(field: str):
-        value = ExampleWithFieldNotInInit()
-        value.field = field
-        return value
-
-
-@dataclass
-class ExampleWithNested:
-    field: ExampleWithString
-
-
-class ExampleEnum(Enum):
-    EXAMPLE = "EXAMPLE"
-
-
-@dataclass
-class ExampleWithEnum:
-    field: ExampleEnum
-
-
-class ExampleBaseClass(ABC):
-    classField: ClassVar[str] = "foo"
-    type: str = dataclasses.field(default=None, init=False)
-
-
-@dataclass
-class FirstExampleSubclass(ExampleBaseClass):
-    type: str = dataclasses.field(default="first", init=False)
-    fieldFromFirst: str
-
-
-@dataclass
-class SecondExampleSubclass(ExampleBaseClass):
-    type: str = dataclasses.field(default="second", init=False)
-    fieldFromSecond: str
-
-
-@dataclass
-class ExampleWithKeyword:
-    global_: str
-
-
-ET = TypeVar('ET', bound=ExampleBaseClass)
-
-
-@dataclass
-class ExampleGeneric(Generic[ET]):
-    field: ET
-
-
-EU = TypeVar('EU')
-
-
-class ExampleGenericBaseClass(ABC, Generic[EU]):
-    type: str
-
-
-@dataclass
-class ExampleFirstSubclassOfGeneric(ExampleGenericBaseClass):
-    type: str = dataclasses.field(default="first", init=False)
-    fieldFromFirst: str
-
-
-@dataclass
-class ExampleSecondSubclassOfGeneric(ExampleGenericBaseClass):
-    type: str = dataclasses.field(default="second", init=False)
-    fieldFromSecond: str
-
 
 symmetric_operations = [
     pytest.param('{"field": "some text"}', ExampleWithString, ExampleWithString("some text"), id="string field"),
@@ -143,6 +34,7 @@ symmetric_operations = [
     pytest.param('{"field": ["first", "second"]}', ExampleWithList, ExampleWithList(
         ["first", "second"]
     ), id="list field"),
+    pytest.param('{"field": ["a"]}', ExampleWithSet, ExampleWithSet({"a"}), id="set field"),
     pytest.param('{"field": []}', ExampleWithList, ExampleWithList([]), id="empty list field"),
     pytest.param('["first", "second"]', List[str], ["first", "second"], id="list of strings"),
     pytest.param('[{"field": "first"}, {"field": "second"}]', List[ExampleWithString], [
@@ -184,11 +76,30 @@ deserialization_operations = [
     ]""", List[ExampleGenericBaseClass[Any]], [
         ExampleFirstSubclassOfGeneric("first text"),
         ExampleSecondSubclassOfGeneric("second text")
-    ], id="list of subclasses of generic case class")
+    ], id="list of subclasses of generic case class"),
+    pytest.param(
+        '{"items": [{"field": "first"}, {"field": "second"}], "nextSliceId": "abc"}',
+        ExampleSlice[ExampleWithString],
+        ExampleSlice(items=[ExampleWithString("first"), ExampleWithString("second")], nextSliceId="abc"),
+        id="generic slice with list of objects",
+    ),
+    pytest.param(
+        '{"items": [{"field": "first"}]}',
+        ExampleSlice[ExampleWithString],
+        ExampleSlice(items=[ExampleWithString("first")], nextSliceId=None),
+        id="generic slice without optional field",
+    ),
+    pytest.param(
+        '{"items": null}',
+        ExampleSlice[ExampleWithString],
+        ExampleSlice(items=None, nextSliceId=None),
+        id="generic slice with null list",
+    )
 ]
 
 serialization_operations = [
     pytest.param('{}', ExampleWithOptional, ExampleWithOptional(None), id="null field ignored"),
+    pytest.param('{}', ExampleWithClassVar, ExampleWithClassVar(), id="class var field ignored")
 ]
 
 
@@ -201,4 +112,18 @@ def test_deserialization(serialized: str, deserialized_type: Type[T], deserializ
 @pytest.mark.parametrize("serialized,deserialized_type,deserialized", symmetric_operations + serialization_operations)
 def test_serialization(serialized: str, deserialized_type: Type[T], deserialized: object):
     actual = Json.dumps(deserialized)
-    assert actual == serialized
+    assert json.loads(actual) == json.loads(serialized)
+
+
+def test_invalid_request_exception_serde():
+    exc = InvalidRequestException("bad request", ("detail one", "detail two"))
+    serialized = Json.dumps(exc)
+    assert json.loads(serialized) == {
+        "errorType": "InvalidRequestException",
+        "message": "bad request",
+        "detail": ["detail one", "detail two"],
+    }
+    deserialized = Json.loads(serialized, BaseCustomException)
+    assert isinstance(deserialized, InvalidRequestException)
+    assert deserialized.message == "bad request"
+    assert deserialized.detail == ("detail one", "detail two")

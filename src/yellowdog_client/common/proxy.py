@@ -190,7 +190,7 @@ class Proxy:
     @classmethod
     def _handle_response(cls, response: Response) -> Response:
         if not response.ok:
-            custom_exception = cls._try_convert_to_file_transfer_exception(response)
+            custom_exception = cls._try_convert_to_custom_exception(response)
             if custom_exception:
                 raise custom_exception
             else:
@@ -198,7 +198,7 @@ class Proxy:
         return response
 
     @staticmethod
-    def _try_convert_to_file_transfer_exception(response: Response) -> Optional[Exception]:
+    def _try_convert_to_custom_exception(response: Response) -> Optional[Exception]:
         if not response.text:
             return None
 

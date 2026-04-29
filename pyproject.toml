@@ -26,7 +26,7 @@ classifiers = [
     'License :: OSI Approved :: Apache Software License'
 ]
 dependencies = [
-    "jsons>=1.4.0,<2",
+    "cattrs>=23.2.0",
     # 2.25.0 is the earliest version of requests that supports urllib3 1.26
     "requests>=2.25.0,<3",
     # This issue makes compatibility with urllib3 < 1.26 difficult: https://github.com/urllib3/urllib3/issues/2057
@@ -42,7 +42,6 @@ dependencies = [
 tests = [
     "pytest==8.3.3",
     "pytest-httpserver==1.0.8",
-    "typing_compat==0.1.0",
     "busypie==0.5.1"
 ]
 mypy = [
@@ -80,6 +79,6 @@ packages = ["yellowdog_client"]
 
 [[tool.mypy.overrides]]
 # These old abandoned dependencies are not typed. They need to be replaced but until then, we need tell mypy to ignore them.
-module = ["jsons", "jsons.*", "pydispatch", "pydispatch.*", "typish", "typish.*"]
+module = ["pydispatch", "pydispatch.*", "typish", "typish.*"]
 follow_imports = "skip"
 ignore_missing_imports = true

@@ -6,8 +6,6 @@ import typing
 from datetime import datetime, timedelta, timezone
 from typing import Type, TypeVar
 
-import typing_compat
-
 T = TypeVar('T')
 
 
@@ -40,18 +38,18 @@ def make(cls: Type[T]) -> T:
 
 
 def _make_value(cls: Type[T]):
-    origin = typing_compat.get_origin(cls)
+    origin = typing.get_origin(cls)
 
     if origin is typing.Union:
-        type_args = typing_compat.get_args(cls)
+        type_args = typing.get_args(cls)
         # Return first type in the Union that isn't None
         type_arg = next(type_arg for type_arg in type_args if type_arg is not type(None))
         return _make_value(type_arg)
     elif origin is list:
-        type_arg = typing_compat.get_args(cls)[0]
+        type_arg = typing.get_args(cls)[0]
         return [_make_value(type_arg), _make_value(type_arg)]
     elif origin is dict:
-        key_cls, value_cls = typing_compat.get_args(cls)
+        key_cls, value_cls = typing.get_args(cls)
         return {
             _make_value(key_cls): _make_value(value_cls),
             _make_value(key_cls): _make_value(value_cls)
