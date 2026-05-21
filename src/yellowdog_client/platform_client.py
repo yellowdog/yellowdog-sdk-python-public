@@ -1,8 +1,11 @@
+import socket
 import sys
 from datetime import timedelta
+from typing import Any, List, Tuple, Union
 
 from requests import Session
 from requests.adapters import HTTPAdapter
+from urllib3.connection import HTTPConnection
 from ._version import __version__
 from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy, AccountClientImpl, AccountServiceProxy, \
     ApplicationClient, ApplicationServiceProxy, ApplicationClientImpl
@@ -65,6 +68,8 @@ class PlatformClient(Closeable):
         self.application_client: ApplicationClient = self.__clients.add(application_client)
         """Application client. Used to controlling applications """
 
+
+
     @staticmethod
     def _build_session(
             retry_count: int,
@@ -73,7 +78,8 @@ class PlatformClient(Closeable):
     ) -> Session:
         session = Session()
 
-        adapter = HTTPAdapter(
+        adapter = _SocketCustomizingHTTPAdapter(
+            socket_options=_SOCKET_OPTIONS,
             max_retries=FullJitterRetry(
                 total=retry_count,
                 connect=retry_count,
@@ -183,3 +189,51 @@ class PlatformClient(Closeable):
         self.__session.close()
 
 
+def _build_socket_options(
+        keepalive_idle: int = 60,
+        keepalive_interval: int = 10,
+        keepalive_count: int = 6,
+) -> List[Tuple[int, int, Union[int, bytes]]]:
+    """
+    Build socket options with TCP keepalive enabled.
+
+    Default values give a detection window of keepalive_idle + keepalive_count *
+    keepalive_interval = 60 + 6*10 = 120s, well within the ~350s idle timeout of
+    AWS NAT gateways and NLBs that trigger the stale-connection hang (YEL-14759).
+
+    The Linux default for keepalive_idle is 7200s (2 hours), which is far too long
+    for a connection pool — a connection idle for a few minutes may already be dead
+    if a network device (NAT gateway, firewall) has silently dropped it.
+    """
+    options = list(HTTPConnection.default_socket_options)
+
+    # Required: kernel ignores the keepalive options below without this.
+    options.append((socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1))
+
+    # The TCP_KEEP* options are not present on all OS versions so we only set them if available.
+    if hasattr(socket, 'TCP_KEEPIDLE'):
+        options.append((socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, keepalive_idle))
+    if hasattr(socket, 'TCP_KEEPINTVL'):
+        options.append((socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, keepalive_interval))
+    if hasattr(socket, 'TCP_KEEPCNT'):
+        options.append((socket.IPPROTO_TCP, socket.TCP_KEEPCNT, keepalive_count))
+
+    return options
+
+
+_SOCKET_OPTIONS: List[Tuple[int, int, Union[int, bytes]]] = _build_socket_options()
+
+class _SocketCustomizingHTTPAdapter(HTTPAdapter):
+    """HTTPAdapter that allows socket options to be customized."""
+
+    def __init__(self, socket_options: List[Tuple[int, int, Union[int, bytes]]], *args: Any, **kwargs: Any) -> None:
+        self._socket_options = socket_options
+        super().__init__(*args, **kwargs)
+
+    def init_poolmanager(self, *args: Any, **kwargs: Any) -> None:
+        kwargs['socket_options'] = self._socket_options
+        super().init_poolmanager(*args, **kwargs)
+
+    def proxy_manager_for(self, proxy: str, **proxy_kwargs: Any) -> Any:
+        proxy_kwargs['socket_options'] = self._socket_options
+        return super().proxy_manager_for(proxy, **proxy_kwargs)
