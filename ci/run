@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+step vault_configure
+step tailscale_configure
+step docker_configure
+step git_configure
+
+step ci/steps/build
+step ci/steps/deploy
+
+step docker_build yellowdog-sdk-python-docs \
+  -f yellowdog-sdk-python-docs/Dockerfile
+step docker_deploy yellowdog-sdk-python-docs
+
+step k8s_update_tag documentation yellowdog-sdk-python-docs

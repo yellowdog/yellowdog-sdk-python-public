@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+BRANCH=$(git_branch)
+
+if [[ "$BRANCH" == "main" ]]; then
+  TWINE_REPOSITORY_URL="https://nexus.yellowdog.tech/repository/pypi-hosted/"
+else
+  TWINE_REPOSITORY_URL="https://nexus.yellowdog.tech/repository/test-pypi-hosted/"
+fi
+
+TWINE_REPOSITORY_URL="$TWINE_REPOSITORY_URL" \
+  TWINE_USERNAME="$(vault_secret_get NEXUS_USER)" \
+  TWINE_PASSWORD="$(vault_secret_get NEXUS_PASSWORD)" \
+  tox -e deploy

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+IMAGE=$(grep -oP '(?<=image: ")[^"]+' .circleci/config.yml | head -1)
+SRC_DIR="/mnt/project-src"
+PROJECT_DIR="/home/circleci/project"
+
+set -a
+# shellcheck disable=SC1090
+source <(vault kv get -field=.env secret-dev/circleci/bootstrap)
+set +a
+
+exec docker run --rm -it \
+  -e VAULT_ROLE_ID \
+  -e VAULT_SECRET_ID \
+  -v "$PWD:$SRC_DIR:ro" \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  --group-add "$(stat -c '%g' /var/run/docker.sock)" \
+  "$IMAGE" \
+  bash -c "mkdir -p '$PROJECT_DIR' && cp -R '$SRC_DIR/.' '$PROJECT_DIR' && cd '$PROJECT_DIR' && exec ci/run"
