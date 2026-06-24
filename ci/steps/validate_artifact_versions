@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+version=$(grep -oP "__version__ = '\K[^']+" src/yellowdog_client/_version.py)
+
+path="packages/yellowdog-sdk/${version}/yellowdog_sdk-${version}-py3-none-any.whl"
+
+nexus_version_available "pypi-hosted" "$path"
