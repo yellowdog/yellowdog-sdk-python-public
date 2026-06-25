@@ -4,7 +4,9 @@ from typing import List, Optional
 
 from .cloud_provider import CloudProvider
 from .double_range import DoubleRange
+from .failure_policy import FailurePolicy
 from .instance_pricing_preference import InstancePricingPreference
+from .retry_policy import RetryPolicy
 from .task_error_matcher import TaskErrorMatcher
 
 
@@ -27,8 +29,16 @@ class RunSpecification:
     """The maximum number of Workers that can be claimed for the associated TaskGroup."""
     tasksPerWorker: Optional[int] = None
     """Determines the number of worker claims based on splitting the number of unfinished tasks across workers."""
-    maximumTaskRetries: int = 0
-    """The maximum number of times a task can be retried after it has failed."""
+    maximumTaskRetries: Optional[int] = None
+    """
+    The maximum number of times a task can be retried after it has failed.
+
+        To restrict which tasks can be retried based on the last error that was encountered, see :attr:`retryable_errors`
+
+    .. deprecated:: (unknown)
+        Use :attr:`retry_policy` instead
+    """
+
     taskTimeout: Optional[timedelta] = None
     """
     The maximum time that a worker should attempt to execute a task for before failing it.
@@ -48,6 +58,20 @@ class RunSpecification:
     """
 
     retryableErrors: Optional[List[TaskErrorMatcher]] = None
-    """Defines the errors that should result in a task retrying if encountered."""
+    """
+    Defines the errors that should result in a task retrying if encountered.
+
+    .. deprecated:: (unknown)
+        Use :attr:`retry_policy` instead
+    """
+
     disablePreallocation: Optional[bool] = None
     """If true, tasks are only allocated to nodes as workers become idle and are not queued on the node."""
+    retryPolicy: Optional[RetryPolicy] = None
+    """
+    A :class:`RetryPolicy` for :class:`Task`\\s. This must not be used in combination with the deprecated
+    :attr:`retryable_errors`, this always overrides :attr:`maximum_task_retries`.
+    """
+
+    failurePolicy: Optional[FailurePolicy] = None
+    """An optional :class:`FailurePolicy` for :class:`Task`\\s."""

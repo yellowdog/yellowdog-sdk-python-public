@@ -34,6 +34,8 @@ class TaskStatus(Enum):
     """The task has been cancelled by the user."""
     DISCARDED = "DISCARDED", False, False, True
     """The task will not be allocated as its task group has finished."""
+    RESUBMITTED = "RESUBMITTED", False, False, True
+    """The task has been (or will imminently be) resubmitted to a different :class:`TaskGroup`"""
 
     def __new__(cls, value: str, waiting: bool, in_progress: bool, finished: bool) -> TaskStatus:
         obj = object.__new__(cls)

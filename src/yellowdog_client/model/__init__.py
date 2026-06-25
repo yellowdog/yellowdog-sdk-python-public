@@ -118,6 +118,7 @@ from .external_attribute_provider_results import ExternalAttributeProviderResult
 from .external_attribute_provider_results_source import ExternalAttributeProviderResultsSource
 from .external_attribute_source import ExternalAttributeSource
 from .external_user import ExternalUser
+from .failure_policy import FailurePolicy
 from .feature import Feature
 from .feature_detail import FeatureDetail
 from .filter import Filter
@@ -234,12 +235,15 @@ from .region import Region
 from .region_search import RegionSearch
 from .requirement_allowance import RequirementAllowance
 from .requirements_allowance import RequirementsAllowance
+from .resubmission_destination import ResubmissionDestination
+from .retry_policy import RetryPolicy
 from .retry_properties import RetryProperties
 from .role import Role
 from .role_scope import RoleScope
 from .role_search import RoleSearch
 from .role_summary import RoleSummary
 from .run_specification import RunSpecification
+from .selection import Selection
 from .services_schema import ServicesSchema
 from .set_password_request import SetPasswordRequest
 from .simulator_compute_source import SimulatorComputeSource
@@ -265,6 +269,7 @@ from .task_data_input import TaskDataInput
 from .task_data_output import TaskDataOutput
 from .task_error import TaskError
 from .task_error_matcher import TaskErrorMatcher
+from .task_error_selector import TaskErrorSelector
 from .task_error_type import TaskErrorType
 from .task_group import TaskGroup
 from .task_group_status import TaskGroupStatus
@@ -424,6 +429,7 @@ __all__ = [
     "ExternalAttributeProviderResultsSource",
     "ExternalAttributeSource",
     "ExternalUser",
+    "FailurePolicy",
     "Feature",
     "FeatureDetail",
     "Filter",
@@ -540,12 +546,15 @@ __all__ = [
     "RegionSearch",
     "RequirementAllowance",
     "RequirementsAllowance",
+    "ResubmissionDestination",
+    "RetryPolicy",
     "RetryProperties",
     "Role",
     "RoleScope",
     "RoleSearch",
     "RoleSummary",
     "RunSpecification",
+    "Selection",
     "ServicesSchema",
     "SetPasswordRequest",
     "SimulatorComputeSource",
@@ -571,6 +580,7 @@ __all__ = [
     "TaskDataOutput",
     "TaskError",
     "TaskErrorMatcher",
+    "TaskErrorSelector",
     "TaskErrorType",
     "TaskGroup",
     "TaskGroupStatus",

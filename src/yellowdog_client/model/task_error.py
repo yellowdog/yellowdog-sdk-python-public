@@ -19,3 +19,9 @@ class TaskError:
     errorType: str = "UNKNOWN_ERROR"
     statusAtFailure: Optional[TaskStatus] = None
     processExitCode: Optional[int] = None
+    causedFailure: Optional[bool] = None
+    """
+    Whether this :class:`TaskError` was the cause of the :class:`Task` moving to a :attr:`TaskStatus.FAILED` state. Can
+    be null if the agent is an old version.
+    """
+

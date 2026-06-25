@@ -23,6 +23,17 @@ class Task(Identified, Named, Tagged):
     nodeId: Optional[str] = field(default=None, init=False)
     workerId: Optional[str] = field(default=None, init=False)
     errors: Optional[List[TaskError]] = field(default=None, init=False)
+    resubmittedToTaskId: Optional[str] = field(default=None, init=False)
+    """
+    The id of the new :class:`Task` that was created when this :class:`Task` errored and was
+    :attr:`TaskStatus.RESUBMITTED` to another :class:`TaskGroup`. There may be a negligible delay between this
+    :class:`Task` being marked as :attr:`TaskStatus.RESUBMITTED`, and this field being populated.
+
+    @see #resubmittedFromTaskId
+    """
+
+    resubmittedFromTaskId: Optional[str] = field(default=None, init=False)
+    """@see #resubmittedToTaskId"""
     name: Optional[str] = None
     """The user allocated name used to uniquely identify the task within its task group."""
     tag: Optional[str] = None
