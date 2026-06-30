@@ -237,7 +237,7 @@ pip install build
 python -m build
 ```
 
-The package version is defined in `src/yellowdog_client/_version.py`. Version bumps are managed by the CI/CD pipeline.
+The package version is defined in `src/yellowdog_client/_version.py`. Bump it manually as part of your change — the CI/CD pipeline does **not** manage version bumps. Follow semantic versioning (minor for backwards-compatible additions such as new model fields, patch for fixes).
 
 ---
 

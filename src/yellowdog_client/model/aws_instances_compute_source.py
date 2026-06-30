@@ -61,6 +61,16 @@ class AwsInstancesComputeSource(AwsComputeSource):
     """Indicates if provisioned instances should have detailed CloudWatch monitoring enabled."""
     enableInstanceMetadataTags: Optional[bool] = None
     """Indicates if provisioned instances should expose their tags via instance metadata."""
+    instanceMetadataHttpPutResponseHopLimit: Optional[int] = None
+    """
+    The number of network hops that an instance metadata service (IMDS) response is allowed to travel from
+    provisioned instances. If null, the AWS default of 1 is used, which only allows processes running on the
+    instance's host network to reach IMDS. Raise this when task workloads run in containers and need IMDS access
+    (for example, to obtain instance-profile credentials or instance metadata): each container network boundary the
+    response must cross consumes one hop, so use 2 for a single bridged container and 3 or more for nested,
+    container-in-container workloads.
+    """
+
     useCapacityBlock: Optional[bool] = None
     """Indicates if instances should be provisioned within a reserved capacity block."""
     assignPublicIp: bool = False

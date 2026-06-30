@@ -27,6 +27,7 @@ class AwsComputeSource(ComputeSource, ABC):
     keyName: Optional[str]
     enableDetailedMonitoring: Optional[bool]
     enableInstanceMetadataTags: Optional[bool]
+    instanceMetadataHttpPutResponseHopLimit: Optional[int]
     createClusterPlacementGroup: Optional[bool]
     existingPlacementGroup: Optional[AwsPlacementGroup]
     createElasticFabricAdapter: Optional[bool]
