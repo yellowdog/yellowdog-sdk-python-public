@@ -57,6 +57,9 @@ docs = [
 deploy = [
     "twine==6.2.0"
 ]
+sbom = [
+    "cyclonedx-bom==7.3.0"
+]
 dev = [
     "tox"
 ]

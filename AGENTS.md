@@ -153,6 +153,7 @@ pytest -s tests/
 | `py39-urllib3-1` | Compatibility test with older urllib3/requests |
 | `mypy` | Strict type checking |
 | `docs` | Build Sphinx documentation |
+| `sbom` | Generate CycloneDX SBOM (see `scripts/generate_sbom`) |
 
 ### Test tooling
 

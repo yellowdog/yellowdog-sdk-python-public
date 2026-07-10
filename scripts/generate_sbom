@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# Generates a CycloneDX Software Bill of Materials (SBOM) for this project,
+# covering the yellowdog-sdk package itself and its full resolved runtime
+# dependency tree.
+#
+# Usage: ./scripts/generate_sbom [output-file]
+#   (default output-file: build/sbom/sbom.json)
+#
+# Run via `tox -e sbom-target,sbom` (or the full tox/tox --parallel, which
+# already runs both) - not `tox -e sbom` alone, since it relies on the
+# sbom-target env's venv already existing.
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+OUTPUT_FILE="${1:-build/sbom/sbom.json}"
+mkdir -p "$(dirname "$OUTPUT_FILE")"
+
+# The sbom-target tox env's venv holds only this project + its runtime deps -
+# kept separate from wherever this script itself is running (e.g. the tox sbom
+# env, which also has cyclonedx-py's own dependencies installed) so those
+# aren't mistaken for project dependencies.
+TARGET_VENV=".tox/sbom-target"
+if [[ ! -d "$TARGET_VENV" ]]; then
+    echo "No $TARGET_VENV - run 'tox -e sbom-target,sbom' (or the full tox suite), not 'tox -e sbom' alone." >&2
+    exit 1
+fi
+
+# --pyproject tells cyclonedx-py which installed package is the project itself,
+# so it's promoted to metadata.component instead of appearing in the flat
+# components list as if it were just another dependency of itself
+cyclonedx-py environment "$TARGET_VENV" \
+    --pyproject pyproject.toml \
+    --mc-type library \
+    --of JSON \
+    -o "$OUTPUT_FILE"
+
+
+echo "SBOM written to $OUTPUT_FILE"

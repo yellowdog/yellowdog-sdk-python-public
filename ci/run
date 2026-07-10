@@ -3,12 +3,22 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# .circleci/config.yml sets this to true so CI always proceeds; ci/local-run
+# defaults it to false and only sets it when given --release, so an accidental
+# local run on main stops here instead of doing (or failing partway through) a
+# real release.
+if [[ "$(git_branch)" == "main" && "$RELEASE" != "true" ]]; then
+  echo "On main but RELEASE is not \"true\" - refusing to run. Pass --release to ci/local-run for an intentional local release." >&2
+  exit 1
+fi
+
 source env_configure
 step docker_configure
 step git_configure
 
 step ci/steps/validate_artifact_versions
 step ci/steps/build
+step ci/steps/submit_vulnerabilities
 step ci/steps/deploy
 
 step docker_build yellowdog-sdk-python-docs \

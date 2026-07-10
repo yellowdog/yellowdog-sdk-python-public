@@ -3,6 +3,16 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+SUBMIT_VULNERABILITIES=false
+RELEASE=false
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --submit-vulnerabilities) SUBMIT_VULNERABILITIES=true; shift ;;
+    --release) RELEASE=true; shift ;;
+    *) echo "Unknown argument: $1" >&2; exit 1 ;;
+  esac
+done
+
 IMAGE=$(grep -oP '(?<=image: ")[^"]+' .circleci/config.yml | head -1)
 SRC_DIR="/mnt/project-src"
 PROJECT_DIR="/home/circleci/project"
@@ -15,6 +25,8 @@ set +a
 exec docker run --rm -it \
   -e VAULT_ROLE_ID \
   -e VAULT_SECRET_ID \
+  -e "SUBMIT_VULNERABILITIES=$SUBMIT_VULNERABILITIES" \
+  -e "RELEASE=$RELEASE" \
   -v "$PWD:$SRC_DIR:ro" \
   -v /var/run/docker.sock:/var/run/docker.sock \
   --group-add "$(stat -c '%g' /var/run/docker.sock)" \

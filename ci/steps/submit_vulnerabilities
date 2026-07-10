@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Submit this project's CycloneDX SBOM to DependencyTrack.
+
+Off by default: SUBMIT_VULNERABILITIES must be "true" to submit anything. ci/run
+always sets it to true; ci/local-run defaults it to false and only sets it when
+given --submit-vulnerabilities, so a plain local run does nothing. Submits under
+projectVersion "main" on the main branch, "local" otherwise, so a non-main
+submission (whether from CI or a local run) never overwrites main's data. The
+SBOM itself is built by the `sbom` tox env as part of ci/steps/build.
+"""
+
+import command
+import os
+import web
+from pathlib import Path
+
+DEPENDENCY_TRACK_URL = "https://dtrack.ydn.cloud/api/v1/bom"
+SBOM = Path("build/sbom/sbom.json")
+PROJECT_NAME = "yellowdog-sdk-python"
+
+branch = command.output("git_branch")
+submit_vulnerabilities = os.environ.get("SUBMIT_VULNERABILITIES") == "true"
+
+if not submit_vulnerabilities:
+    print("SUBMIT_VULNERABILITIES is not set; skipping vulnerability submission")
+else:
+    # On main always submit as "main"; a local test (necessarily off main) as "local".
+    project_version = "main" if branch == "main" else "local"
+
+    if not SBOM.exists():
+        raise FileNotFoundError(f"No SBOM found at {SBOM}")
+
+    print(f"Submitting SBOM for project {PROJECT_NAME} {project_version} ({SBOM})")
+
+    # dtrack.ydn.cloud is internal; urllib reads the Tailscale proxy from the env.
+    os.environ["HTTPS_PROXY"] = "http://localhost:1054"
+    api_key = os.environ["DEPENDENCY_TRACK_API_TOKEN"]
+
+    web.post_multipart(
+        DEPENDENCY_TRACK_URL,
+        fields={"autoCreate": "true", "projectName": PROJECT_NAME,
+                "projectVersion": project_version},
+        files={"bom": (SBOM.name, SBOM.read_bytes())},
+        headers={"X-Api-Key": api_key},
+    )
