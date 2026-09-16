@@ -1,13 +1,11 @@
-from typing import List
-
 import pytest
 
 from util.api import MockApi, HttpMethod
 from util.data import make, make_string
 from yellowdog_client import PlatformClient
 from yellowdog_client.account import KeyringClient
-from yellowdog_client.model import ServicesSchema, ApiKey, CreateKeyringResponse, KeyringSummary, Keyring, \
-    AwsCredential, KeyringCredential
+from yellowdog_client.model import ServicesSchema, ApiKey, CreateKeyringResponse, KeyringSearch, KeyringSummary, \
+    Keyring, AwsCredential, KeyringCredential, Slice, UpdateKeyringRequest
 
 
 @pytest.fixture
@@ -24,6 +22,27 @@ def test_can_create_keyring(mock_api: MockApi, keyring_client: KeyringClient):
     expected = response.keyring
 
     actual = keyring_client.create_keyring(response.keyring.name, response.keyring.description)
+
+    assert actual == expected
+    mock_api.verify_all_requests_called()
+
+
+def test_can_get_keyring(mock_api: MockApi, keyring_client: KeyringClient):
+    expected = make(Keyring)
+    mock_api.mock(f"/keyrings/{expected.id}", HttpMethod.GET, response=expected)
+
+    actual = keyring_client.get_keyring(expected.id)
+
+    assert actual == expected
+    mock_api.verify_all_requests_called()
+
+
+def test_can_update_keyring(mock_api: MockApi, keyring_client: KeyringClient):
+    expected = make(Keyring)
+    request = UpdateKeyringRequest(description=expected.description)
+    mock_api.mock(f"/keyrings/{expected.id}", HttpMethod.PUT, request=request, response=expected)
+
+    actual = keyring_client.update_keyring(expected.id, request)
 
     assert actual == expected
     mock_api.verify_all_requests_called()
@@ -48,9 +67,41 @@ def test_can_delete_keyring_by_name(mock_api: MockApi, keyring_client: KeyringCl
 
 
 def test_can_find_all_keyrings(mock_api: MockApi, keyring_client: KeyringClient):
-    expected = mock_api.mock("/keyrings/", HttpMethod.GET, response_type=List[KeyringSummary])
+    first_slice = Slice(items=[make(KeyringSummary)], nextSliceId=make_string())
+    second_slice = Slice(items=[make(KeyringSummary)])
+    expected = first_slice.items + second_slice.items
+
+    mock_api.mock("/keyrings/", HttpMethod.GET, params={
+        "sliced": "true"
+    }, response=first_slice)
+
+    mock_api.mock("/keyrings/", HttpMethod.GET, params={
+        "sliceId": first_slice.nextSliceId,
+        "sliced": "true"
+    }, response=second_slice)
 
     actual = keyring_client.find_all_keyrings()
+
+    assert actual == expected
+    mock_api.verify_all_requests_called()
+
+
+def test_can_get_keyrings(mock_api: MockApi, keyring_client: KeyringClient):
+    first_slice = Slice(items=[make(KeyringSummary)], nextSliceId=make_string())
+    second_slice = Slice(items=[make(KeyringSummary)])
+    expected = first_slice.items + second_slice.items
+    search = KeyringSearch()
+
+    mock_api.mock("/keyrings/", HttpMethod.GET, params={
+        "sliced": "true"
+    }, response=first_slice)
+
+    mock_api.mock("/keyrings/", HttpMethod.GET, params={
+        "sliceId": first_slice.nextSliceId,
+        "sliced": "true"
+    }, response=second_slice)
+
+    actual = keyring_client.get_keyrings(search).list_all()
 
     assert actual == expected
     mock_api.verify_all_requests_called()

@@ -24,12 +24,16 @@ class TaskGroupStatus(Enum):
     HELD = "HELD", False, False, False
     """
     The task group parent work requirement has been held by the user such that no further tasks are executed.
-    Resources (e.g. Workers) will be released.
+    Resources (e.g. Workers) will be released
     The task group will remain in HELD state until the user reactivates the parent work requirement.
     """
 
     FINISHING = "FINISHING", False, False, True
-    """The task group is waiting for all tasks to finish, no further tasks can be added."""
+    """
+    The task group is waiting for all tasks to finish, no further tasks can be added. minWorkers is no longer
+    enforced to allow all workers to be released as tasks finish.
+    """
+
     COMPLETED = "COMPLETED", False, True, False
     """All tasks within the task group have been completed."""
     FAILING = "FAILING", True, False, False

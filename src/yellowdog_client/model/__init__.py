@@ -67,6 +67,13 @@ from .best_compute_source_report_string_constraint import BestComputeSourceRepor
 from .change_password_request import ChangePasswordRequest
 from .check_credentials_result import CheckCredentialsResult
 from .cloud_provider import CloudProvider
+from .cluster import Cluster
+from .cluster_operation import ClusterOperation
+from .cluster_operation_type import ClusterOperationType
+from .cluster_provider import ClusterProvider
+from .cluster_search import ClusterSearch
+from .cluster_spec import ClusterSpec
+from .cluster_status import ClusterStatus
 from .compute_namespace_filter import ComputeNamespaceFilter
 from .compute_provision_strategy import ComputeProvisionStrategy
 from .compute_requirement import ComputeRequirement
@@ -107,6 +114,7 @@ from .credential_availability import CredentialAvailability
 from .currency import Currency
 from .dashboard_request import DashboardRequest
 from .double_range import DoubleRange
+from .eks_cluster_provider import EksClusterProvider
 from .email_change_request import EmailChangeRequest
 from .error_response import ErrorResponse
 from .existing_password_request import ExistingPasswordRequest
@@ -166,6 +174,7 @@ from .keyring import Keyring
 from .keyring_access_secrets import KeyringAccessSecrets
 from .keyring_accessor import KeyringAccessor
 from .keyring_credential import KeyringCredential
+from .keyring_search import KeyringSearch
 from .keyring_summary import KeyringSummary
 from .log_level import LogLevel
 from .long_range import LongRange
@@ -378,6 +387,13 @@ __all__ = [
     "ChangePasswordRequest",
     "CheckCredentialsResult",
     "CloudProvider",
+    "Cluster",
+    "ClusterOperation",
+    "ClusterOperationType",
+    "ClusterProvider",
+    "ClusterSearch",
+    "ClusterSpec",
+    "ClusterStatus",
     "ComputeNamespaceFilter",
     "ComputeProvisionStrategy",
     "ComputeRequirement",
@@ -418,6 +434,7 @@ __all__ = [
     "Currency",
     "DashboardRequest",
     "DoubleRange",
+    "EksClusterProvider",
     "EmailChangeRequest",
     "ErrorResponse",
     "ExistingPasswordRequest",
@@ -477,6 +494,7 @@ __all__ = [
     "KeyringAccessSecrets",
     "KeyringAccessor",
     "KeyringCredential",
+    "KeyringSearch",
     "KeyringSummary",
     "LogLevel",
     "LongRange",

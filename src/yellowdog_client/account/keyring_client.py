@@ -3,8 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List
 
-from yellowdog_client.common import Closeable
-from yellowdog_client.model import ApiKey, CreateKeyringResponse, Credential, Keyring, KeyringSummary
+from yellowdog_client.common import Closeable, SearchClient
+from yellowdog_client.model import ApiKey, CreateKeyringResponse, Credential, Keyring, KeyringSearch, KeyringSummary, UpdateKeyringRequest
 
 
 class KeyringClient(ABC, Closeable):
@@ -22,6 +22,14 @@ class KeyringClient(ABC, Closeable):
         pass
 
     @abstractmethod
+    def get_keyring(self, keyring_id: str) -> Keyring:
+        pass
+
+    @abstractmethod
+    def update_keyring(self, keyring_id: str, request: UpdateKeyringRequest) -> Keyring:
+        pass
+
+    @abstractmethod
     def delete_keyring(self, keyring: Keyring) -> None:
         pass
 
@@ -31,6 +39,15 @@ class KeyringClient(ABC, Closeable):
 
     @abstractmethod
     def find_all_keyrings(self) -> List[KeyringSummary]:
+        """
+        .. deprecated:: (unknown)
+            use :meth:`get_keyrings(keyring_search)` instead to search keyrings.
+        """
+
+        pass
+
+    @abstractmethod
+    def get_keyrings(self, search: KeyringSearch) -> SearchClient[KeyringSummary]:
         pass
 
     @abstractmethod

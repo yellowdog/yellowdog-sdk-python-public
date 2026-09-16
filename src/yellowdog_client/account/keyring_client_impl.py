@@ -3,10 +3,15 @@ from typing import List
 from .keyring_service_proxy import KeyringServiceProxy
 from .keyring_client import KeyringClient
 from yellowdog_client.model import Credential, CreateKeyringResponse
+from yellowdog_client.model import KeyringSearch
 from yellowdog_client.model import KeyringSummary
 from yellowdog_client.model import Keyring
 from yellowdog_client.model import ApiKey
-from ..common import check
+from yellowdog_client.model import Slice
+from yellowdog_client.model import SliceReference
+from yellowdog_client.model import UpdateKeyringRequest
+from ..common import SearchClient, check
+from ..common.pagination import paginate
 
 
 class KeyringClientImpl(KeyringClient):
@@ -21,6 +26,12 @@ class KeyringClientImpl(KeyringClient):
     def add_keyring(self, name: str, description: str) -> CreateKeyringResponse:
         return self.__service_proxy.create_keyring(name, description)
 
+    def get_keyring(self, keyring_id: str) -> Keyring:
+        return self.__service_proxy.get_keyring(keyring_id)
+
+    def update_keyring(self, keyring_id: str, request: UpdateKeyringRequest) -> Keyring:
+        return self.__service_proxy.update_keyring(keyring_id, request)
+
     def delete_keyring(self, keyring: Keyring) -> None:
         name = check.not_none(keyring.name, "keyring.name")
         self.delete_keyring_by_name(name)
@@ -29,7 +40,15 @@ class KeyringClientImpl(KeyringClient):
         self.__service_proxy.delete_keyring(keyring_name)
 
     def find_all_keyrings(self) -> List[KeyringSummary]:
-        return self.__service_proxy.find_all_keyrings()
+        search = KeyringSearch()
+        return paginate(lambda sr: self._get_keyrings_slice(search, sr))
+
+    def get_keyrings(self, search: KeyringSearch) -> SearchClient[KeyringSummary]:
+        get_next_slice_function = lambda slice_reference: self._get_keyrings_slice(search, slice_reference)
+        return SearchClient(get_next_slice_function)
+
+    def _get_keyrings_slice(self, search: KeyringSearch, slice_reference: SliceReference) -> Slice[KeyringSummary]:
+        return self.__service_proxy.find_keyrings(search, slice_reference)
 
     def grant_application_access_to_keyring(self, keyring_name: str, application_id: str, application_api_key: ApiKey) -> Keyring:
         return self.__service_proxy.grant_application_access_to_keyring(keyring_name, application_id, application_api_key)
