@@ -47,6 +47,8 @@ class ComputeSource(Identified, Named, ABC):
     """Gets the custom instance tags to be set on the provisioned instance at startup."""
     limit: Optional[int]
     """Returns the limit in number of instances that can be provisioned from this source."""
+    bootVolumeSizeGb: Optional[int]
+    """Gets the size of the boot volume in GB"""
     instanceSummary: Optional[InstanceSummary]
     """A summary of instance counts according to instance status"""
     status: Optional[ComputeSourceStatus]

@@ -38,6 +38,7 @@ class GceInstanceGroupComputeSource(GceComputeSource):
     """Indicates if provisioned instances should be assigned public IP addresses."""
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
+    bootVolumeSizeGb: Optional[int] = None
     sshKeys: Optional[str] = None
     """A list of public SSH keys. If provided, instances will be accessible with the matching private keys through SSH."""
     zone: Optional[str] = None

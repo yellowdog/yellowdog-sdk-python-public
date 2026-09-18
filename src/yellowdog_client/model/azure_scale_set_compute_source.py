@@ -38,6 +38,7 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     environment: Optional[str] = None
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
+    bootVolumeSizeGb: Optional[int] = None
     adminUserCredential: Optional[str] = None
     """
     Optionally specifies the name of an AzureInstanceCredential that provides the admin user name and password to use for root (Linux) or administrator (Windows).

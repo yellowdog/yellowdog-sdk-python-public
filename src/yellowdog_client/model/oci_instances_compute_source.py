@@ -48,3 +48,4 @@ class OciInstancesComputeSource(OciComputeSource):
     """Indicates if provisioned instances should be assigned public IP addresses."""
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
+    bootVolumeSizeGb: Optional[int] = None

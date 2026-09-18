@@ -48,6 +48,8 @@ class GceComputeSource(ComputeSource, ABC):
     """Gets the user-data script to be passed to the provisioned instance at startup."""
     limit: Optional[int]
     """Returns the limit in number of instances that can be provisioned from this source."""
+    bootVolumeSizeGb: Optional[int]
+    """Gets the size of the boot volume in GB"""
     instanceSummary: Optional[InstanceSummary]
     """A summary of instance counts according to instance status"""
     status: Optional[ComputeSourceStatus]

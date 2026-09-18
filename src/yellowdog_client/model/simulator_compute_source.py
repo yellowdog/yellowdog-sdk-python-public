@@ -36,6 +36,7 @@ class SimulatorComputeSource(ComputeSource):
     instanceType: str = "sim-instance"
     imageId: str = "sim-image"
     instanceTags: Optional[Dict[str, str]] = None
+    bootVolumeSizeGb: Optional[int] = None
     implicitCapacity: Optional[int] = None
     """The implicit capacity of this source that is not directly discoverable by the compute service, independent of limit."""
     instanceStartupTimeSeconds: int = 0

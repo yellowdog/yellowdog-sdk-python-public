@@ -48,3 +48,4 @@ class OciInstancePoolComputeSource(OciComputeSource):
     createClusterNetwork: Optional[bool] = None
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
+    bootVolumeSizeGb: Optional[int] = None
