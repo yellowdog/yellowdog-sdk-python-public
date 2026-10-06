@@ -3,11 +3,11 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-SUBMIT_VULNERABILITIES=false
+DEPLOY_SBOM=false
 RELEASE=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --submit-vulnerabilities) SUBMIT_VULNERABILITIES=true; shift ;;
+    --deploy-sbom) DEPLOY_SBOM=true; shift ;;
     --release) RELEASE=true; shift ;;
     *) echo "Unknown argument: $1" >&2; exit 1 ;;
   esac
@@ -25,7 +25,7 @@ set +a
 exec docker run --rm -it \
   -e VAULT_ROLE_ID \
   -e VAULT_SECRET_ID \
-  -e "SUBMIT_VULNERABILITIES=$SUBMIT_VULNERABILITIES" \
+  -e "DEPLOY_SBOM=$DEPLOY_SBOM" \
   -e "RELEASE=$RELEASE" \
   -v "$PWD:$SRC_DIR:ro" \
   -v /var/run/docker.sock:/var/run/docker.sock \

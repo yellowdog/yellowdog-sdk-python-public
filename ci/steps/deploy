@@ -11,6 +11,6 @@ else
 fi
 
 TWINE_REPOSITORY_URL="$TWINE_REPOSITORY_URL" \
-  TWINE_USERNAME="$(vault_secret_get NEXUS_USER)" \
-  TWINE_PASSWORD="$(vault_secret_get NEXUS_PASSWORD)" \
+  TWINE_USERNAME="$NEXUS_USER" \
+  TWINE_PASSWORD="$NEXUS_PASSWORD" \
   tox -e deploy
