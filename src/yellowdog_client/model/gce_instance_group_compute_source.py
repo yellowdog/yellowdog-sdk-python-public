@@ -41,6 +41,8 @@ class GceInstanceGroupComputeSource(GceComputeSource):
     bootVolumeSizeGb: Optional[int] = None
     sshKeys: Optional[str] = None
     """A list of public SSH keys. If provided, instances will be accessible with the matching private keys through SSH."""
+    serviceAccountEmail: Optional[str] = None
+    """The email of the service account to attach to provisioned instances, granting them access to other Google Cloud resources."""
     zone: Optional[str] = None
     network: Optional[str] = None
     subnetwork: Optional[str] = None

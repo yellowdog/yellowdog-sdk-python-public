@@ -30,6 +30,7 @@ class GceComputeSource(ComputeSource, ABC):
     acceleratorCount: Optional[int]
     hostMaintenanceBehaviour: Optional[GceHostMaintenanceBehaviour]
     sshKeys: Optional[str]
+    serviceAccountEmail: Optional[str]
     instanceTags: Optional[Dict[str, str]]
     traits: Optional[ComputeSourceTraits]
     """Returns an object describing behavioural traits specific to this compute source."""
