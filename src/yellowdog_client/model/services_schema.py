@@ -36,3 +36,14 @@ class ServicesSchema:
     Set to ``None`` to disable the connection timeout.
     """
 
+    # KEEP until YEL-15322 adds readTimeout to the Java ServicesSchema
+    DEFAULT_READ_TIMEOUT: ClassVar[timedelta] = timedelta(seconds=90)
+    """The default read timeout."""
+
+    readTimeout: Optional[timedelta] = timedelta(seconds=90)
+    """
+    The timeout for receiving a response from a YellowDog Platform service once a request has been sent.
+    A POST request that times out is not retried, because the service may still be processing it.
+    Defaults to :attr:`DEFAULT_READ_TIMEOUT`.
+    Set to ``None`` to disable the read timeout.
+    """

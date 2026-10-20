@@ -1,10 +1,19 @@
+from __future__ import annotations
+
 import random
 from datetime import timedelta
 from itertools import takewhile
 import inspect
-from typing import Any
+from types import TracebackType
+from typing import Any, Optional, TYPE_CHECKING
 
+from urllib3.connectionpool import ConnectionPool
+from urllib3.exceptions import ReadTimeoutError
 from urllib3.util.retry import Retry
+
+if TYPE_CHECKING:
+    # Not present in urllib3 1.x
+    from urllib3.response import BaseHTTPResponse
 
 class FullJitterRetry(Retry):
     """
@@ -47,6 +56,20 @@ class FullJitterRetry(Retry):
         kwargs.setdefault("retry_max_interval", self.retry_max_interval)
         kwargs.setdefault("retry_initial_interval", self.retry_initial_interval)
         return super().new(**kwargs)
+
+    def increment(
+            self,
+            method: Optional[str] = None,
+            url: Optional[str] = None,
+            response: Optional[BaseHTTPResponse] = None,
+            error: Optional[Exception] = None,
+            _pool: Optional[ConnectionPool] = None,
+            _stacktrace: Optional[TracebackType] = None,
+    ) -> "FullJitterRetry":
+        # A POST is not idempotent, and the service may still be processing a request whose response timed out
+        if isinstance(error, ReadTimeoutError) and method == "POST":
+            raise error.with_traceback(_stacktrace)
+        return super().increment(method, url, response, error, _pool, _stacktrace)
 
     # Overrides the parent get_backoff_time ensuring we use FullJitter
     def get_backoff_time(self) -> float:

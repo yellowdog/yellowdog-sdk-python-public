@@ -26,7 +26,8 @@ class Proxy:
             user_agent: UserAgent,
             base_url: str = "",
             compress_requests: bool = False,
-            connection_timeout: Optional[float] = 90.0
+            connection_timeout: Optional[float] = 90.0,
+            read_timeout: Optional[float] = 90.0
     ) -> None:
         self._authentication_headers_provider: ApiKeyAuthenticationHeadersProvider = authentication_headers_provider
         self._user_agent: UserAgent = user_agent
@@ -34,6 +35,7 @@ class Proxy:
         self._compress_requests: bool = compress_requests
         self._session: Session = session
         self._connection_timeout: Optional[float] = connection_timeout
+        self._read_timeout: Optional[float] = read_timeout
 
     @staticmethod
     def _format_params(params: Optional[Dict[str, object]]) -> None:
@@ -54,7 +56,8 @@ class Proxy:
             self._user_agent,
             self._base_url + base_url,
             self._compress_requests,
-            self._connection_timeout
+            self._connection_timeout,
+            self._read_timeout
         )
 
     def get(self, return_type: Type[T], url: str = "", params: Optional[Dict[str, Any]] = None) -> T:
@@ -137,10 +140,11 @@ class Proxy:
         prepared_request = self._session.prepare_request(request)
         settings = self._session.merge_environment_settings(prepared_request.url, {}, None, None, None)
 
-        # Pass connect timeout only; None read timeout means unlimited read.
-        timeout = (self._connection_timeout, None) if self._connection_timeout is not None else None
-
-        response = self._session.send(request=prepared_request, timeout=timeout, **settings)
+        response = self._session.send(
+            request=prepared_request,
+            timeout=(self._connection_timeout, self._read_timeout),
+            **settings
+        )
 
         return self._handle_response(response)
 
@@ -148,7 +152,8 @@ class Proxy:
         return EventSource(
             url=self._base_url + url,
             auth=self._authentication_headers_provider,
-            headers=self._get_user_agent_headers()
+            headers=self._get_user_agent_headers(),
+            timeout=(self._connection_timeout, self._read_timeout)
         )
 
     def execute_with_timeout(self, method: str, timeout: int, url: str = "", data: Optional[object] = None,

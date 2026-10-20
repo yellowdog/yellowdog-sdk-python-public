@@ -122,12 +122,14 @@ class RequestsSseClient(SseClient):
             url: str,
             auth: Optional[AuthBase] = None,
             headers: Optional[Dict[str, str]] = None,
-            initial_retry_interval: timedelta = timedelta(seconds=3)
+            initial_retry_interval: timedelta = timedelta(seconds=3),
+            timeout: Tuple[Optional[float], Optional[float]] = (None, None)
     ):
         self._url: str = url
         self._auth: Optional[AuthBase] = auth
         self._headers: Optional[Dict[str, str]] = headers or {}
         self._retry_interval: timedelta = initial_retry_interval
+        self._timeout: Tuple[Optional[float], Optional[float]] = timeout
 
     def _connect(self) -> SseConnection:
         response = self._get()
@@ -151,7 +153,8 @@ class RequestsSseClient(SseClient):
                 self._url,
                 stream=True,
                 headers=headers,
-                auth=self._auth
+                auth=self._auth,
+                timeout=self._timeout
             )
 
             try:

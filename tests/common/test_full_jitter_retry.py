@@ -2,6 +2,7 @@ from datetime import timedelta
 from unittest.mock import patch, MagicMock
 
 import pytest
+from urllib3.exceptions import ReadTimeoutError, ConnectTimeoutError, ProtocolError
 from urllib3.util.retry import RequestHistory
 
 from yellowdog_client.common.full_jitter_retry import FullJitterRetry
@@ -159,6 +160,33 @@ def test_sleep_uses_get_backoff_time(sleep_mock: MagicMock, get_backoff_time: Ma
     # Then
     get_backoff_time.assert_called_once()
     sleep_mock.assert_called_once_with(0.01)
+
+
+ALL_METHODS = frozenset(["GET", "POST", "PUT", "DELETE"])
+
+
+def test_increment_given_read_timeout_on_post_then_raises():
+
+    retry = build_full_jitter_retry().new(allowed_methods=ALL_METHODS)
+    error = ReadTimeoutError(None, "/", "Read timed out.")
+
+    with pytest.raises(ReadTimeoutError):
+        retry.increment(method="POST", url="/", error=error)
+
+
+@pytest.mark.parametrize("method,error", [
+    pytest.param("GET", ReadTimeoutError(None, "/", "Read timed out."), id="read timeout on GET"),
+    pytest.param("PUT", ReadTimeoutError(None, "/", "Read timed out."), id="read timeout on PUT"),
+    pytest.param("POST", ConnectTimeoutError("Connect timed out."), id="connect timeout on POST"),
+    pytest.param("POST", ProtocolError("Connection aborted."), id="other read error on POST"),
+])
+def test_increment_given_retryable_error_then_retries(method: str, error: Exception):
+
+    retry = build_full_jitter_retry().new(allowed_methods=ALL_METHODS)
+
+    incremented = retry.increment(method=method, url="/", error=error)
+
+    assert incremented.total == retry.total - 1
 
 
 def build_full_jitter_retry(

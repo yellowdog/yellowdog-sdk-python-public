@@ -124,11 +124,16 @@ class PlatformClient(Closeable):
         if services_schema.connectionTimeout is not None:
             connection_timeout = services_schema.connectionTimeout.total_seconds()
 
+        read_timeout = None
+        if services_schema.readTimeout is not None:
+            read_timeout = services_schema.readTimeout.total_seconds()
+
         proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
             session=session,
             user_agent=user_agent,
-            connection_timeout=connection_timeout
+            connection_timeout=connection_timeout,
+            read_timeout=read_timeout
         )
 
         work_proxy = Proxy(
@@ -136,7 +141,8 @@ class PlatformClient(Closeable):
             session=session,
             user_agent=user_agent,
             compress_requests=True,
-            connection_timeout=connection_timeout
+            connection_timeout=connection_timeout,
+            read_timeout=read_timeout
         )
 
         compute_url = services_schema.defaultUrl if services_schema.computeServiceUrl is None else services_schema.computeServiceUrl

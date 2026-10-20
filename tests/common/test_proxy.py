@@ -2,6 +2,7 @@ import datetime
 from datetime import timedelta
 import gzip
 import json
+import time
 import traceback
 from dataclasses import dataclass
 from http import HTTPStatus
@@ -10,7 +11,8 @@ from unittest import mock
 
 import pytest
 from requests import HTTPError
-from requests.exceptions import ConnectTimeout
+from requests.exceptions import ConnectTimeout, ReadTimeout
+from urllib3.exceptions import ReadTimeoutError
 from werkzeug.wrappers import Response as WerkzeugResponse
 
 from util.api import MockApi, HttpMethod
@@ -32,7 +34,8 @@ def build_proxy(
         retry_count: int = 0,
         max_retry_interval_seconds: int = 1,
         compress_requests: bool = False,
-        connection_timeout: Optional[float] = 90.0
+        connection_timeout: Optional[float] = 90.0,
+        read_timeout: Optional[float] = 90.0
     ) -> Proxy:
     session = PlatformClient._build_session(retry_count, timedelta(seconds=max_retry_interval_seconds), timedelta(seconds=1))
     return Proxy(
@@ -41,7 +44,8 @@ def build_proxy(
         base_url=base_url,
         user_agent=UserAgent("test", "1.0", "3.8"),
         compress_requests=compress_requests,
-        connection_timeout=connection_timeout
+        connection_timeout=connection_timeout,
+        read_timeout=read_timeout
     )
 
 
@@ -87,6 +91,45 @@ def test_can_stream_sse():
 
             wait_until(lambda: len(listener.updates) == 2)
             assert len(listener.errors) == 0
+
+
+def test_does_not_time_out_sse_while_events_arrive():
+    with SseServer(TEST_ENDPOINT) as sse_server:
+        proxy = build_proxy(sse_server.get_sse_url(), read_timeout=STALL_READ_TIMEOUT_SECONDS)
+
+        with SubscriptionManager(
+                update_events_provider=lambda id: proxy.stream(""),
+                class_type=Example
+        ) as subscription_manager:
+            listener = ExampleSubscriptionEventListener()
+            subscription_manager.add_listener("foo", listener)
+
+            wait_until(lambda: sse_server.get_subscriber_count() == 1)
+            for i in range(4):
+                time.sleep(STALL_READ_TIMEOUT_SECONDS / 4)
+                sse_server.broadcast(id=f"foo{i}", type="entity_updated", data=f'{{"field": "foo{i}"}}')
+
+            wait_until(lambda: len(listener.updates) == 4)
+            assert len(listener.errors) == 0
+
+
+def test_reports_error_when_sse_stalls_beyond_read_timeout():
+    with SseServer(TEST_ENDPOINT) as sse_server:
+        proxy = build_proxy(sse_server.get_sse_url(), read_timeout=STALL_READ_TIMEOUT_SECONDS)
+
+        with SubscriptionManager(
+                update_events_provider=lambda id: proxy.stream(""),
+                class_type=Example
+        ) as subscription_manager:
+            listener = ExampleSubscriptionEventListener()
+            subscription_manager.add_listener("foo", listener)
+
+            wait_until(lambda: sse_server.get_subscriber_count() == 1)
+            sse_server.broadcast(id="foo1", type="entity_updated", data='{"field": "foo1"}')
+            wait_until(lambda: len(listener.updates) == 1)
+
+            wait_until(lambda: len(listener.errors) == 1, at_most=STALL_READ_TIMEOUT_SECONDS * 5)
+            assert isinstance(listener.errors[0], ReadTimeoutError)
 
 
 def test_can_stream_chunked_sse():
@@ -234,16 +277,59 @@ def test_sub_proxy_shares_session_with_parent():
     assert sub_proxy._session is proxy._session
 
 
-def test_connect_timeout_passed_as_connect_only_tuple(mock_api: MockApi):
-    """The connect timeout must be sent as (connect, None) so only the connect phase is applied."""
-    proxy = build_proxy(mock_api.url(), connection_timeout=5.0)
+def test_timeouts_passed_as_connect_and_read_tuple(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url(), connection_timeout=5.0, read_timeout=10.0)
 
     mock_api.mock(TEST_ENDPOINT, HttpMethod.GET, response=Example(field="foo"))
 
     with mock.patch.object(proxy._session, "send", wraps=proxy._session.send) as mock_send:
         proxy.get(Example, TEST_ENDPOINT)
 
-    assert mock_send.call_args[1]["timeout"] == (5.0, None)
+    assert mock_send.call_args[1]["timeout"] == (5.0, 10.0)
+
+
+def test_read_timeout_is_propagated_to_sub_proxy():
+    proxy = build_proxy("http://example.com", read_timeout=10.0)
+    sub_proxy = proxy.append_base_url("/api")
+
+    assert sub_proxy._read_timeout == 10.0
+
+
+def test_retries_get_when_response_stalls_beyond_read_timeout(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url(), retry_count=1, read_timeout=STALL_READ_TIMEOUT_SECONDS)
+
+    expected = Example(field="foo")
+    mock_stalled_response(mock_api, HttpMethod.GET)
+    mock_api.mock(TEST_ENDPOINT, HttpMethod.GET, response=expected)
+
+    actual = proxy.get(Example, TEST_ENDPOINT)
+
+    assert actual == expected
+
+
+def test_does_not_retry_post_when_response_stalls_beyond_read_timeout(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url(), retry_count=1, read_timeout=STALL_READ_TIMEOUT_SECONDS)
+
+    mock_stalled_response(mock_api, HttpMethod.POST)
+    mock_api.mock(TEST_ENDPOINT, HttpMethod.POST)
+
+    with pytest.raises(ReadTimeout):
+        proxy.post(url=TEST_ENDPOINT)
+
+    assert len(mock_api.httpserver.oneshot_handlers) == 1
+
+
+STALL_READ_TIMEOUT_SECONDS = 1.0
+
+
+def mock_stalled_response(mock_api: MockApi, method: HttpMethod) -> None:
+    # The mock server handles one request at a time, so a retry waits for the stall to end. It must end within the
+    # retry's own read timeout.
+    def stall(_request: object) -> WerkzeugResponse:
+        time.sleep(STALL_READ_TIMEOUT_SECONDS * 1.5)
+        return WerkzeugResponse(status=HTTPStatus.OK)
+
+    mock_api.httpserver.expect_oneshot_request(TEST_ENDPOINT, method=str(method)).respond_with_handler(stall)
 
 
 def test_connection_timeout_is_propagated_to_sub_proxy():

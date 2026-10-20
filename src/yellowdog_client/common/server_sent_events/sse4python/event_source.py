@@ -1,5 +1,5 @@
 from threading import Thread
-from typing import Callable, Dict, Any
+from typing import Callable, Dict, Any, Optional, Tuple
 
 from cancel_token import CancellationToken
 from pydispatch import Dispatcher
@@ -16,11 +16,18 @@ class EventSource(Dispatcher): # type: ignore[misc]  # Dispatcher is untyped thi
     ERROR_RECEIVED = "error_received"
     _events_ = [EVENT_SOURCE_COMPLETED, EVENT_RECEIVED, ERROR_RECEIVED]
 
-    def __init__(self, url: str, auth: AuthBase, headers: Dict[str, str]) -> None:
+    def __init__(
+            self,
+            url: str,
+            auth: AuthBase,
+            headers: Dict[str, str],
+            timeout: Tuple[Optional[float], Optional[float]] = (None, None)
+    ) -> None:
         super().__init__(None, None)
         self.__url: str = url
         self.__auth: AuthBase = auth
         self.__headers: Dict[str, str] = headers
+        self.__timeout: Tuple[Optional[float], Optional[float]] = timeout
         self._token_source: CancellationToken = CancellationToken()
         self._current_state: EventSourceState = EventSourceState.CLOSED
 
@@ -45,7 +52,7 @@ class EventSource(Dispatcher): # type: ignore[misc]  # Dispatcher is untyped thi
     def _run(self) -> None:
         try:
             self._current_state = EventSourceState.CONNECTING
-            stream = RequestsSseClient(self.__url, self.__auth, self.__headers).stream()
+            stream = RequestsSseClient(self.__url, self.__auth, self.__headers, timeout=self.__timeout).stream()
         except Exception as ex:
             self._on_error_received(ex)
             self._current_state = EventSourceState.CLOSED
