@@ -6,6 +6,7 @@ from yellowdog_client.common.server_sent_events import SubscriptionEventListener
 from yellowdog_client.common.server_sent_events import SubscriptionManager
 from yellowdog_client.model import BestComputeSourceReport, ComputeRequirementSearch, SliceReference, Slice, \
     InstanceSearch, InstanceId, ComputeSourceTemplateSearch, ComputeRequirementTemplateSearch
+from yellowdog_client.model import AutoShutdown
 from yellowdog_client.model import ComputeRequirement, ComputeRequirementTemplateUsage
 from yellowdog_client.model import ComputeRequirementStatus
 from yellowdog_client.model import ComputeRequirementSummary
@@ -79,6 +80,9 @@ class ComputeClientImpl(ComputeClient):
     def reprovision_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
         return self.__service_proxy.transition_compute_requirement(compute_requirement_id,
                                                                    ComputeRequirementStatus.PROVISIONING)
+
+    def update_compute_requirement_auto_shutdown(self, compute_requirement_id: str, auto_shutdown: Optional[AutoShutdown] = None) -> ComputeRequirement:
+        return self.__service_proxy.update_compute_requirement_auto_shutdown(compute_requirement_id, auto_shutdown)
 
     def get_instances(self, instance_search: InstanceSearch) -> SearchClient[Instance]:
         def get_next_slice_function(slice_reference: SliceReference) -> Slice[Instance]:

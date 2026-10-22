@@ -6,7 +6,7 @@ from typing import List, Optional
 from .compute_requirement_helper import ComputeRequirementHelper
 from yellowdog_client.common import Closeable, SearchClient
 from yellowdog_client.common.server_sent_events import SubscriptionEventListener
-from yellowdog_client.model import BestComputeSourceReport, ComputeRequirement, ComputeRequirementSearch, ComputeRequirementSummary, ComputeRequirementSummarySearch, ComputeRequirementTemplate, ComputeRequirementTemplateSearch, ComputeRequirementTemplateSummary, ComputeRequirementTemplateTestResult, ComputeRequirementTemplateUsage, ComputeSourceTemplate, ComputeSourceTemplateSearch, ComputeSourceTemplateSummary, Instance, InstanceId, InstanceSearch
+from yellowdog_client.model import AutoShutdown, BestComputeSourceReport, ComputeRequirement, ComputeRequirementSearch, ComputeRequirementSummary, ComputeRequirementSummarySearch, ComputeRequirementTemplate, ComputeRequirementTemplateSearch, ComputeRequirementTemplateSummary, ComputeRequirementTemplateTestResult, ComputeRequirementTemplateUsage, ComputeSourceTemplate, ComputeSourceTemplateSearch, ComputeSourceTemplateSummary, Instance, InstanceId, InstanceSearch
 
 
 class ComputeClient(ABC, Closeable):
@@ -152,6 +152,19 @@ class ComputeClient(ABC, Closeable):
         Instructs YellowDog Compute to provision more instances if required such that the number of running instances meets the targetInstanceCount.
 
         :param compute_requirement_id: the ID of the requirement to terminate
+        :return: the latest view of the requirement returned from YellowDog Compute
+        """
+
+        pass
+
+    @abstractmethod
+    def update_compute_requirement_auto_shutdown(self, compute_requirement_id: str, auto_shutdown: Optional[AutoShutdown] = None) -> ComputeRequirement:
+        """
+        Instructs YellowDog Compute to replace the auto shutdown of the specified requirement and restart its timeout from now.
+        If the auto shutdown is disabled then the requirement will no longer be terminated automatically.
+
+        :param compute_requirement_id: the ID of the requirement
+        :param auto_shutdown:         the auto shutdown to apply to the requirement
         :return: the latest view of the requirement returned from YellowDog Compute
         """
 
@@ -423,7 +436,7 @@ class ComputeClient(ABC, Closeable):
         """
         Returns a search client for searching compute source templates.
 
-        :param search: the search object to filter & sort results
+        :param search: the search object to filter and sort results
         :return: a search client for searching compute source templates.
         """
 
@@ -471,7 +484,7 @@ class ComputeClient(ABC, Closeable):
         """
         Returns a search client for searching compute requirement templates.
 
-        :param search: the search object to filter & sort results
+        :param search: the search object to filter and sort results
         :return: a search client for searching compute requirement templates.
         """
 

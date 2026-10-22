@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import List
 
 import pytest
@@ -8,7 +9,7 @@ from yellowdog_client.model import ServicesSchema, ApiKey, ComputeRequirement, S
     ComputeRequirementStatus, ComputeRequirementSearch, SortDirection, Slice, Instance, SimulatorInstance, \
     InstanceSearch, InstanceId, ComputeSourceTemplate, ComputeSource, StringAttributeValue, \
     ComputeRequirementDynamicTemplate, ComputeRequirementTemplateSearch, ComputeRequirementTemplateSummary, \
-    ComputeSourceTemplateSummary, ComputeSourceTemplateSearch
+    ComputeSourceTemplateSummary, ComputeSourceTemplateSearch, AutoShutdown
 
 from util.api import MockApi, HttpMethod
 from util.data import make, make_string
@@ -34,6 +35,38 @@ def test_can_stop_compute_requirement(mock_api: MockApi, compute_client: Compute
     )
 
     actual = compute_client.stop_compute_requirement(compute_requirement)
+
+    assert actual == expected
+    mock_api.verify_all_requests_called()
+
+
+def test_can_restart_compute_requirement_auto_shutdown(mock_api: MockApi, compute_client: ComputeClient):
+    compute_requirement = _make_compute_requirement()
+
+    expected = mock_api.mock(
+        f"/compute/requirements/{compute_requirement.id}/autoShutdown",
+        HttpMethod.PUT,
+        response=compute_requirement
+    )
+
+    actual = compute_client.update_compute_requirement_auto_shutdown(compute_requirement.id)
+
+    assert actual == expected
+    mock_api.verify_all_requests_called()
+
+
+def test_can_replace_compute_requirement_auto_shutdown(mock_api: MockApi, compute_client: ComputeClient):
+    compute_requirement = _make_compute_requirement()
+    auto_shutdown = AutoShutdown(enabled=True, timeout=timedelta(hours=48))
+
+    expected = mock_api.mock(
+        f"/compute/requirements/{compute_requirement.id}/autoShutdown",
+        HttpMethod.PUT,
+        request=auto_shutdown,
+        response=compute_requirement
+    )
+
+    actual = compute_client.update_compute_requirement_auto_shutdown(compute_requirement.id, auto_shutdown)
 
     assert actual == expected
     mock_api.verify_all_requests_called()

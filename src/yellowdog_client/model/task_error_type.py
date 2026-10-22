@@ -20,4 +20,10 @@ class TaskErrorType:
     OUTPUT_NOT_FOUND: ClassVar[str] = "OUTPUT_NOT_FOUND"
     INPUT_NOT_FOUND: ClassVar[str] = "INPUT_NOT_FOUND"
     TRANSITION_REFUSED: ClassVar[str] = "TRANSITION_REFUSED"
+    """
+    No longer raised, as a task status transition is no longer refused when its worker has been released.
+
+    .. deprecated:: (unknown)
+    """
+
     UNABLE_WRITE_TASK_DATA: ClassVar[str] = "UNABLE_WRITE_TASK_DATA"

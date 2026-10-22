@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 
+from .auto_shutdown import AutoShutdown
 from .compute_provision_strategy import ComputeProvisionStrategy
 from .compute_requirement_status import ComputeRequirementStatus
 from .compute_requirement_supported_operations import ComputeRequirementSupportedOperations
@@ -32,6 +33,7 @@ class ComputeRequirement(Identified, Named, Tagged):
     supportedOperations: Optional[ComputeRequirementSupportedOperations] = field(default=None, init=False)
     status: Optional[ComputeRequirementStatus] = field(default=None, init=False)
     """The status of this compute requirement."""
+    autoShutdownTime: Optional[datetime] = field(default=None, init=False)
     namespace: str
     """The user allocated namespace used to group compute requirements and other objects together."""
     name: str
@@ -47,3 +49,4 @@ class ComputeRequirement(Identified, Named, Tagged):
     """Indicates if the Compute Service should automatically attempt to provision new instances if the number of RUNNING instances is below the specified targetInstanceCount"""
     nextStatus: Optional[ComputeRequirementStatus] = None
     """The next status of this compute requirement when a status transition is being requested."""
+    autoShutdown: Optional[AutoShutdown] = None

@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Optional
 
 from yellowdog_client.common import Proxy
 from yellowdog_client.common.server_sent_events.sse4python import EventSource
-from yellowdog_client.model import ComputeRequirementTemplate, ComputeRequirementStatus, ComputeRequirementSearch, \
+from yellowdog_client.model import AutoShutdown, ComputeRequirementTemplate, ComputeRequirementStatus, ComputeRequirementSearch, \
     SliceReference, Slice, InstanceSearch, Instance, InstanceId, ComputeRequirementTemplateSearch, \
     ComputeSourceTemplateSearch
 from yellowdog_client.model import InstanceStatus, \
@@ -31,6 +31,10 @@ class ComputeServiceProxy:
     def transition_compute_requirement(self, compute_requirement_id: str, next_status: ComputeRequirementStatus) -> ComputeRequirement:
         url = "requirements/%s/transition/%s" % (compute_requirement_id, next_status.value)
         return self._proxy.put(ComputeRequirement, url=url)
+
+    def update_compute_requirement_auto_shutdown(self, compute_requirement_id: str, auto_shutdown: Optional[AutoShutdown]) -> ComputeRequirement:
+        url = "requirements/%s/autoShutdown" % compute_requirement_id
+        return self._proxy.put(ComputeRequirement, auto_shutdown, url)
 
     def deprovision_instances(self, compute_requirement: ComputeRequirement, instance_ids: List[InstanceId]) -> None:
         self._proxy.put(data=instance_ids, url="requirements/%s/instances/deprovision" % compute_requirement.id)

@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict, Optional
 
+from .auto_shutdown import AutoShutdown
+
 
 @dataclass
 class ComputeRequirementTemplateUsage:
@@ -13,3 +15,4 @@ class ComputeRequirementTemplateUsage:
     userData: Optional[str] = None
     instanceTags: Optional[Dict[str, str]] = None
     maintainInstanceCount: bool = False
+    autoShutdown: Optional[AutoShutdown] = None
