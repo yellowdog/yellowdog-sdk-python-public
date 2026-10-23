@@ -123,9 +123,9 @@ source .venv/bin/activate
 
 All dependencies are declared in `pyproject.toml`. There is no separate `requirements.txt`.
 
-**Python versions supported:** See `tox.ini` for the canonical list of supported versions.
+**Python versions supported:** `requires-python` in `pyproject.toml` sets the oldest supported version, and `tox.ini` lists the versions tested.
 
-The support policy is: the SDK targets the oldest actively supported Python version and drops a version as soon as it reaches End of Life (as defined by https://devguide.python.org/versions/). See the [internal standards document](https://yellowdog.atlassian.net/wiki/spaces/DEVT/pages/3167125505/Python+Version+Support) for details.
+The support policy is: the SDK is tested on every actively supported Python version and stops testing a version as soon as it reaches End of Life (as defined by https://devguide.python.org/versions/). It still supports versions it no longer tests. See the [internal standards document](https://yellowdog.atlassian.net/wiki/spaces/DEVT/pages/3167125505/Python+Version+Support) for details. To upgrade, follow `private/upgrading-python.md`.
 
 ---
 
@@ -139,7 +139,7 @@ The support policy is: the SDK targets the oldest actively supported Python vers
 ./.venv/bin/tox --parallel
 
 # Run a specific test environment
-tox -e py39
+tox -e py311
 
 # Run with pytest directly (active venv)
 pytest -s tests/
@@ -149,8 +149,8 @@ pytest -s tests/
 
 | Environment | Description |
 |-------------|-------------|
-| `py{39,310,...}` | Run tests against each supported Python version (see `tox.ini` for current list) |
-| `py39-urllib3-1` | Compatibility test with older urllib3/requests |
+| `py{311,312,...}` | Run tests against each tested Python version (see `tox.ini` for current list) |
+| `py311-urllib3-1` | Compatibility test with older urllib3/requests |
 | `mypy` | Strict type checking |
 | `docs` | Build Sphinx documentation |
 | `sbom` | Generate CycloneDX SBOM (see `scripts/generate_sbom`) |
@@ -169,7 +169,7 @@ Tests live in `tests/` and include a `conftest.py` with shared fixtures and a `t
 
 ### Type hints
 
-All code must pass **strict mypy** targeting the minimum supported Python version (see `tox.ini`). Run the type checker with:
+All code must pass **strict mypy** targeting the minimum supported Python version (see `python_version` in `pyproject.toml`). Run the type checker with:
 
 ```bash
 tox -e mypy
