@@ -14,7 +14,7 @@ class Selection(Generic[T]):
       - **Include only** the selection matches any element that appears in :attr:`includes`.
       - **Exclude only** the selection matches any element that does *not* appear in :attr:`excludes`.
       - **Both specified** :attr:`includes` takes precedence; the effective set is the :attr:`includes` list with any elements also present in :attr:`excludes` removed. Only elements that survive this filtering are matched.
-      - **Neither specified** both lists are empty; the selection matches nothing.
+      - **Neither specified** both lists are empty; the selection is invalid.
     """
 
     includes: Optional[List[T]] = None

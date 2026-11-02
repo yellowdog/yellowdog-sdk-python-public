@@ -13,7 +13,8 @@ class ComputeRequirementStatus(Enum):
     PROVISIONING = "PROVISIONING"
     """
     YellowDog Compute is in the process of provisioning computer machine instances to meet the requirement.
-    The requirement will remain in PROVISIONING state until all newly provisioned instances have transitioned to RUNNING or TERMINATED (in the case where a provider cancels provision).
+    The requirement will remain in PROVISIONING state until none of the newly provisioned instances are PENDING or UNKNOWN, after which it becomes RUNNING.
+    If no new instances could be provisioned, the requirement becomes RUNNING immediately.
     """
 
     STARTING = "STARTING"

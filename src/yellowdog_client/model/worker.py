@@ -13,10 +13,6 @@ class Worker(Identified):
     status: Optional[WorkerStatus] = None
     """The status of the worker."""
     taskGroupId: Optional[str] = None
-    """
-    The ID of the task group that has a claim on the worker.
-    Should only be set if the :class:`Worker` is exclusively claimed by a single :class:`TaskGroup`.
-    """
-
+    """The ID of the task group that has a claim on the worker, if any. A worker is claimed by at most one task group."""
     registeredTime: Optional[datetime] = None
     """The time at which the worker was registered."""

@@ -18,7 +18,7 @@ class Task(Identified, Named, Tagged):
     status: Optional[TaskStatus] = field(default=None, init=False)
     """The task status."""
     retryCount: Optional[int] = field(default=None, init=False)
-    """How many times the task has failed and then been set back to WAITING to be retried."""
+    """How many times the task has failed and then been set back to :attr:`TaskStatus.READY` to be retried."""
     taskGroupId: Optional[str] = field(default=None, init=False)
     nodeId: Optional[str] = field(default=None, init=False)
     workerId: Optional[str] = field(default=None, init=False)

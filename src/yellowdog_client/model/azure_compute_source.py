@@ -25,7 +25,8 @@ class AzureComputeSource(ComputeSource, ABC):
     """
     Allows the specification of an Azure environment other than the default public environment.
     This should normally be left blank.
-    Valid values are "china", "germany", "us_government".
+    Valid values are "azure" (the default public environment), "china" and "us_government".
+    Any other value causes provisioning from this source to fail.
     """
 
     vmSize: Optional[str]

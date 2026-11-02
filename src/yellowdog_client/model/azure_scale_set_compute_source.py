@@ -42,7 +42,7 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     adminUserCredential: Optional[str] = None
     """
     Optionally specifies the name of an AzureInstanceCredential that provides the admin user name and password to use for root (Linux) or administrator (Windows).
-    If not specified, then YellowDog Compute uses the default admin user name and a different randomly generated password for each instance.
+    If not specified, then YellowDog Compute uses the default admin user name and a randomly generated password, which is shared by all instances in the scale set.
     """
 
     sshKey: Optional[str] = None

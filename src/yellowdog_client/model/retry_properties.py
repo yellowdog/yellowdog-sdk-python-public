@@ -7,15 +7,15 @@ from typing import ClassVar
 class RetryProperties:
     """Defines properties that control services client retry behaviour"""
     DEFAULT_MAX_ATTEMPTS: ClassVar[int] = 3
-    """The default max attempt count (3)"""
+    """The default maximum number of retries (3)"""
     DEFAULT_INITIAL_RETRY_INTERVAL: ClassVar[timedelta] = timedelta(seconds=10)
     """The default initial retry interval (10 seconds)"""
     DEFAULT_MAX_RETRY_INTERVAL: ClassVar[timedelta] = timedelta(minutes=1)
     """The default maximum retry interval (1 minute)"""
     maxAttempts: int = 3
     """
-    Set the number of attempts before retries are exhausted.
-    Includes the initial attempt before the retries begin.
+    The maximum number of retries after the initial request fails.
+    A request is sent at most maxAttempts + 1 times before retries are exhausted.
     """
 
     initialInterval: timedelta = timedelta(seconds=10)

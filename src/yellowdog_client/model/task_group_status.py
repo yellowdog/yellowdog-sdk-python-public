@@ -18,9 +18,9 @@ class TaskGroupStatus(Enum):
     """Returns true, if the status indicates the task group is still able to allocate tasks to execute; otherwise, false."""
 
     PENDING = "PENDING", False, False, False
-    """The task group is awaiting resources required to execute tasks."""
+    """The task group is waiting for the task groups it depends on to complete."""
     RUNNING = "RUNNING", False, False, True
-    """The task group has sufficient resources to execute tasks."""
+    """The task group can execute tasks, on Workers as they are claimed for it."""
     HELD = "HELD", False, False, False
     """
     The task group parent work requirement has been held by the user such that no further tasks are executed.
@@ -35,11 +35,15 @@ class TaskGroupStatus(Enum):
     """
 
     COMPLETED = "COMPLETED", False, True, False
-    """All tasks within the task group have been completed."""
+    """All tasks within the task group have finished and none have failed."""
     FAILING = "FAILING", True, False, False
-    """At least one task in the task group has failed and the task group is in the process of discarding any outstanding tasks."""
+    """
+    At least one task in the task group has failed, or a task group it depends on has failed, and the task group is in
+    the process of discarding any outstanding tasks.
+    """
+
     FAILED = "FAILED", False, True, False
-    """All tasks within the task group have been finished but at least one has failed."""
+    """All tasks within the task group have finished but at least one has failed, or a task group it depends on has failed."""
     CANCELLING = "CANCELLING", True, False, False
     """The parent work requirement is in the process of being cancelled, no further tasks will be executed."""
     CANCELLED = "CANCELLED", False, True, False

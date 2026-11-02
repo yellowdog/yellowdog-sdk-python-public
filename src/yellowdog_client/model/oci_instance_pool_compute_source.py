@@ -32,7 +32,14 @@ class OciInstancePoolComputeSource(OciComputeSource):
     compartmentId: str
     """The OCI compartment ID (ocid) where instances will be provisioned."""
     imageId: str
-    """The region-specific OCI Image ID (ocid) for the image to use for the provisioned instances."""
+    """
+    The region-specific OCI Image ID (ocid) for the image to use for the provisioned instances.
+    In a compute source template, this may instead be the ID of a :class:`MachineImage`, :class:`MachineImageGroup` or :class:`MachineImageFamily`,
+    resolved to a matching OCI Image ID (ocid) when a compute requirement is provisioned from the template,
+    or "*" for the image to be supplied by the compute requirement template or when provisioning from it.
+    A value in a compute source template is not checked until a compute requirement is provisioned from it.
+    """
+
     shape: str
     subnetId: str
     """The region-specific OCI Subnet ID (ocid) for the subnet to use for the provisioned instances."""

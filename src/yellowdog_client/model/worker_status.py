@@ -20,7 +20,7 @@ class WorkerStatus(Enum):
 
     SLEEPING = "SLEEPING", True, True
     """
-    The Worker is claimed by one or more task groups but has been instructed to sleep as no tasks are READY for it.
+    The Worker is claimed by a task group but has been instructed to sleep as no tasks are READY for it.
 
     .. deprecated:: (unknown)
         only used by single allocation
@@ -45,7 +45,7 @@ class WorkerStatus(Enum):
     RUNNING = "RUNNING", True, True
     """The Worker has become claimed. Its status is now monitored locally to the node."""
     SHUTDOWN = "SHUTDOWN", False, False
-    """The Worker has been instructed to shut down."""
+    """The Worker has been instructed to shut down. No longer used."""
 
     def __new__(cls, value: str, available: bool, healthy: bool) -> WorkerStatus:
         obj = object.__new__(cls)

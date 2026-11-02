@@ -36,6 +36,7 @@ class ServicesSchema:
     Set to ``None`` to disable the connection timeout.
     """
 
+
     # KEEP until YEL-15322 adds readTimeout to the Java ServicesSchema
     DEFAULT_READ_TIMEOUT: ClassVar[timedelta] = timedelta(seconds=90)
     """The default read timeout."""

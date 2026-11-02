@@ -46,7 +46,11 @@ class ComputeRequirement(Identified, Named, Tagged):
     expectedInstanceCount: int = 0
     """The number of alive instances expected based on existing instances and the most recent provision action."""
     maintainInstanceCount: bool = False
-    """Indicates if the Compute Service should automatically attempt to provision new instances if the number of RUNNING instances is below the specified targetInstanceCount"""
+    """
+    Indicates if the Compute Service should automatically attempt to provision new instances if the number of alive instances (PENDING, RUNNING, STOPPING or STOPPED) is below the specified targetInstanceCount.
+    This is only done while the compute requirement is RUNNING.
+    """
+
     nextStatus: Optional[ComputeRequirementStatus] = None
     """The next status of this compute requirement when a status transition is being requested."""
     autoShutdown: Optional[AutoShutdown] = None

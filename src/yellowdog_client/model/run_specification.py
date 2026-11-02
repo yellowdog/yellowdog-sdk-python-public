@@ -24,11 +24,21 @@ class RunSpecification:
     ram: Optional[DoubleRange] = None
     """Range constraint on GB of RAM that are required to execute tasks"""
     minWorkers: Optional[int] = None
-    """The minimum number of Workers that the associated TaskGroup requires. This many workers must be claimed before the associated TaskGroup will start running."""
+    """
+    The minimum number of Workers that the YellowDog Scheduler aims to keep claimed for the associated TaskGroup while it
+    is :attr:`TaskGroupStatus.RUNNING`. This does not delay the TaskGroup starting, and is no longer applied once the
+    TaskGroup is :attr:`TaskGroupStatus.FINISHING`.
+    """
+
     maxWorkers: Optional[int] = None
     """The maximum number of Workers that can be claimed for the associated TaskGroup."""
     tasksPerWorker: Optional[int] = None
-    """Determines the number of worker claims based on splitting the number of unfinished tasks across workers."""
+    """
+    Determines the number of worker claims based on splitting the number of unfinished tasks across workers. This is
+    only used until the YellowDog Scheduler has estimated how long the associated TaskGroup's tasks take, after which
+    claims are sized from that estimate instead.
+    """
+
     maximumTaskRetries: Optional[int] = None
     """
     The maximum number of times a task can be retried after it has failed.
@@ -70,7 +80,7 @@ class RunSpecification:
     retryPolicy: Optional[RetryPolicy] = None
     """
     A :class:`RetryPolicy` for :class:`Task`\\s. This must not be used in combination with the deprecated
-    :attr:`retryable_errors`, this always overrides :attr:`maximum_task_retries`.
+    :attr:`retryable_errors` or :attr:`maximum_task_retries`.
     """
 
     failurePolicy: Optional[FailurePolicy] = None

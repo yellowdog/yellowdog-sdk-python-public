@@ -138,7 +138,7 @@ class ComputeClient(ABC, Closeable):
     @abstractmethod
     def reprovision_compute_requirement(self, compute_requirement: ComputeRequirement) -> ComputeRequirement:
         """
-        Instructs YellowDog Compute to provision more instances if required such that the number of running instances meets the targetInstanceCount.
+        Instructs YellowDog Compute to provision more instances if required such that the number of alive instances (PENDING, RUNNING, STOPPING or STOPPED) meets the targetInstanceCount.
 
         :param compute_requirement: the requirement to terminate
         :return: the latest view of the requirement returned from YellowDog Compute
@@ -149,7 +149,7 @@ class ComputeClient(ABC, Closeable):
     @abstractmethod
     def reprovision_compute_requirement_by_id(self, compute_requirement_id: str) -> ComputeRequirement:
         """
-        Instructs YellowDog Compute to provision more instances if required such that the number of running instances meets the targetInstanceCount.
+        Instructs YellowDog Compute to provision more instances if required such that the number of alive instances (PENDING, RUNNING, STOPPING or STOPPED) meets the targetInstanceCount.
 
         :param compute_requirement_id: the ID of the requirement to terminate
         :return: the latest view of the requirement returned from YellowDog Compute

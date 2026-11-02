@@ -22,9 +22,9 @@ class WorkerPoolSummary(Identified, Named):
     registeredWorkerCount: int = 0
     """The count of workers that have registered with the worker pool."""
     claimedWorkerCount: int = 0
-    """The count of workers within the worker pool that have been claimed by one or more task groups."""
+    """The count of workers within the worker pool that have been claimed by a task group."""
     workingWorkerCount: int = 0
-    """The count of workers within the worker pool that are currently doing a task."""
+    """The count of workers within the worker pool that have status RUNNING. These workers are claimed but may be idle."""
     status: Optional[WorkerPoolStatus] = None
     """The status of the worker pool."""
     createdTime: Optional[datetime] = None
@@ -32,4 +32,4 @@ class WorkerPoolSummary(Identified, Named):
     statusChangedTime: Optional[datetime] = None
     """The date and time when the worker pool status was last updated"""
     healthy: bool = False
-    """Indicates if the worker pool is healthy. If false then workers may be late or lost."""
+    """Indicates if the worker pool is healthy. If false then workers may be late or lost, or a node's action queue may have failed."""

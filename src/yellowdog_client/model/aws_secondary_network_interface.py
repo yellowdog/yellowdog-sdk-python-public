@@ -11,4 +11,4 @@ class AwsSecondaryNetworkInterface:
     subnetId: Optional[str] = None
     """Optional subnetId for this network interface. If not specified the subnetId of the parent source is used."""
     securityGroupId: Optional[str] = None
-    """Optional securityGroupId for this network interface. If not specified the subnetId of the parent source is used."""
+    """Optional securityGroupId for this network interface. If not specified the securityGroupId of the parent source is used."""

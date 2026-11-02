@@ -221,7 +221,7 @@ class WorkClient(ABC, Closeable):
         Returns summaries of all existing work requirements within the system for the requesting user.
 
         .. deprecated:: (unknown)
-            use :meth:`get_work_requirements(work_requirement_search)` instead to search tasks.
+            use :meth:`get_work_requirements(work_requirement_search)` instead to search work requirements.
 
         :return: a list of work requirement summaries
         """
@@ -328,7 +328,7 @@ class WorkClient(ABC, Closeable):
         """
         Returns tasks within the system that match the specified search.
         WARNING: If your search matches too many tasks to fit into your application's memory limits, consider using
-        :meth:`stream_tasks(task_search)` or :meth:`find_tasks(task_search, slice_reference)`.
+        :meth:`get_tasks(task_search)`, which can stream the tasks or return them a slice at a time.
 
         .. deprecated:: (unknown)
             use :meth:`get_tasks(task_search)` instead to search tasks.

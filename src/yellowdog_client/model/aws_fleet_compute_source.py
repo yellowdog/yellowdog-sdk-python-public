@@ -44,7 +44,14 @@ class AwsFleetComputeSource(AwsComputeSource):
     instanceType: str
     """The EC2 instance type for the provisioned instances."""
     imageId: str
-    """The region-specific Amazon Machine Image (AMI) ID for the image to use for the provisioned instances."""
+    """
+    The region-specific Amazon Machine Image (AMI) ID for the image to use for the provisioned instances.
+    In a compute source template, this may instead be the ID of a :class:`MachineImage`, :class:`MachineImageGroup` or :class:`MachineImageFamily`,
+    resolved to a matching AMI ID when a compute requirement is provisioned from the template,
+    or "*" for the image to be supplied by the compute requirement template or when provisioning from it.
+    A value in a compute source template is not checked until a compute requirement is provisioned from it.
+    """
+
     purchaseOption: AwsFleetPurchaseOption
     """Determines which instance purchase options (On-Demand and/or Spot) are available to AWS EC2 Fleet."""
     availabilityZone: Optional[str] = None
