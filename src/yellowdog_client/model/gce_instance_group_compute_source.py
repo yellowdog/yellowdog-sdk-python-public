@@ -43,6 +43,14 @@ class GceInstanceGroupComputeSource(GceComputeSource):
     """A list of public SSH keys. If provided, instances will be accessible with the matching private keys through SSH."""
     serviceAccountEmail: Optional[str] = None
     """The email of the service account to attach to provisioned instances, granting them access to other Google Cloud resources."""
+    reservation: Optional[str] = None
+    """The reservation to provision instances from: its name, or projects/PROJECT/reservations/NAME for one shared from another project."""
+    reservationBound: bool = False
+    """
+    Indicates if instances should be reservation-bound, as a capacity block or calendar-mode future reservation requires.
+    Requires reservation. Reservation-bound instances are deleted when the reservation ends.
+    """
+
     zone: Optional[str] = None
     network: Optional[str] = None
     subnetwork: Optional[str] = None
