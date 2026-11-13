@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional, Set
 
 from .azure_compute_source import AzureComputeSource
+from .azure_trusted_launch import AzureTrustedLaunch
 from .cloud_provider import CloudProvider
 from .compute_source_exhaustion import ComputeSourceExhaustion
 from .compute_source_status import ComputeSourceStatus
@@ -54,4 +55,6 @@ class AzureScaleSetComputeSource(AzureComputeSource):
     """Indicates if instances should be provisioned with a primary networking interface with accelerated networking."""
     useSpot: Optional[bool] = None
     spotMaxPrice: Optional[float] = None
+    trustedLaunch: Optional[AzureTrustedLaunch] = None
+    """Specifies the Trusted Launch security settings for provisioned instances."""
     limit: int = 0

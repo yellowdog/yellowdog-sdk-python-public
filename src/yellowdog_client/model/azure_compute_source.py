@@ -1,6 +1,7 @@
 from abc import ABC
 from typing import Dict, Optional
 
+from .azure_trusted_launch import AzureTrustedLaunch
 from .cloud_provider import CloudProvider
 from .compute_source import ComputeSource
 from .compute_source_exhaustion import ComputeSourceExhaustion
@@ -38,6 +39,7 @@ class AzureComputeSource(ComputeSource, ABC):
     """Indicates if Spot VMs should be requested from Azure. Requires Spot max price to be set."""
     spotMaxPrice: Optional[float]
     """The maximum price that will be paid for Spot VMs provisioned from this source."""
+    trustedLaunch: Optional[AzureTrustedLaunch]
     supportingResourceCreated: Optional[bool]
     instanceTags: Optional[Dict[str, str]]
     traits: Optional[ComputeSourceTraits]

@@ -55,6 +55,7 @@ from .azure_instance_credential import AzureInstanceCredential
 from .azure_instances_compute_source import AzureInstancesComputeSource
 from .azure_scale_set_compute_source import AzureScaleSetComputeSource
 from .azure_storage_credential import AzureStorageCredential
+from .azure_trusted_launch import AzureTrustedLaunch
 from .best_compute_source_report import BestComputeSourceReport
 from .best_compute_source_report_constraint import BestComputeSourceReportConstraint
 from .best_compute_source_report_image import BestComputeSourceReportImage
@@ -375,6 +376,7 @@ __all__ = [
     "AzureInstancesComputeSource",
     "AzureScaleSetComputeSource",
     "AzureStorageCredential",
+    "AzureTrustedLaunch",
     "BestComputeSourceReport",
     "BestComputeSourceReportConstraint",
     "BestComputeSourceReportImage",
