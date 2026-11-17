@@ -221,7 +221,7 @@ class WorkClient(ABC, Closeable):
         Returns summaries of all existing work requirements within the system for the requesting user.
 
         .. deprecated:: (unknown)
-            use :meth:`get_work_requirements(work_requirement_search)` instead to search work requirements.
+            use :meth:`get_work_requirements(work_requirement_search) <get_work_requirements>` instead to search work requirements.
 
         :return: a list of work requirement summaries
         """
@@ -231,7 +231,7 @@ class WorkClient(ABC, Closeable):
     @abstractmethod
     def get_work_requirements(self, search: WorkRequirementSearch) -> SearchClient[WorkRequirementSummary]:
         """
-        Returns a :class:`SearchClient` that offers the ability to search work requirements.
+        Returns a :class:`yellowdog_client.common.SearchClient` that offers the ability to search work requirements.
 
         :param search: the search
         :return: the search client
@@ -328,10 +328,10 @@ class WorkClient(ABC, Closeable):
         """
         Returns tasks within the system that match the specified search.
         WARNING: If your search matches too many tasks to fit into your application's memory limits, consider using
-        :meth:`get_tasks(task_search)`, which can stream the tasks or return them a slice at a time.
+        :meth:`get_tasks(task_search) <get_tasks>`, which can stream the tasks or return them a slice at a time.
 
         .. deprecated:: (unknown)
-            use :meth:`get_tasks(task_search)` instead to search tasks.
+            use :meth:`get_tasks(task_search) <get_tasks>` instead to search tasks.
 
         :param search: the search
         :return: a list of tasks
@@ -345,7 +345,7 @@ class WorkClient(ABC, Closeable):
         Returns a slice of tasks that match the specified search and slice reference.
 
         .. deprecated:: (unknown)
-            use :meth:`get_tasks(task_search)` instead to search tasks.
+            use :meth:`get_tasks(task_search) <get_tasks>` instead to search tasks.
 
         :param search:         the search
         :param slice_reference: the slice reference
@@ -357,7 +357,7 @@ class WorkClient(ABC, Closeable):
     @abstractmethod
     def get_tasks(self, search: TaskSearch) -> SearchClient[Task]:
         """
-        Returns a :class:`SearchClient` that offers the ability to search tasks.
+        Returns a :class:`yellowdog_client.common.SearchClient` that offers the ability to search tasks.
 
         :param search: the search
         :return: the search client

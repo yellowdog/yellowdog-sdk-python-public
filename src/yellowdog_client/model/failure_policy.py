@@ -11,7 +11,7 @@ class FailurePolicy:
     the :attr:`TaskStatus.FAILED` status. The :class:`FailurePolicy` is always applied after the :class:`RetryPolicy`.
 
     A :class:`FailurePolicy` can be used in conjunction with a :class:`RetryPolicy` or the deprecated
-    :meth:`RunSpecification.set_maximum_task_retries(integer)`}/:meth:`RunSpecification.set_retryable_errors(list)`.
+    :attr:`RunSpecification.maximumTaskRetries`/:attr:`RunSpecification.retryableErrors`.
     """
 
     resubmissionDestinations: List[ResubmissionDestination]

@@ -43,10 +43,10 @@ class RunSpecification:
     """
     The maximum number of times a task can be retried after it has failed.
 
-        To restrict which tasks can be retried based on the last error that was encountered, see :attr:`retryable_errors`
+        To restrict which tasks can be retried based on the last error that was encountered, see :attr:`retryableErrors`
 
     .. deprecated:: (unknown)
-        Use :attr:`retry_policy` instead
+        Use :attr:`retryPolicy` instead
     """
 
     taskTimeout: Optional[timedelta] = None
@@ -72,7 +72,7 @@ class RunSpecification:
     Defines the errors that should result in a task retrying if encountered.
 
     .. deprecated:: (unknown)
-        Use :attr:`retry_policy` instead
+        Use :attr:`retryPolicy` instead
     """
 
     disablePreallocation: Optional[bool] = None
@@ -80,7 +80,7 @@ class RunSpecification:
     retryPolicy: Optional[RetryPolicy] = None
     """
     A :class:`RetryPolicy` for :class:`Task`\\s. This must not be used in combination with the deprecated
-    :attr:`retryable_errors` or :attr:`maximum_task_retries`.
+    :attr:`retryableErrors` or :attr:`maximumTaskRetries`.
     """
 
     failurePolicy: Optional[FailurePolicy] = None

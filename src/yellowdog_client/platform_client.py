@@ -183,7 +183,7 @@ class PlatformClient(Closeable):
 
         .. note::
 
-            Client also supports ``with`` keyword. When executing :meth:`__exit__`, method :meth:`close` is invoked
+            Client also supports the ``with`` statement, which invokes :meth:`close` on exit
 
             .. code-block:: python
 

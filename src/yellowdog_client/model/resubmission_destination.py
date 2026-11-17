@@ -22,7 +22,7 @@ class ResubmissionDestination:
     """
     Optional :class:`Selection` to determine which :class:`Task`\\s are eligible to be resubmitted to the to destination
     :class:`TaskGroup`. If no :class:`Selection` is specified, all errors will match. Make sure to only omit
-    :attr:`resubmit_errors` if this is the last :class:`ResubmissionDestination` in the :class:`FailurePolicy`,
+    :attr:`resubmitErrors` if this is the last :class:`ResubmissionDestination` in the :class:`FailurePolicy`,
     otherwise and proceeding :class:`ResubmissionDestination`\\s will be unreachable.
 
     The :class:`TaskErrorSelector` will be applied to the last seen error.

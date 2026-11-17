@@ -386,7 +386,7 @@ class ComputeClient(ABC, Closeable):
         Returns a search client for searching compute requirements.
 
         .. deprecated:: (unknown)
-            use :meth:`get_compute_requirement_summaries(compute_requirement_summary_search)` instead.
+            use :meth:`get_compute_requirement_summaries(compute_requirement_summary_search) <get_compute_requirement_summaries>` instead.
 
         :param compute_requirement_search: the search criteria
         :return: a search client for searching compute requirements
@@ -426,7 +426,7 @@ class ComputeClient(ABC, Closeable):
     def find_all_compute_source_templates(self) -> List[ComputeSourceTemplateSummary]:
         """
         .. deprecated:: (unknown)
-            use :meth:`get_compute_source_templates(compute_source_template_search)` instead.
+            use :meth:`get_compute_source_templates(compute_source_template_search) <get_compute_source_templates>` instead.
         """
 
         pass
@@ -472,7 +472,7 @@ class ComputeClient(ABC, Closeable):
         Returns summaries of all existing compute requirement templates within the system for the requesting user.
 
         .. deprecated:: (unknown)
-            use :meth:`get_compute_requirement_templates(compute_requirement_template_search)` instead.
+            use :meth:`get_compute_requirement_templates(compute_requirement_template_search) <get_compute_requirement_templates>` instead.
 
         :return: a list of compute requirement template summaries
         """

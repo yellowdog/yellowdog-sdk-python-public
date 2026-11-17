@@ -6,6 +6,9 @@
 from datetime import date
 import os
 import sys
+
+from sphinx.ext import intersphinx
+
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 import yellowdog_client
 doc_name = u'YellowDog Client Documentation'
@@ -95,8 +98,27 @@ autodoc_inherit_docstrings = True
 
 # Intersphinx
 # https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'requests': ('https://requests.readthedocs.io/en/latest', None),
+}
 
 # sphinx-autodoc-typehints
 # https://github.com/tox-dev/sphinx-autodoc-typehints
 always_document_param_types = True
+
+
+# Sphinx can't link to type variables
+nitpick_ignore_regex = [('py:class', r'yellowdog_client\.model\..*\.(T|TValue)')]
+
+
+def resolve_future(app, env, node, contnode):
+    """Links Future to concurrent.futures, where Python documents it, rather than the private module defining it."""
+    if node.get('reftarget') == 'concurrent.futures._base.Future':
+        node['reftarget'] = 'concurrent.futures.Future'
+        return intersphinx.missing_reference(app, env, node, contnode)
+    return None
+
+
+def setup(app):
+    app.connect('missing-reference', resolve_future)

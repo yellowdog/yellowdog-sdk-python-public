@@ -32,3 +32,4 @@ YellowDog services
    usage
    cloud_info
    model
+   common

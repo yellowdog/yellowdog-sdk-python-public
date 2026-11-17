@@ -41,7 +41,7 @@ class KeyringClient(ABC, Closeable):
     def find_all_keyrings(self) -> List[KeyringSummary]:
         """
         .. deprecated:: (unknown)
-            use :meth:`get_keyrings(keyring_search)` instead to search keyrings.
+            use :meth:`get_keyrings(keyring_search) <get_keyrings>` instead to search keyrings.
         """
 
         pass
