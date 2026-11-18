@@ -25,9 +25,9 @@ class Subscription(Generic[T], Closeable):
         self._listeners.add(listener)
         self._class_type = class_type
         self._event_source = sse
-        self._event_source.bind(event_received=self._receive_event)
-        self._event_source.bind(error_received=self._notify_error)
-        self._event_source.bind(event_source_completed=self._notify_server_cancelled)
+        self._event_source.add_event_received_listener(self._receive_event)
+        self._event_source.add_error_received_listener(self._notify_error)
+        self._event_source.add_event_source_completed_listener(self._notify_server_cancelled)
         self._event_source.start()
 
     def __copy_listeners(self) -> Set[SubscriptionEventListener[T]]:

@@ -259,8 +259,6 @@ Push to any branch. The pipeline runs tests automatically. Deployment to test ha
 | `jsons` | JSON serialization/deserialization for model classes |
 | `requests` | HTTP client for all API calls |
 | `urllib3` | URL handling (version depends on Python version) |
-| `python-dispatch` | Event dispatching for subscription listeners |
-| `cancel-token` | Cancellation tokens for long-running operations |
 | `isodate` | ISO 8601 datetime parsing |
 
 ---

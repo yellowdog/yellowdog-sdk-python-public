@@ -34,8 +34,6 @@ dependencies = [
     "urllib3>=1.26.0,<2; python_version < '3.12'",
     # urllib3 is not compatible with python 3.12 until version 2.0.0
     "urllib3>=2.0.0,<3; python_version >= '3.12'",
-    "python-dispatch==0.2.3",
-    "cancel-token==0.1.6",
     "isodate>=0.6.1,<1"
 ]
 
@@ -80,9 +78,3 @@ python_version = "3.9"
 strict = true
 mypy_path = "src:stubs"
 packages = ["yellowdog_client"]
-
-[[tool.mypy.overrides]]
-# These old abandoned dependencies are not typed. They need to be replaced but until then, we need tell mypy to ignore them.
-module = ["pydispatch", "pydispatch.*", "typish", "typish.*"]
-follow_imports = "skip"
-ignore_missing_imports = true

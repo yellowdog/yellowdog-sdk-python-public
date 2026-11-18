@@ -1,21 +1,17 @@
-from threading import Thread
-from typing import Callable, Dict, Any, Optional, Tuple
+from threading import Lock, Thread
+from typing import Callable, Dict, List, Optional, Tuple, TypeVar
 
-from cancel_token import CancellationToken
-from pydispatch import Dispatcher
 from requests.auth import AuthBase
 
+from yellowdog_client.common import CancellationToken
 from .event_source_state import EventSourceState
 from .server_sent_event import ServerSentEvent
 from .sse_stream import RequestsSseClient
 
+L = TypeVar('L')
 
-class EventSource(Dispatcher): # type: ignore[misc]  # Dispatcher is untyped third-party class
-    EVENT_SOURCE_COMPLETED = "event_source_completed"
-    EVENT_RECEIVED = "event_received"
-    ERROR_RECEIVED = "error_received"
-    _events_ = [EVENT_SOURCE_COMPLETED, EVENT_RECEIVED, ERROR_RECEIVED]
 
+class EventSource:
     def __init__(
             self,
             url: str,
@@ -23,13 +19,28 @@ class EventSource(Dispatcher): # type: ignore[misc]  # Dispatcher is untyped thi
             headers: Dict[str, str],
             timeout: Tuple[Optional[float], Optional[float]] = (None, None)
     ) -> None:
-        super().__init__(None, None)
         self.__url: str = url
         self.__auth: AuthBase = auth
         self.__headers: Dict[str, str] = headers
         self.__timeout: Tuple[Optional[float], Optional[float]] = timeout
         self._token_source: CancellationToken = CancellationToken()
         self._current_state: EventSourceState = EventSourceState.CLOSED
+        self._listeners_lock = Lock()
+        self._event_received_listeners: List[Callable[[ServerSentEvent], None]] = []
+        self._error_received_listeners: List[Callable[[Exception], None]] = []
+        self._event_source_completed_listeners: List[Callable[[], None]] = []
+
+    def add_event_received_listener(self, listener: Callable[[ServerSentEvent], None]) -> None:
+        with self._listeners_lock:
+            self._event_received_listeners.append(listener)
+
+    def add_error_received_listener(self, listener: Callable[[Exception], None]) -> None:
+        with self._listeners_lock:
+            self._error_received_listeners.append(listener)
+
+    def add_event_source_completed_listener(self, listener: Callable[[], None]) -> None:
+        with self._listeners_lock:
+            self._event_source_completed_listeners.append(listener)
 
     @property
     def is_closed(self) -> bool:
@@ -73,18 +84,24 @@ class EventSource(Dispatcher): # type: ignore[misc]  # Dispatcher is untyped thi
             self._on_event_source_completed()
 
     def _on_error_received(self, ex: Exception) -> Thread:
-        return self._dispatch(lambda: self.emit(name=self.ERROR_RECEIVED, error=ex))
+        return self._dispatch(self._error_received_listeners, lambda listener: listener(ex))
 
     def _on_event_source_completed(self) -> Thread:
         if not self._token_source.cancelled:
             self._token_source.cancel()
-        return self._dispatch(lambda: self.emit(name=self.EVENT_SOURCE_COMPLETED))
+        return self._dispatch(self._event_source_completed_listeners, lambda listener: listener())
 
     def _on_event_received(self, sse: ServerSentEvent) -> Thread:
-        return self._dispatch(lambda: self.emit(name=self.EVENT_RECEIVED, message=sse))
+        return self._dispatch(self._event_received_listeners, lambda listener: listener(sse))
 
-    @staticmethod
-    def _dispatch(callback: Callable[..., Any]) -> Thread:
-        thread = Thread(target=callback)
+    def _dispatch(self, listeners: List[L], notify: Callable[[L], None]) -> Thread:
+        with self._listeners_lock:
+            listeners_to_notify = list(listeners)
+
+        def notify_all() -> None:
+            for listener in listeners_to_notify:
+                notify(listener)
+
+        thread = Thread(target=notify_all)
         thread.start()
         return thread

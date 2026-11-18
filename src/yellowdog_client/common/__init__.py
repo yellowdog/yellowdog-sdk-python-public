@@ -1,6 +1,7 @@
 from .synchronized_predicated_runner import SynchronizedPredicatedRunner
 from .slice_iterator import SliceIterator
 from .search_client import SearchClient
+from .cancellation_token import CancellationToken
 from .countdown_event import CountdownEvent
 from .closeable import Closeable
 from .full_jitter_retry import FullJitterRetry
@@ -11,6 +12,7 @@ __all__ = [
     "SynchronizedPredicatedRunner",
     "SliceIterator",
     "SearchClient",
+    "CancellationToken",
     "CountdownEvent",
     "Proxy",
     "Closeable",

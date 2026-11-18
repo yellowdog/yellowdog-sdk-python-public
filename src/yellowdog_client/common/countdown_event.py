@@ -1,7 +1,7 @@
 from concurrent.futures import Future
 from threading import Lock
 
-from cancel_token import CancellationToken
+from .cancellation_token import CancellationToken
 
 
 class CountdownEvent(object):
