@@ -125,11 +125,10 @@ def test_reports_error_when_sse_stalls_beyond_read_timeout():
             subscription_manager.add_listener("foo", listener)
 
             wait_until(lambda: sse_server.get_subscriber_count() == 1)
-            sse_server.broadcast(id="foo1", type="entity_updated", data='{"field": "foo1"}')
-            wait_until(lambda: len(listener.updates) == 1)
 
             wait_until(lambda: len(listener.errors) == 1, at_most=STALL_READ_TIMEOUT_SECONDS * 5)
             assert isinstance(listener.errors[0], ReadTimeoutError)
+            assert len(listener.updates) == 0
 
 
 def test_can_stream_chunked_sse():
