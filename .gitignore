@@ -208,3 +208,6 @@ sandbox/*
 demos/*.json
 
 integration-tests/application.yaml
+
+# direnv
+.envrc
