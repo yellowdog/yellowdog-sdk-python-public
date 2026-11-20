@@ -41,4 +41,8 @@ class WorkerPoolSummary(Identified, Named):
     Indicates if the worker pool is healthy. If false then workers may be late or lost, or a node's action queue may
     have failed.
     """
-
+    provisioningPriority: float = 0
+    """
+    The provisioning priority of a provisioned worker pool, which orders the worker pools to upscale for the same
+    demand, highest first. Always 0 for a configured worker pool, which is not upscaled.
+    """

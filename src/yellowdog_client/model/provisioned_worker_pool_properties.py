@@ -33,6 +33,11 @@ class ProvisionedWorkerPoolProperties(WorkerPoolProperties):
     """
     An optional tag value that will be attached to all workers in this pool and used to constrain worker allocation.
     """
-
+    provisioningPriority: float = 0
+    """
+    The priority of the worker pool when choosing which worker pools to upscale for the same demand. Worker pools
+    with a higher provisioning priority are upscaled first. Defaults to 0.
+    Can only be set when the worker pool is provisioned and cannot be changed afterwards.
+    """
     nodeConfiguration: Optional[WorkerPoolNodeConfiguration] = None
     metricsEnabled: Optional[bool] = None
