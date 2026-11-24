@@ -77,20 +77,40 @@ class ServicesSchema:
 
     requestTimeout: Optional[timedelta] = timedelta(seconds=90)
     """
-    The maximum time to wait for a response from a YellowDog Platform service. Before Java 26, this covers only the
-    wait for the response to start. Subscriptions to updates are not subject to this timeout. Defaults to
-    :attr:`DEFAULT_REQUEST_TIMEOUT`. Set to ``None`` to disable the request timeout.
+    The maximum time to wait for a response from a YellowDog Platform service. A request fails if the service does
+    not start to respond within this time. Depending on the SDK, it can also fail if the rest of the response is slow
+    to arrive. Subscriptions to updates are not subject to this timeout. Defaults to :attr:`DEFAULT_REQUEST_TIMEOUT`.
+    Set to ``None`` to disable the request timeout.
     """
 
 
-    # KEEP until YEL-15322 adds readTimeout to the Java ServicesSchema
+    # KEEP until the next major version removes the deprecated readTimeout
     DEFAULT_READ_TIMEOUT: ClassVar[timedelta] = timedelta(seconds=90)
-    """The default read timeout."""
+    """
+    The default read timeout.
+
+    .. deprecated:: 16.3.0
+       Use :attr:`DEFAULT_REQUEST_TIMEOUT` instead.
+    """
 
     readTimeout: Optional[timedelta] = timedelta(seconds=90)
     """
     The timeout for receiving a response from a YellowDog Platform service once a request has been sent.
-    A POST request that times out is not retried, because the service may still be processing it.
-    Defaults to :attr:`DEFAULT_READ_TIMEOUT`.
-    Set to ``None`` to disable the read timeout.
+    It is used for all calls only if :attr:`requestTimeout` is left at :attr:`DEFAULT_REQUEST_TIMEOUT`. It is also
+    the longest a subscription to updates waits for data before reporting an error. Defaults to
+    :attr:`DEFAULT_READ_TIMEOUT`. Set to ``None`` to disable the read timeout.
+
+    .. deprecated:: 16.3.0
+       Use :attr:`requestTimeout` instead. It will be removed in the next major version, after which subscriptions
+       to updates use a fixed timeout of 90 seconds.
     """
+
+    def __post_init__(self) -> None:
+        import warnings
+
+        if self.readTimeout != ServicesSchema.DEFAULT_READ_TIMEOUT:
+            warnings.warn(
+                "ServicesSchema.readTimeout is deprecated. Use requestTimeout instead.",
+                DeprecationWarning,
+                stacklevel=3
+            )

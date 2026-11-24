@@ -1,11 +1,11 @@
 import socket
 import sys
 from datetime import timedelta
-from typing import Any, List, Tuple, Union
-
 from requests import Session
 from requests.adapters import HTTPAdapter
+from typing import Any, List, Optional, Tuple, Union
 from urllib3.connection import HTTPConnection
+
 from ._version import __version__
 from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy, AccountClientImpl, AccountServiceProxy, \
     ApplicationClient, ApplicationServiceProxy, ApplicationClientImpl
@@ -96,6 +96,17 @@ class PlatformClient(Closeable):
         return session
 
     @staticmethod
+    def _to_seconds(duration: Optional[timedelta]) -> Optional[float]:
+        return None if duration is None else duration.total_seconds()
+
+    @staticmethod
+    def _resolve_request_timeout(services_schema: ServicesSchema) -> Optional[timedelta]:
+        # requestTimeout is given priority over readTimeout. The deprecated readTimeout is honoured only if requestTimeout is left at its default.
+        if services_schema.requestTimeout != ServicesSchema.DEFAULT_REQUEST_TIMEOUT:
+            return services_schema.requestTimeout
+        return services_schema.readTimeout
+
+    @staticmethod
     def create(services_schema: ServicesSchema, api_key: ApiKey) -> "PlatformClient":
         """
         Construct :class:`PlatformClient` object.
@@ -120,20 +131,17 @@ class PlatformClient(Closeable):
             services_schema.retry.initialInterval,
         )
 
-        connection_timeout = None
-        if services_schema.connectionTimeout is not None:
-            connection_timeout = services_schema.connectionTimeout.total_seconds()
-
-        read_timeout = None
-        if services_schema.readTimeout is not None:
-            read_timeout = services_schema.readTimeout.total_seconds()
+        connection_timeout = PlatformClient._to_seconds(services_schema.connectionTimeout)
+        read_timeout = PlatformClient._to_seconds(services_schema.readTimeout)
+        request_timeout = PlatformClient._to_seconds(PlatformClient._resolve_request_timeout(services_schema))
 
         proxy = Proxy(
             authentication_headers_provider=api_key_authentication_headers_provider,
             session=session,
             user_agent=user_agent,
             connection_timeout=connection_timeout,
-            read_timeout=read_timeout
+            read_timeout=read_timeout,
+            request_timeout=request_timeout
         )
 
         work_proxy = Proxy(
@@ -142,7 +150,8 @@ class PlatformClient(Closeable):
             user_agent=user_agent,
             compress_requests=True,
             connection_timeout=connection_timeout,
-            read_timeout=read_timeout
+            read_timeout=read_timeout,
+            request_timeout=request_timeout
         )
 
         compute_url = services_schema.defaultUrl if services_schema.computeServiceUrl is None else services_schema.computeServiceUrl

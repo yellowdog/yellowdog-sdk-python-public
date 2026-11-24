@@ -1,24 +1,22 @@
 import datetime
-from datetime import timedelta
 import gzip
 import json
+import pytest
 import time
 import traceback
 from dataclasses import dataclass
+from datetime import timedelta
 from http import HTTPStatus
-from typing import List, Optional
-from unittest import mock
-
-import pytest
 from requests import HTTPError
 from requests.exceptions import ConnectTimeout, ReadTimeout
+from typing import List, Optional
+from unittest import mock
 from urllib3.exceptions import ReadTimeoutError
-from werkzeug.wrappers import Response as WerkzeugResponse
-
 from util.api import MockApi, HttpMethod
 from util.data import make
 from util.sse.sse_server import SseServer
 from util.waiter import wait_until
+from werkzeug.wrappers import Response as WerkzeugResponse
 from yellowdog_client.common import Proxy, UserAgent
 from yellowdog_client.common.credentials import ApiKeyAuthenticationHeadersProvider
 from yellowdog_client.common.json import Json
@@ -35,7 +33,8 @@ def build_proxy(
         max_retry_interval_seconds: int = 1,
         compress_requests: bool = False,
         connection_timeout: Optional[float] = 90.0,
-        read_timeout: Optional[float] = 90.0
+        read_timeout: Optional[float] = 90.0,
+        request_timeout: Optional[float] = 90.0
     ) -> Proxy:
     session = PlatformClient._build_session(retry_count, timedelta(seconds=max_retry_interval_seconds), timedelta(seconds=1))
     return Proxy(
@@ -45,7 +44,8 @@ def build_proxy(
         user_agent=UserAgent("test", "1.0", "3.8"),
         compress_requests=compress_requests,
         connection_timeout=connection_timeout,
-        read_timeout=read_timeout
+        read_timeout=read_timeout,
+        request_timeout=request_timeout
     )
 
 
@@ -276,8 +276,8 @@ def test_sub_proxy_shares_session_with_parent():
     assert sub_proxy._session is proxy._session
 
 
-def test_timeouts_passed_as_connect_and_read_tuple(mock_api: MockApi):
-    proxy = build_proxy(mock_api.url(), connection_timeout=5.0, read_timeout=10.0)
+def test_requests_use_connection_and_request_timeouts(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url(), connection_timeout=5.0, read_timeout=20.0, request_timeout=10.0)
 
     mock_api.mock(TEST_ENDPOINT, HttpMethod.GET, response=Example(field="foo"))
 
@@ -287,15 +287,24 @@ def test_timeouts_passed_as_connect_and_read_tuple(mock_api: MockApi):
     assert mock_send.call_args[1]["timeout"] == (5.0, 10.0)
 
 
-def test_read_timeout_is_propagated_to_sub_proxy():
-    proxy = build_proxy("http://example.com", read_timeout=10.0)
+def test_subscriptions_use_connection_and_read_timeouts():
+    proxy = build_proxy("http://example.com", connection_timeout=5.0, read_timeout=20.0, request_timeout=10.0)
+
+    event_source = proxy.stream(TEST_ENDPOINT)
+
+    assert event_source._EventSource__timeout == (5.0, 20.0)
+
+
+def test_read_and_request_timeouts_are_propagated_to_sub_proxy():
+    proxy = build_proxy("http://example.com", read_timeout=20.0, request_timeout=10.0)
     sub_proxy = proxy.append_base_url("/api")
 
-    assert sub_proxy._read_timeout == 10.0
+    assert sub_proxy._read_timeout == 20.0
+    assert sub_proxy._request_timeout == 10.0
 
 
-def test_retries_get_when_response_stalls_beyond_read_timeout(mock_api: MockApi):
-    proxy = build_proxy(mock_api.url(), retry_count=1, read_timeout=STALL_READ_TIMEOUT_SECONDS)
+def test_retries_get_when_response_stalls_beyond_request_timeout(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url(), retry_count=1, request_timeout=STALL_READ_TIMEOUT_SECONDS)
 
     expected = Example(field="foo")
     mock_stalled_response(mock_api, HttpMethod.GET)
@@ -306,8 +315,8 @@ def test_retries_get_when_response_stalls_beyond_read_timeout(mock_api: MockApi)
     assert actual == expected
 
 
-def test_does_not_retry_post_when_response_stalls_beyond_read_timeout(mock_api: MockApi):
-    proxy = build_proxy(mock_api.url(), retry_count=1, read_timeout=STALL_READ_TIMEOUT_SECONDS)
+def test_does_not_retry_post_when_response_stalls_beyond_request_timeout(mock_api: MockApi):
+    proxy = build_proxy(mock_api.url(), retry_count=1, request_timeout=STALL_READ_TIMEOUT_SECONDS)
 
     mock_stalled_response(mock_api, HttpMethod.POST)
     mock_api.mock(TEST_ENDPOINT, HttpMethod.POST)

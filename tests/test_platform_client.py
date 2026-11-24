@@ -1,10 +1,11 @@
+import pytest
 import time
+import warnings
 from datetime import timedelta
 from http import HTTPStatus
-
-import pytest
-from unittest import mock
 from requests.exceptions import ConnectionError
+from typing import Optional
+from unittest import mock
 from werkzeug.wrappers import Response
 from yellowdog_client import PlatformClient
 from yellowdog_client.model import ServicesSchema, ApiKey, RetryProperties
@@ -62,16 +63,26 @@ def test_default_services_schema_applies_90s_read_timeout(mock_api: MockApi):
     assert schema.readTimeout == timedelta(seconds=90)
 
 
-def test_services_schema_read_timeout_fails_stalled_requests(mock_api: MockApi):
+def test_default_services_schema_applies_90s_request_timeout(mock_api: MockApi):
 
+    schema = ServicesSchema(defaultUrl=mock_api.url())
+    assert schema.requestTimeout == timedelta(seconds=90)
+
+
+def stall_get_work_requirement(mock_api: MockApi) -> None:
     def stall(_request: object) -> Response:
         time.sleep(1.5)
         return Response(status=HTTPStatus.OK)
 
     mock_api.httpserver.expect_oneshot_request("/work/requirements/foo").respond_with_handler(stall)
+
+
+def test_services_schema_request_timeout_fails_stalled_requests(mock_api: MockApi):
+
+    stall_get_work_requirement(mock_api)
     schema = ServicesSchema(
         defaultUrl=mock_api.url(),
-        readTimeout=timedelta(seconds=1),
+        requestTimeout=timedelta(seconds=1),
         retry=RetryProperties(maxAttempts=0)
     )
 
@@ -80,8 +91,49 @@ def test_services_schema_read_timeout_fails_stalled_requests(mock_api: MockApi):
             client.work_client.get_work_requirement_by_id("foo")
 
 
+def test_services_schema_read_timeout_fails_stalled_requests(mock_api: MockApi):
+
+    stall_get_work_requirement(mock_api)
+    with pytest.warns(DeprecationWarning):
+        schema = ServicesSchema(
+            defaultUrl=mock_api.url(),
+            readTimeout=timedelta(seconds=1),
+            retry=RetryProperties(maxAttempts=0)
+        )
+
+    with PlatformClient.create(schema, make(ApiKey)) as client:
+        with pytest.raises(ConnectionError, match="Read timed out"):
+            client.work_client.get_work_requirement_by_id("foo")
+
+
+@pytest.mark.parametrize("schema_args, expected", [
+    ({}, timedelta(seconds=90)),
+    ({"requestTimeout": timedelta(seconds=30)}, timedelta(seconds=30)),
+    ({"requestTimeout": None}, None),
+    ({"readTimeout": timedelta(seconds=30)}, timedelta(seconds=30)),
+    ({"readTimeout": None}, None),
+    ({"requestTimeout": timedelta(seconds=30), "readTimeout": timedelta(seconds=60)}, timedelta(seconds=30)),
+    ({"requestTimeout": None, "readTimeout": timedelta(seconds=60)}, None),
+])
+@pytest.mark.filterwarnings("ignore:ServicesSchema.readTimeout is deprecated:DeprecationWarning")
+def test_resolves_request_timeout(schema_args: dict[str, Optional[timedelta]], expected: Optional[timedelta]):
+    assert PlatformClient._resolve_request_timeout(ServicesSchema(**schema_args)) == expected
+
+
+def test_setting_read_timeout_warns_it_is_deprecated():
+    with pytest.warns(DeprecationWarning, match="readTimeout is deprecated"):
+        ServicesSchema(readTimeout=timedelta(seconds=30))
+
+
+def test_default_read_timeout_does_not_warn():
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ServicesSchema(requestTimeout=timedelta(seconds=30))
+
+
 def test_services_schema_read_timeout_can_be_disabled(mock_api: MockApi):
 
-    schema = ServicesSchema(defaultUrl=mock_api.url(), readTimeout=None)
+    with pytest.warns(DeprecationWarning):
+        schema = ServicesSchema(defaultUrl=mock_api.url(), readTimeout=None)
     client = PlatformClient.create(schema, make(ApiKey))
     client.close()

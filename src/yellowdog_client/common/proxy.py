@@ -1,12 +1,11 @@
 import gzip
-import json as json_module
 from dataclasses import asdict
 from datetime import datetime, timedelta
-from typing import TypeVar, Type, Dict, Optional, overload, Any
-
 from requests import Request, Session, Response, HTTPError
-
+from typing import TypeVar, Type, Dict, Optional, overload, Any
 from yellowdog_client.model.exceptions import BaseCustomException
+
+import json as json_module
 from .credentials import ApiKeyAuthenticationHeadersProvider
 from .iso_datetime import iso_timedelta_format, iso_format
 from .json import Json
@@ -27,7 +26,8 @@ class Proxy:
             base_url: str = "",
             compress_requests: bool = False,
             connection_timeout: Optional[float] = 90.0,
-            read_timeout: Optional[float] = 90.0
+            read_timeout: Optional[float] = 90.0,
+            request_timeout: Optional[float] = 90.0
     ) -> None:
         self._authentication_headers_provider: ApiKeyAuthenticationHeadersProvider = authentication_headers_provider
         self._user_agent: UserAgent = user_agent
@@ -36,6 +36,7 @@ class Proxy:
         self._session: Session = session
         self._connection_timeout: Optional[float] = connection_timeout
         self._read_timeout: Optional[float] = read_timeout
+        self._request_timeout: Optional[float] = request_timeout
 
     @staticmethod
     def _format_params(params: Optional[Dict[str, object]]) -> None:
@@ -57,7 +58,8 @@ class Proxy:
             self._base_url + base_url,
             self._compress_requests,
             self._connection_timeout,
-            self._read_timeout
+            self._read_timeout,
+            self._request_timeout
         )
 
     def get(self, return_type: Type[T], url: str = "", params: Optional[Dict[str, Any]] = None) -> T:
@@ -142,7 +144,7 @@ class Proxy:
 
         response = self._session.send(
             request=prepared_request,
-            timeout=(self._connection_timeout, self._read_timeout),
+            timeout=(self._connection_timeout, self._request_timeout),
             **settings
         )
 
