@@ -5,6 +5,8 @@
 
 .. module:: yellowdog_client.common
 
+.. autoclass:: yellowdog_client.common.Product
+
 .. autoclass:: yellowdog_client.common.SearchClient
     :members:
 

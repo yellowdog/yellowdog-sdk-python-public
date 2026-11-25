@@ -16,6 +16,18 @@ The PlatformClient provides access to all functionality and may be constructed a
         ApiKey("my_app_key",  "my_app_secret")
     )
 
+To add your application's name and version to the User-Agent header that the SDK sends, pass it as a
+:class:`yellowdog_client.common.Product`. This lets YellowDog see which applications, and which versions of them, use
+the platform::
+
+    from yellowdog_client.common import Product
+
+    client = PlatformClient.create(
+        ServicesSchema(defaultUrl="https://portal.yellowdog.co/api"),
+        ApiKey("my_app_key",  "my_app_secret"),
+        Product("my-app", "1.2.0")
+    )
+
 The PlatformClient is split into several clients, each covering a specific area of functionality.
 All clients are available as attributes of the PlatformClient.
 

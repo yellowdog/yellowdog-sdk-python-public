@@ -12,7 +12,7 @@ from .account import KeyringClient, KeyringClientImpl, KeyringServiceProxy, Acco
 from .account.account_client import AccountClient
 from .client_collection import ClientCollection
 from .cloud_info import CloudInfoClient, CloudInfoClientImpl, CloudInfoProxy
-from .common import Proxy, Closeable, UserAgent, FullJitterRetry
+from .common import Proxy, Closeable, Product, UserAgent, FullJitterRetry
 from .common.credentials import ApiKeyAuthenticationHeadersProvider
 from .compute import ComputeClient, ComputeClientImpl, ComputeServiceProxy
 from .images import ImagesClient, ImagesClientImpl, ImagesServiceProxy
@@ -107,12 +107,17 @@ class PlatformClient(Closeable):
         return services_schema.readTimeout
 
     @staticmethod
-    def create(services_schema: ServicesSchema, api_key: ApiKey) -> "PlatformClient":
+    def create(services_schema: ServicesSchema, api_key: ApiKey, *products: Product) -> "PlatformClient":
         """
         Construct :class:`PlatformClient` object.
 
         :param services_schema: configuration for platform client. Includes url for YellowDog platform service
         :param api_key: the api key to use for authenticating with the YellowDog platform
+        :param products: the application, and anything it is built on, to add to the User-Agent header after the SDK
+            and Python versions, in the order given. List the application itself last, and anything it is built on
+            before it, such as a framework that your applications share. Identifying the application is recommended.
+            It lets YellowDog see which applications, and which versions of them, use the platform, so YellowDog can
+            provide you with better support.
         :returns: created YellowDog Platform client
         """
         api_key_authentication_headers_provider = ApiKeyAuthenticationHeadersProvider(api_key)
@@ -122,7 +127,8 @@ class PlatformClient(Closeable):
         user_agent = UserAgent(
             application_id="yellowdog-sdk-python",
             application_version=__version__,
-            python_version=f"{python_version.major}.{python_version.minor}"
+            python_version=f"{python_version.major}.{python_version.minor}",
+            products=list(products)
         )
 
         session = PlatformClient._build_session(

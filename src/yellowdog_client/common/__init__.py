@@ -6,7 +6,7 @@ from .countdown_event import CountdownEvent
 from .closeable import Closeable
 from .full_jitter_retry import FullJitterRetry
 from .proxy import Proxy
-from .user_agent import UserAgent
+from .user_agent import Product, UserAgent
 
 __all__ = [
     "SynchronizedPredicatedRunner",
@@ -17,6 +17,7 @@ __all__ = [
     "Proxy",
     "Closeable",
     "FullJitterRetry",
+    "Product",
     "UserAgent",
     "check"
 ]

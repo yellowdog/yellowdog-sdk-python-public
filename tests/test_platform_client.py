@@ -1,4 +1,5 @@
 import pytest
+import sys
 import time
 import warnings
 from datetime import timedelta
@@ -7,10 +8,11 @@ from requests.exceptions import ConnectionError
 from typing import Optional
 from unittest import mock
 from werkzeug.wrappers import Response
-from yellowdog_client import PlatformClient
-from yellowdog_client.model import ServicesSchema, ApiKey, RetryProperties
+from yellowdog_client import PlatformClient, __version__
+from yellowdog_client.common import Product
+from yellowdog_client.model import ServicesSchema, ApiKey, RetryProperties, NamespacePolicy
 
-from util.api import MockApi
+from util.api import MockApi, HttpMethod
 from util.data import make
 
 
@@ -137,3 +139,63 @@ def test_services_schema_read_timeout_can_be_disabled(mock_api: MockApi):
         schema = ServicesSchema(defaultUrl=mock_api.url(), readTimeout=None)
     client = PlatformClient.create(schema, make(ApiKey))
     client.close()
+
+
+def _sent_user_agent(mock_api: MockApi, *products: Product) -> str:
+    mock_api.mock("/namespaces/foo/policy", HttpMethod.GET, response=NamespacePolicy(namespace="foo"))
+    with PlatformClient.create(ServicesSchema(defaultUrl=mock_api.url()), make(ApiKey), *products) as client:
+        client.namespaces_client.get_namespace_policy("foo")
+    request, _ = mock_api.httpserver.log[-1]
+    return request.headers["User-Agent"]
+
+
+def test_user_agent_names_sdk_and_python(mock_api: MockApi):
+    python = f"{sys.version_info.major}.{sys.version_info.minor}"
+
+    assert _sent_user_agent(mock_api) == f"yd/1.1.0 yellowdog-sdk-python/{__version__} python/{python}"
+
+
+def test_user_agent_appends_products_in_order(mock_api: MockApi):
+    python = f"{sys.version_info.major}.{sys.version_info.minor}"
+
+    user_agent = _sent_user_agent(mock_api, Product("my-framework", "3.0"), Product("my-app", "1.2.0"))
+
+    assert user_agent == f"yd/1.1.0 yellowdog-sdk-python/{__version__} python/{python} my-framework/3.0 my-app/1.2.0"
+
+
+def test_product_accepts_every_token_character():
+    token = "!#$%&'*+-.^_`|~09AZaz"
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        product = Product(token, token)
+
+    assert product.name == token
+    assert product.version == token
+
+
+@pytest.mark.parametrize("value, sent", [
+    ("my app", "my_app"),
+    (" my-app\t", "my-app"),
+    ("1/0", "1#0"),
+    ("my\x00app", "myapp"),
+    ("my-äpp", "my-_pp"),
+    ("(1.0)", "_1.0_"),
+    ("", "unknown"),
+    ("\x00", "unknown"),
+    ("my\x85app", "myapp"),
+    ("\xa0my\u2007app\u202f", "_my_app_"),
+    ("\u3000my\u2028app\u3000", "my_app"),
+])
+def test_product_sends_token_in_place_of_value_that_is_not_one(value: str, sent: str):
+    with pytest.warns(UserWarning, match="is not an RFC 9110 token") as warnings_issued:
+        product = Product(value, value)
+
+    assert product == Product(sent, sent)
+    assert len(warnings_issued) == 2
+    assert warnings_issued[0].filename == __file__
+
+
+def test_product_rejects_none():
+    with pytest.raises(TypeError):
+        Product(None, "1.0")

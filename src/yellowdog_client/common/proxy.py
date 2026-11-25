@@ -247,8 +247,10 @@ class Proxy:
         raise HTTPError(http_error_msg, response=response)
 
     def _get_user_agent_headers(self) -> Dict[str, str]:
+        products = "".join(f" {product.name}/{product.version}" for product in self._user_agent.products)
         return {
-            "User-Agent": f"yd/1.0.0"
+            "User-Agent": f"yd/1.1.0"
                           f" {self._user_agent.application_id}/{self._user_agent.application_version}"
                           f" python/{self._user_agent.python_version}"
+                          f"{products}"
         }
