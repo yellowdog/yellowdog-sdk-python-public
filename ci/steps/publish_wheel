@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# Uploads the wheel that the build job published to Nexus, so the release is exactly what was built and tested.
+
+set -euo pipefail
+
+USAGE="Usage: $0 test|prod"
+TARGET=${1:?Missing required argument TARGET. $USAGE}
+
+source ci/release-target "$TARGET"
+
+DIST=$(mktemp -d)
+trap 'rm -rf "$DIST"' EXIT
+
+python3 -m pip download --quiet --no-deps --dest "$DIST" "yellowdog-sdk==$VERSION" \
+  --index-url "https://${NEXUS_USER:?}:${NEXUS_PASSWORD:?}@nexus.yellowdog.tech/repository/pypi-hosted/simple"
+
+TWINE_REPOSITORY_URL="$WHEEL_REPOSITORY_URL" \
+  TWINE_USERNAME="${WHEEL_USER:?Missing the $TARGET package index user, see ci/release-target}" \
+  TWINE_PASSWORD="${WHEEL_PASSWORD:?Missing the $TARGET package index password, see ci/release-target}" \
+  tox -e publish -- "$DIST"/*.whl

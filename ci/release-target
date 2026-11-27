@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# Sourced by the deploy scripts, not run directly. Expects one argument naming the release target, test or prod.
+# Sets:
+# - VERSION to the version being released
+# - WHEEL_REPOSITORY_URL to the package index the wheel is uploaded to, and WHEEL_USER and WHEEL_PASSWORD to its login
+# - SOURCE_REPO to the GitHub repository the source is published to
+# - RELEASE_URL to the page that shows the release
+
+# shellcheck disable=SC2034 # used by the scripts that source this
+
+VERSION=$(grep -oP "__version__ = '\K[^']+" src/yellowdog_client/_version.py)
+
+case "${1:-}" in
+  test)
+    WHEEL_REPOSITORY_URL=https://nexus.yellowdog.tech/repository/pypi-public-test/
+    WHEEL_USER=${NEXUS_USER:-}
+    WHEEL_PASSWORD=${NEXUS_PASSWORD:-}
+    SOURCE_REPO=yellowdog/yellowdog-sdk-python-public-test
+    # The test package index is internal, so the source is the release's public face.
+    RELEASE_URL=https://github.com/$SOURCE_REPO/tree/$VERSION
+    ;;
+  prod)
+    WHEEL_REPOSITORY_URL=https://upload.pypi.org/legacy/
+    WHEEL_USER=__token__
+    WHEEL_PASSWORD=${YELLOWDOG_SDK_PYPI_TOKEN:-}
+    SOURCE_REPO=yellowdog/yellowdog-sdk-python-public
+    RELEASE_URL=https://pypi.org/project/yellowdog-sdk/$VERSION/
+    ;;
+  *)
+    echo "Unknown release target '${1:-}', expected test or prod" >&2
+    exit 1
+    ;;
+esac

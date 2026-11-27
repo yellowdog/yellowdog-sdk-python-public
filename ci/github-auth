@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Lets git reach the release repositories over HTTPS with GITHUB_TOKEN (loaded by
+# env_configure), as CircleCI's own SSH key can only reach this repository. CircleCI's
+# checkout rewrites https://github.com URLs to SSH, so that rewrite is removed first. The
+# credential helper reads the token from the environment whenever git asks, so it is
+# never written to disk.
+
+set -euo pipefail
+
+: "${GITHUB_TOKEN:?Missing required environment variable GITHUB_TOKEN}"
+
+REWRITES=$(git config --global --get-regexp '^url\..*\.insteadof$' || true)
+while read -r key value; do
+  if [[ $value == https://github.com* ]]; then
+    git config --global --unset-all "$key"
+  fi
+done <<<"$REWRITES"
+
+# shellcheck disable=SC2016 # expanded by git's shell when the helper runs, not here
+git config --global credential.https://github.com.helper \
+  '!f() { echo username=x-access-token; echo "password=$GITHUB_TOKEN"; }; f'

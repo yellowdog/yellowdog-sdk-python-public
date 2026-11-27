@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+USAGE="Usage: $0 test|prod successful|failed"
+TARGET=${1:?Missing required argument TARGET. $USAGE}
+STATUS=${2:?Missing required argument STATUS. $USAGE}
+
+source ci/release-target "$TARGET"
+
+case "$STATUS" in
+  successful) deploy_notify successful "$TARGET" "$VERSION" "$RELEASE_URL" ;;
+  failed) deploy_notify failed "$TARGET" "$VERSION" ;;
+  *)
+    echo "Unknown status '$STATUS', expected successful or failed" >&2
+    exit 1
+    ;;
+esac

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+USAGE="Usage: $0 test|prod"
+TARGET=${1:?Missing required argument TARGET. $USAGE}
+
+source env_configure
+step git_configure
+step ci/github-auth
+
+step ci/steps/publish_wheel "$TARGET"
+step ci/steps/publish_source "$TARGET"
